@@ -29,6 +29,17 @@ FIND_LIBRARY(REALTIME_LIBRARY NAMES rt PATH /usr/lib /usr/local/lib REQUIRED)
 
 add_subdirectory(test)
 
+# add a target to generate API documentation with Doxygen
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.cmake ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+FIND_PACKAGE(Doxygen)
+IF(DOXYGEN_FOUND)
+    ADD_CUSTOM_TARGET(doc
+                      ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                      COMMENT "Generating API documentation with Doxygen" VERBATIM
+                     )
+ENDIF(DOXYGEN_FOUND)
+
 # project version
 SET( Dlibs_MAJOR_VERSION 1 )
 SET( Dlibs_MINOR_VERSION 2 )
