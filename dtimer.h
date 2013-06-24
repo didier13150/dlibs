@@ -72,7 +72,7 @@ class DTimer : public DThread
 		 * Stop the timer
 		 */
 		void stop ( void );
-		
+
 
 		/**
 		 * Start the timer again. It's like a soft reset.\n
@@ -97,7 +97,7 @@ class DTimer : public DThread
 
 		/// The timestamp since the timer was started
 		long double m_timestamp;
-		
+
 		/// A copy of the timeout start option
 		unsigned int m_countdown;
 
@@ -115,7 +115,7 @@ class DTimer : public DThread
 
 		/// Timestamp
 		long int m_zeroTime;
-		
+
 		/**
 		 * What the thread must to do
 		 */

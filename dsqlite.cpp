@@ -193,14 +193,14 @@ DDatabaseResult & DSQLite::exec ( const DString & query )
 		}
 		
 		// Get the last AUTO_INCREMENT
-		llu = sqlite3_last_insert_rowid ( m_sqlite );
-		m_result.last_auto_increment = ( long long unsigned int ) llu;
+		llu = ( long long unsigned int ) sqlite3_last_insert_rowid ( m_sqlite );
+		m_result.last_auto_increment = llu;
 
 		// Get the number of affected rows
-		llu = sqlite3_changes ( m_sqlite );
-		if ( llu != -1 )
+		llu = ( long long unsigned int ) sqlite3_changes ( m_sqlite );
+		if ( llu >= 0 )
 		{
-			m_result.affected_row = ( long long unsigned int ) llu;
+			m_result.affected_row = llu;
 		}
 	}
 	else

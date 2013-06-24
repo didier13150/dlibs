@@ -72,7 +72,7 @@ public:
 		/// Thread must make infinite number of loop until stop method is called.
 		MULTI_LOOP,
 	} RunMode;
-	
+
 	/**
 	 * Start the thread
 	 * @brief start the thread
@@ -126,8 +126,15 @@ public:
 	 * @brief Get the thread mode
 	 */
 	RunMode getRunMode();
-	
-	
+
+	/**
+	 * Get return value about thread
+	 * @return The return value of the thread
+	 * @brief Get Thread return value
+	 */
+	int getReturn() const;
+
+
 private:
 
 	/// Time ( microseconds ) between two thread loop.
@@ -147,19 +154,22 @@ private:
 	/// The thread status flag
 	bool m_running;
 
+	/// Return value about thread
+	int m_return;
+
 	/**
 	 * Thread Mode
 	 * @see Mode
 	 */
 	RunMode m_mode;
-	
+
 	/**
 	 * If thread must make another loop.\n
 	 * @return TRUE if run method must make another loop, false otherwise.
 	 * @brief Get another loop flag
 	 */
 	bool again();
-	
+
 	/**
 	* @brief It's the real thread.
 	* @internal

@@ -36,8 +36,10 @@
 using namespace std;
 
 DTimer::DTimer()
-	: DThread(), m_precision ( false ), m_timestamp ( 0.0 )
+	: DThread()
 {
+	m_precision = false;
+	m_timestamp = 0.0;
 	// Create mutex
 	pthread_mutex_init ( &m_Mutex, NULL );
 }

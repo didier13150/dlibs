@@ -514,7 +514,7 @@ int DServerSock::writeMessage ( int hSock, const DString & message, bool checkSo
 
 int DServerSock::sendPacket ( int hSock, const DString & packet, bool checkSock )
 {
-	int numberChar;
+	ssize_t numberChar;
 	fd_set stFdSet;
 	struct timeval stTime;
 	DString buffer;
@@ -550,7 +550,7 @@ int DServerSock::sendPacket ( int hSock, const DString & packet, bool checkSock 
 			  ( FD_ISSET ( hSock, &stFdSet ) ) )
 	{
 		numberChar = send ( hSock, packet.c_str(), packet.length(), 0 );
-		if ( numberChar == packet.length() )
+		if ( numberChar == (ssize_t) packet.length() )
 		{
 			m_lastError = "";
 			m_status = SUCCESS;

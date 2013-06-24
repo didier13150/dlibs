@@ -23,7 +23,7 @@
  *
  * - Manage points and rectangle with DPoint and rectangle with DRect libraries.
  *
- * - Database operations with the DDatabase factory library DSQLite and 
+ * - Database operations with the DDatabase factory library DSQLite and
  * optionnaly DMySQL, DPgSQL.
  *
  * - Manage URL with the DURL library
@@ -109,7 +109,7 @@
  *
  * @section license Licensing
  *
- * The libraries are licensed under GNU/GPL license. See the COPYING file.
+ * The libraries are licensed under GNU/GPL v3 license. See the COPYING file.
  *
  * @section TODO
  * In documentation :

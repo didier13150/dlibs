@@ -39,6 +39,7 @@ DThread::DThread()
 	m_continue = false;
 	m_running = false;
 	m_mode = DThread::MULTI_LOOP;
+	m_return = -1;
 }
 
 DThread::~DThread()
@@ -94,7 +95,7 @@ void DThread::start()
 void DThread::stop()
 {
 	m_continue = false;
-	int ret = pthread_join ( m_handle, NULL );
+	m_return = pthread_join ( m_handle, NULL );
 }
 
 void * DThread::entryPoint( void * pthis )
