@@ -1,0 +1,58 @@
+/******************************************************************************
+ * Unit Test for DFactory                                                     *
+ ******************************************************************************/
+
+#include "dlibs.h" // replace it by #include <dlibs/dlibs.h>
+
+int testdfactory()
+{
+	DFactory<DDatabase> factory;
+	DDatabaseResult result;
+	DDatabaseParams params;
+
+	// Register available types
+#ifdef DLIBS_HAVE_MYSQL
+	DFactory<DDatabase>::Register ( "dmysql", new DMySQL( true ) );
+#endif
+#ifdef DLIBS_HAVE_PGSQL
+	DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL( true ) );
+#endif
+	DFactory<DDatabase>::Register ( "dsqlite", new DSQLite( true ) );
+
+	DDatabase * db1 = factory.create ( "dmysql" );
+	DDatabase * db2 = factory.create ( "dsqlite" );
+
+	params.base = "/tmp/testdfactory.db";
+	db2->setParams( params );
+	
+	try
+	{
+		db2->open();
+		db2->exec ( "CREATE TABLE mytable2 (field1 DATETIME, field2 TEXT);" );
+		db2->exec ( "INSERT INTO mytable2(field1, field2) VALUES(\"2010-02-02T01:02:03\", \"Mon insertion de texte\");" );
+		result = db2->exec ( "SELECT * FROM mytable2;" );
+		std::cout << result << std::endl;
+		db2->close();
+		
+	}
+	catch (const DException_database & e)
+	{
+		std::cout << "DException_database exception encoured" << std::endl;
+		std::cout << e.what() << std::endl;
+		std::cout << "base was " << params.base << std::endl;
+	}
+	catch (const DException & e)
+	{
+		std::cout << "DException exception encoured" << std::endl;
+		std::cout << e.what() << std::endl;
+	}
+	catch ( ... )
+	{
+		std::cout << "Another unknow exception encoured" << std::endl;
+	}
+	
+	delete db1;
+	delete db2;
+
+	return 0;
+}

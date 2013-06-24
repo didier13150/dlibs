@@ -1,0 +1,103 @@
+/******************************************************************************
+ * Unit Test for DSQLite                                                      *
+ ******************************************************************************/
+
+#include <iostream>
+#include <cstdlib>
+#include "dlibs.h" // replace it by #include <dlibs/dlibs.h>
+
+using namespace std;
+
+int testdsqlite()
+{
+	DSQLite sql;
+	DDatabaseParams params;
+	DDatabaseResult result;
+
+	//cout << "Enter the database name : ";
+	//cin >> params.base;
+	params.base = "/tmp/testdsqlite.db";
+
+	sql.setParams ( params );
+	
+	DString info = params.toString();
+	std::cout << info << std::endl;
+	
+	params.host = "localhost";
+	info = params.toString();
+	std::cout << info << std::endl;
+	params.user = "toto";
+	params.password = "passwd";
+	params.port = "12345";
+	info = params.toString();
+	std::cout << info << std::endl;
+
+	// Open SQLite connection
+	result = sql.open();
+	if ( result.errnb != DSQLite::SUCCESS )
+	{
+		cout << "Error " << result.errnb << endl;
+		cout << result.error << endl;
+		return 0;
+	}
+
+	cout << "Execute SQLite Queries on base " << params.base << endl;
+
+	cout << "---------------------------------------------------------" << endl;
+	
+	// Execute show tables query
+	result = sql.exec ( "CREATE TABLE mytable (field1, field2);" );
+	cout << result << endl;
+
+	cout << "---------------------------------------------------------" << endl;
+
+	// Execute first insert query
+	result = sql.exec ( "INSERT INTO mytable(field1, field2) VALUES(1, 2);" );
+	cout << result << endl;
+
+	cout << "---------------------------------------------------------" << endl;
+
+	// Execute second insert query
+	result = sql.exec ( "INSERT INTO mytable(field1, field2) VALUES(2, NULL);" );
+	cout << result << endl;
+	
+	// Execute select query
+	result = sql.exec ( "SELECT * FROM mytable;" );
+	cout << result << endl;
+
+	// Close SQLite connection
+	sql.close();
+	
+	cout << "---------------------------------------------------------" << endl;
+	params.clear();
+	params.base = "/tmp/testdsqlite.db";
+	sql.setParams ( params );
+
+	sql.useDExceptions( true );
+	try
+	{
+		sql.open();
+		sql.exec ( "CREATE TABLE mytable2 (field1 DATETIME, field2 TEXT);" );
+		sql.exec ( "INSERT INTO mytable2(field1, field2) VALUES(\"2010-02-02T01:02:03\", \"Mon insertion de texte\");" );
+		result = sql.exec ( "SELECT * FROM mytable2;" );
+		cout << result << endl;
+	}
+	catch (const DException_database & e)
+	{
+		cout << "DException_database exception encoured" << endl;
+		cout << e.what() << endl;
+		cout << "base was " << params.base << endl;
+	}
+	catch (const DException & e)
+	{
+		cout << "DException exception encoured" << endl;
+		cout << e.what() << endl;
+	}
+	catch ( ... )
+	{
+		cout << "Another unknow exception encoured" << endl;
+	}
+	sql.close();
+	
+	return 0;
+}

@@ -1,0 +1,60 @@
+/******************************************************************************
+ * Unit Test for DThread class                                                *
+ ******************************************************************************/
+
+#include <iostream>
+#include <cstdlib>
+
+#include "dlibs.h" // replace it by #include <dlibs/dlibs.h>
+
+using namespace std;
+
+class Foo : public DThread
+{
+public:
+	Foo() : DThread(), nb( 0 ) {}
+
+	void run()
+	{
+		nb++;
+	}
+	void clear() { nb = 0; }
+	int getNb() { return nb; }
+private:
+	int nb;
+};
+
+int testdthread()
+{
+	Foo foo;
+
+	foo.setRunMode( DThread::MULTI_LOOP );
+	foo.setSleep( 10000 );
+	foo.start();
+	for ( int i = 0 ; i < 3 ; ++i )
+	{
+		cout << "Running = " << foo.isRunning() << endl;
+		sleep( 1 );
+	}
+	for ( int i = 0 ; i < 3 ; ++i )
+	{
+		cout << "Running = " << foo.isRunning() << endl;
+		//foo.kill( SIGKILL );
+		sleep( 1 );
+	}
+	
+	cout << "Running = " << foo.isRunning() << endl;
+	foo.stop();
+	cout << "Running = " << foo.isRunning() << endl;
+	cout << "DThread make " << foo.getNb() << " loop(s)" << endl;
+
+	foo.clear();
+	foo.setRunMode( DThread::SINGLE_LOOP );
+	foo.start();
+	sleep( 1 );
+	foo.stop();
+	cout << "DThread make " << foo.getNb() << " loop(s)" << endl;
+	
+	
+	return 0;
+}
