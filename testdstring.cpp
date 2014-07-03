@@ -341,8 +341,21 @@ int testdstring()
 	cout << "good if '123456789' is displayed : " << mp[str] << endl;
 	str = "2";
 	cout << "good if '987654321' is displayed : " << mp[str] << endl;
-
+	
 	cout << "#########################################################" << endl;
+	
+	cout << "section test" << endl;
+	
+	str = "ABC;DEF 01234;56789 abc;def";
+	cout << "la dstring de base = \"" << str << "\"" << endl;
+	cout << "Section ( \" \", 1, 1 ) = \"" << str.section( " ", 1, 1 ) << "\"" << endl;
+	cout << "Section ( \";\", 1, 2 ) = \"" << str.section( ";", 1, 2 ) << "\"" << endl;
+	cout << "Section ( \";\", 1, 3 ) = \"" << str.section( ";", 1, 3 ) << "\"" << endl;
+	cout << "Section ( \";\", 1, 30 ) = \"" << str.section( ";", 1, 30 ) << "\"" << endl;
+	cout << "Section ( \";\", -1, -1 ) = \"" << str.section( ";", -1, -1 ) << "\"" << endl;
+	
+	
+#if 0
 	cout << "getline test" << endl;
 	ifstream iss;
 	bool finished = false;
@@ -373,6 +386,7 @@ int testdstring()
 	}
 
 	iss.close();
+#endif
 	cout << endl << "End of DString test" << endl;
 	return 0;
 }
