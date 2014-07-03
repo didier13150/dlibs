@@ -91,10 +91,10 @@ int main ( int argc, char *argv[] )
 	DString library, file;
 	
 	args.setAppVersion( DLIBS_VERSION );
-	args.addOption( "help", "Show help", 'h', false );
-	args.addOption( "version", "Show version number", 'v', false );
-	args.addOption( "debug", "Set debug mode", 'd', false );
-	args.addOption( "testing", "Test only one library", 't', true );
+	args.addOption( "help", "Show help", 'h' );
+	args.addOption( "version", "Show version number", 'v' );
+	args.addOption( "debug", "Set debug mode", 'd' );
+	args.addOption( "testing", "Test only one library", "LIB", 't' );
 	//args.addArgument( "FILE" );
 
 	if ( !args.parse( argc, argv ) )
