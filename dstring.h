@@ -154,25 +154,13 @@ template<class T> std::string decTobin ( T & Value )
 
 /**
  * @relates DString
- * Convert a string base 2 value (bin) to any numeric value
- * (int, unsigned int, float, double, etc...).\n
+ * Convert a string base 2 value (bin) to double.\n
  *
  * To convert binary to decimal, we start from the right to the left of the
  * binary chain and at each bit, we associate the value @f$ 2^n @f$ ,
  * the first bit being bit number 0, and it be incremented to 1 for each round.
  */
-template<class T> void binToDec ( const std::string & str, T & Value )
-{
-	unsigned int i;
-	std::string number;
-
-	Value = 0;
-	for ( i = 0 ; i < str.length() ; i++ )
-	{
-		number = str.substr ( str.length()-1-i, 1 );
-		if ( number == "1" ) { Value += ( T ) pow ( 2.0, ( int ) i ); }
-	}
-}
+double binToDec ( const std::string & str );
 
 class DString;
 /**

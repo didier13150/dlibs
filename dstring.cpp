@@ -1202,7 +1202,7 @@ DString DString::section ( const DString sep, int start, int end ) const
 		}
 		else
 		{
-			for ( i = 1 ; i < std::abs ( ( double ) start ) ; i++ )
+			for ( i = 1 ; i < static_cast<int> ( std::abs ( static_cast<double> ( start ) ) ) ; i++ )
 			{
 				rite++;
 				if ( rite == liststr.rend() )
@@ -1211,12 +1211,12 @@ DString DString::section ( const DString sep, int start, int end ) const
 					break;
 				}
 			}
-			while ( i <= std::abs ( ( double ) end ) && rite != liststr.rend() )
+			while ( i <= static_cast<int> ( std::abs ( static_cast<double> ( end ) ) ) && rite != liststr.rend() )
 			{
 				buffer.prepend ( *rite );
 				rite++;
 				i++;
-				if ( rite != liststr.rend() && i <= std::abs ( ( double ) end ) )
+				if ( rite != liststr.rend() && i <= static_cast<int> ( std::abs ( static_cast<double> ( end ) ) ) )
 				{
 					buffer.prepend ( sep );
 				}
@@ -1342,60 +1342,44 @@ DString & DString::toBase2 ( unsigned long long int number )
 
 short int DString::toShortBase10()
 {
-	short int number;
-	binToDec ( m_str, number );
-	return number;
+	return static_cast<short int> ( binToDec ( m_str ) );
 }
 
 unsigned short int DString::toUShortBase10()
 {
-	unsigned short int number;
-	binToDec ( m_str, number );
-	return number;
+	return static_cast<unsigned short int> ( binToDec ( m_str ) );
 }
 
 int DString::toIntBase10()
 {
-	int number;
-	binToDec ( m_str, number );
-	return number;
+	return static_cast<int> ( binToDec ( m_str ) );
 }
 
 unsigned int DString::toUIntBase10()
 {
-	unsigned int number;
-	binToDec ( m_str, number );
-	return number;
+	return static_cast<unsigned int> ( binToDec ( m_str ) );
 }
 
 long int DString::toLongBase10()
 {
-	long int number;
-	binToDec ( m_str, number );
-	return number;
+	return static_cast<long int> ( binToDec ( m_str ) );
 }
 
 
 unsigned long int DString::toULongBase10()
 {
-	unsigned long int number;
-	binToDec ( m_str, number );
-	return number;
+	return static_cast<unsigned long int> ( binToDec ( m_str ) );
 }
 
 long long int DString::toLongLongBase10()
 {
-	long int number;
-	binToDec ( m_str, number );
-	return number;
+	return static_cast<long long int> ( binToDec ( m_str ) );
 }
 
 
 long long unsigned int DString::toULongLongBase10()
 {
-	unsigned long long int number;
-	binToDec ( m_str, number );
-	return number;
+	return static_cast<unsigned long long int> ( binToDec ( m_str ) );
 }
 
 DString DString::removeEscapeSequence() const
@@ -1750,6 +1734,22 @@ const char * DString::getFormat ( DateFormat format )
 		}
 	}
 	return buffer.c_str();
+}
+
+double binToDec ( const std::string & str )
+{
+	unsigned int i;
+	std::string number;
+
+	double Value = 0;
+	for ( i = 0 ; i < str.length() ; i++ )
+	{
+		number = str.substr ( str.length()-1-i, 1 );
+		if ( number == "1" ) {
+			Value += pow ( 2.0, static_cast<double>(i) );
+		}
+	}
+	return Value;
 }
 
 std::istream & getline ( std::istream & stream, DString & content, char delim )
