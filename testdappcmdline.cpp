@@ -18,11 +18,11 @@ int testdappcmdline( bool fileauto, int argc, char ** argv )
 	}
 	cout << endl;
 
-	args.addOption( "help", "Show help", 'h', false );
-	args.addOption( "debug", "Set debug mode", 'd', false );
-	args.addOption( "version", "Show version number", 'v', false );
-	args.addOption( "testing", "Test only one library", 't', true );
-	args.addOption( "nul", "Nul entry", 'n', true );
+	args.addOption( "help", "Show help", 'h' );
+	args.addOption( "debug", "Set debug mode", 'd' );
+	args.addOption( "version", "Show version number", 'v' );
+	args.addOption( "testing", "Test only one library", "VALUE", 't' );
+	args.addOption( "dummy", "Null entry", 'n' );
 	args.addArgument( "loop number" );
 
 	if ( args.parse( argc, argv ) )
@@ -38,7 +38,7 @@ int testdappcmdline( bool fileauto, int argc, char ** argv )
 	cout << "have option --testing : " << args.haveOption( "testing" ) << endl;
 	cout << "option --testing = " << args.getOption( "testing" ) << endl;
 	cout << "option -t = " << args.getOption( "t" ) << endl;
-	cout << "option --nul = " << args.getOption( "nul" ) << endl;
+	cout << "option --dummy = " << args.getOption( "dummy" ) << endl;
 	cout << "option -n = " << args.getOption( "n" ) << endl;
 
 	cout << endl << "Show help :" << endl;

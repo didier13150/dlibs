@@ -37,6 +37,8 @@ DAppCmdLine::DAppCmdLine()
 {
 	m_autoID = 0;
 	m_found = 0;
+	m_summaryMaxPos = 0;
+	m_maxSummarySize = 0;
 }
 
 DAppCmdLine::DAppCmdLine( int argc,
@@ -46,24 +48,34 @@ DAppCmdLine::DAppCmdLine( int argc,
 {
 	m_autoID = 0;
 	m_found = 0;
+	setArguments( argList );
+	setOptions( optList );
 	parse( argc, argv );
 }
-
 
 DAppCmdLine::~DAppCmdLine()
 {
 }
 
 void DAppCmdLine::addOption ( const DString & name,
-                        const DString & description,
-                        const char alias,
-                        bool argument_required )
+                              const DString & description,
+                              const char alias )
+{
+	addOption( name, description, DString::empty(), alias );
+}
+
+void DAppCmdLine::addOption ( const DString & name,
+                              const DString & description,
+                              const DString & example,
+                              const char alias )
 {
 	DString buffer;
-	DAppOption opt ( name, description, alias, argument_required );
+	bool required = false;
+	if ( ! example.isEmpty() ) required = true;
+	DAppOption opt ( name, description, alias, required );
 
 	// Insert option
-	m_options[ name ] = opt;
+	m_options[name] = opt;
 
 	// Save alias name
 	if ( alias )
@@ -72,21 +84,37 @@ void DAppCmdLine::addOption ( const DString & name,
 	}
 
 	// prepare help string
+	
 	buffer = "-";
-	buffer.append ( alias );
-	buffer.append ( ", --" );
+	if ( alias ) {
+		buffer.append ( alias );
+		buffer.append ( ", -" );
+	}
+	buffer.append ( "-" );
 	buffer.append ( name );
 
-	if ( argument_required )
+	if ( required )
 	{
-		buffer.append ( "=VALUE" );
-		buffer.append ( "\t" );
+		buffer.append ( "=" );
+		buffer.append ( example );
 	}
-
-	else
+	
+	if ( buffer.length() > m_maxSummarySize )
 	{
+		m_maxSummarySize = buffer.length();
+	}
+	
+	if ( m_summaryMaxPos ) {
+		buffer.append ( " " ); // to be sure there is at least one space
+		for ( unsigned int i = buffer.length() ; i < m_summaryMaxPos ; ++i )
+		{
+			buffer.append ( " " );
+		}
+	}
+	else {
 		buffer.append ( "\t\t" );
 	}
+	
 
 	buffer.append ( description );
 
@@ -149,7 +177,10 @@ bool DAppCmdLine::haveOption ( const DString & name ) const
 	ito = m_options.find( name );
 	if ( ito != m_options.end() )
 	{
-		return ( ito->second.is_set );
+		if ( ito->second.have_mandatory_value )
+			return ( ito->second.is_set );
+		else
+			return true;
 	}
 
 	//search in alias
@@ -161,7 +192,10 @@ bool DAppCmdLine::haveOption ( const DString & name ) const
 
 		if ( ito != m_options.end() )
 		{
-			return ( ito->second.is_set );
+			if ( ito->second.have_mandatory_value )
+				return ( ito->second.is_set );
+			else
+				return true;
 		}
 	}
 	
@@ -324,7 +358,6 @@ bool DAppCmdLine::parse ( int argc, char** argv )
 
 		nb++;
 	}
-
 	return true;
 }
 
@@ -358,6 +391,11 @@ void DAppCmdLine::showVersion() const
 const DString & DAppCmdLine::getLastError() const
 {
 	return m_err;
+}
+
+void DAppCmdLine::setSummaryMaxPos( unsigned int pos )
+{
+	m_summaryMaxPos = pos;
 }
 
 /******************************************************************************

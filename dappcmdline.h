@@ -56,7 +56,7 @@ class DAppOption
 		DAppOption ( DString option_name,
 		             DString option_description,
 		             char option_alias = 0,
-		             bool option_argument_mandatory = false );
+		             bool required = false );
 
 		/**
 		 * Destructor
@@ -184,12 +184,22 @@ class DAppCmdLine
 		 * @param name The (long) name of the option
 		 * @param description
 		 * @param alias Alias (short name) for the option
-		 * @param argument_required Set to TRUE if option must have an argument.
 		 */
 		void addOption ( const DString & name,
 		                 const DString & description,
-		                 const char alias = 0,
-		                 bool argument_required = false );
+		                 const char alias = 0 );
+
+		/**
+		 * Add an argument.
+		 * @param name The (long) name of the option
+		 * @param description
+		 * @param example Argument example. Option is required if not empty.
+		 * @param alias Alias (short name) for the option
+		 */
+		void addOption ( const DString & name,
+		                 const DString & description,
+		                 const DString & example,
+		                 const char alias = 0 );
 
 		/**
 		 * Add an argument.
@@ -261,7 +271,8 @@ class DAppCmdLine
 		unsigned int getNbExpectedArgs() const;
 		
 		/**
-		 * Return TRUE if number of expected argument and number of
+		 * Check if all arguments are provided
+		 * @return Return TRUE if number of expected argument and number of
 		 * really found are equal, FALSE otherwise.
 		 */
 		bool haveAllExpectedArgsFound() const;
@@ -274,16 +285,19 @@ class DAppCmdLine
 		
 		/**
 		 * Set application version
+		 * @param version The version number
 		 */
 		void setAppVersion( const DString & version );
 		
 		/**
 		 * Get application version
+		 * @return application version
 		 */
 		const DString & getAppVersion() const;
 		
 		/**
 		 * Get application name
+		 * @return application name
 		 */
 		const DString & getAppName() const;
 
@@ -295,8 +309,14 @@ class DAppCmdLine
 
 		/**
 		 * Get the last error encoured
+		 * @return the last error encoured.
 		 */
 		const DString & getLastError() const;
+		
+		/**
+		 * Set maximum position about summary of options
+		 */
+		void setSummaryMaxPos( unsigned int pos );
 
 	protected:
 		/// alias for option (long) name ( alias => name )
@@ -326,6 +346,8 @@ class DAppCmdLine
 	private:
 		unsigned int m_autoID;
 		unsigned int m_found;
+		unsigned int m_summaryMaxPos;
+		unsigned int m_maxSummarySize;
 };
 
 #endif // _DAPPCMDLINE_H_
