@@ -73,7 +73,8 @@ void DAppCmdLine::addOption ( const DString & name,
 	bool required = false;
 	if ( ! example.isEmpty() ) required = true;
 	DAppOption opt ( name, description, alias, required );
-
+	DAppHelp help;
+	
 	// Insert option
 	m_options[name] = opt;
 
@@ -98,27 +99,16 @@ void DAppCmdLine::addOption ( const DString & name,
 		buffer.append ( "=" );
 		buffer.append ( example );
 	}
+	help.setName( buffer );
 	
 	if ( buffer.length() > m_maxSummarySize )
 	{
 		m_maxSummarySize = buffer.length();
 	}
 	
-	if ( m_summaryMaxPos ) {
-		buffer.append ( " " ); // to be sure there is at least one space
-		for ( unsigned int i = buffer.length() ; i < m_summaryMaxPos ; ++i )
-		{
-			buffer.append ( " " );
-		}
-	}
-	else {
-		buffer.append ( "\t\t" );
-	}
-	
+	help.setSummary( description );
 
-	buffer.append ( description );
-
-	m_help_options.push_back ( buffer );
+	m_help_options.push_back ( help );
 }
 
 void DAppCmdLine::addOption ( const DAppOption & opt )
@@ -207,18 +197,19 @@ int DAppCmdLine::getNumberOfOptions() const
 	return m_options.size();
 }
 
-void DAppCmdLine::addArgument ( const DString & description )
+unsigned int DAppCmdLine::addArgument ( const DString & description )
 {
+	m_autoID++;
 	DAppArg arg( m_autoID, description );
 
 	m_arguments[m_autoID] = arg;
 	m_help_arguments.push_back ( description );
-	m_autoID++;
+	return m_autoID;
 }
 
-void DAppCmdLine::addArgument ( const DAppArg & arg )
+unsigned int DAppCmdLine::addArgument ( const DAppArg & arg )
 {
-	addArgument( arg.description );
+	return addArgument( arg._description );
 }
 
 void DAppCmdLine::setArguments ( const DAppArgList & list )
@@ -243,7 +234,7 @@ const DString & DAppCmdLine::getArgument ( unsigned int position ) const
 
 	if ( it != m_arguments.end() )
 	{
-		return ( ( *it ).second.value );
+		return ( ( *it ).second._value );
 	}
 
 	return empty;
@@ -351,7 +342,7 @@ bool DAppCmdLine::parse ( int argc, char** argv )
 		{
 			if ( m_found <= m_autoID )
 			{
-				m_arguments[m_found].value = buffer;
+				m_arguments[m_found]._value = buffer;
 				m_found++;
 			}
 		}
@@ -365,22 +356,29 @@ void DAppCmdLine::showHelp() const
 {
 	DString helpstr;
 	DStringList::const_iterator it;
-	//std::list<DString>::const_iterator it;
+	std::list<DAppHelp>::const_iterator it2;
 
-	std::cout << "Usage : " << m_appname;
+	std::cout << std::endl << m_appname;
+	
+	if ( getNumberOfOptions() ) std::cout << " [args] ";
 
 	for ( it = m_help_arguments.begin() ; it != m_help_arguments.end() ; ++it )
 	{
-		std::cout << " <" << ( *it ) << ">";
+		std::cout << "[" << ( *it ) << "]";
 	}
 
-	std::cout << std::endl;
+	std::cout << std::endl << std::endl;
 
-	for ( it = m_help_options.begin() ; it != m_help_options.end() ; ++it )
+	for ( it2 = m_help_options.begin() ; it2 != m_help_options.end() ; ++it2 )
 	{
-		std::cout << ( *it );
-		std::cout << std::endl;
+		helpstr = "  " + it2->getName();
+		for ( unsigned int i = helpstr.length() ; i < ( m_summaryMaxPos +2 ) ; ++i )
+		{
+			helpstr.append ( " " );
+		}
+		std::cout << helpstr << it2->getSummary() << std::endl;
 	}
+	std::cout << std::endl;
 }
 
 void DAppCmdLine::showVersion() const
@@ -442,12 +440,12 @@ std::ostream& operator<< ( std::ostream& s, const DAppOption & opt )
  *                                DAppArg                                     *
  ******************************************************************************/
 
-DAppArg::DAppArg() : id ( -1 )
+DAppArg::DAppArg() : _id ( -1 )
 {
 }
 
-DAppArg::DAppArg ( unsigned int arg_id, DString arg_description )
-		: id ( arg_id ), description ( arg_description )
+DAppArg::DAppArg ( unsigned int id, DString description )
+		: _id ( id ), _description ( description )
 {
 }
 
@@ -457,15 +455,45 @@ DAppArg::~DAppArg()
 
 void DAppArg::clear()
 {
-	description.clear();
-	value.clear();
-	id = 0;
+	_description.clear();
+	_value.clear();
+	_id = 0;
 }
 
 std::ostream& operator<< ( std::ostream& s, const DAppArg & arg )
 {
-	s << "opt[" << arg.id << "] = " << arg.value << "(" << arg.description << ")";
+	s << "opt[" << arg._id << "] = " << arg._value << "(" << arg._description << ")";
 	return s;
 }
 
+/******************************************************************************
+ *                                DAppHelp                                    *
+ ******************************************************************************/
 
+DAppHelp::DAppHelp()
+{
+}
+
+DAppHelp::~DAppHelp()
+{
+}
+
+void DAppHelp::setName( const DString & name )
+{
+	_name = name;
+}
+
+void DAppHelp::setSummary( const DString & summary )
+{
+	_summary = summary;
+}
+
+const DString & DAppHelp::getName() const
+{
+	return _name;
+}
+
+const DString & DAppHelp::getSummary() const
+{
+	return _summary;
+}

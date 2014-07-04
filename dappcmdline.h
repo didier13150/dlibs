@@ -113,7 +113,7 @@ class DAppArg
 		/**
 		 * Default Constructor
 		 */
-		DAppArg ( unsigned int arg_id, DString arg_description );
+		DAppArg ( unsigned int arg_id, DString arg_description = DString::empty() );
 
 		/**
 		 * Destructor
@@ -131,13 +131,13 @@ class DAppArg
 		friend std::ostream& operator<< ( std::ostream& s, const DAppArg & opt );
 
 		/// Unique identifiant for argument
-		unsigned int id;
+		unsigned int _id;
 
 		/// Argument description ( for displaying help )
-		DString description;
+		DString _description;
 
 		/// Argument value
-		DString value;
+		DString _value;
 };
 
 
@@ -145,6 +145,53 @@ class DAppArg
  * @typedef DAppArgList
  */
 typedef std::list<DAppArg> DAppArgList;
+
+
+/**
+ * @short Manage Help message.
+ * @author Didier FABERT <didier.fabert@gmail.com>
+ */
+class DAppHelp
+{
+	public:
+		/**
+		 * Empty constructor.
+		 */
+		DAppHelp();
+		
+		/**
+		 * Default destructor.
+		 */
+		~DAppHelp();
+		
+		/**
+		 * Set the help line name
+		 * @param name The option full name: short (if any), long name and example (if any) already formated
+		 */
+		void setName( const DString & name );
+		
+		/**
+		 * Set the help line summary
+		 * @param summary the option summary
+		 */
+		void setSummary( const DString & summary );
+		
+		/**
+		 * Get the help line name
+		 * @return the option full name (short and long name with example)
+		 */
+		const DString & getName() const;
+		
+		/**
+		 * Get the help line summary
+		 * @return the option summary
+		 */
+		const DString & getSummary() const;
+		
+	protected:
+		DString _name;
+		DString _summary;
+};
 
 /**
  * @short Manage command line options and arguments.
@@ -234,8 +281,8 @@ class DAppCmdLine
 		bool haveOption ( const DString & name ) const;
 
 		/**
-		 * Get the number of arguments
-		 * @return the number of option, -1 if no option was found.
+		 * Get the number of options
+		 * @return the number of options, 0 if no option was found.
 		 */
 		int getNumberOfOptions() const;
 
@@ -244,13 +291,13 @@ class DAppCmdLine
 		 * Arguments must be given in order.
 		 * @param description A description of the mandatory argument
 		 */
-		void addArgument ( const DString & description );
+		unsigned int addArgument ( const DString & description = DString::empty() );
 
 		/**
 		 * Add an argument.
 		 * @param arg A DAppArg class
 		 */
-		void addArgument ( const DAppArg & arg );
+		unsigned int addArgument ( const DAppArg & arg );
 
 		/**
 		 * Set argument list.
@@ -335,7 +382,7 @@ class DAppCmdLine
 		DString m_appversion;
 
 		/// Help list for options
-		DStringList m_help_options;
+		std::list<DAppHelp> m_help_options;
 
 		/// Help list for arguments
 		DStringList m_help_arguments;
