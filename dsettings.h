@@ -42,6 +42,11 @@
 #include "dskeleton.h"
 
 /**
+ * @typedef xmlNodePtrList
+ */
+typedef std::list<xmlNodePtr> xmlNodePtrList;
+
+/**
  * Class for reading and writing XML settings file.\n
  * Settings group are fully supported.\n
  * For now, include in root node are not supported.\n \n
@@ -71,10 +76,12 @@ class DSettings : public DSkeleton
 		 * Empty constructor
 		 */
 		DSettings ( void );
+#ifdef WITH_EXCEPTIONS
 		/**
 		 * Default constructor
 		 */
 		DSettings ( bool );
+#endif
 		/**
 		 * Default destructor
 		 */
@@ -217,6 +224,11 @@ class DSettings : public DSkeleton
 		 * Get a node by its XPath
 		 */
 		xmlNodePtr getNodeByXPath ( const DString & path );
+
+		/**
+		 * Get all nodes by its XPath
+		 */
+		xmlNodePtrList getNodesByXPath ( const DString & path );
 
 		/**
 		 * Init the class

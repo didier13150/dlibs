@@ -32,8 +32,12 @@
  ******************************************************************************/
 
 #include "dsettings.h"
+#ifndef WITH_EXCEPTIONS
+#define WITH_EXCEPTIONS 0
+#endif
+#if WITH_EXCEPTIONS
 #include "dexception.h"
-
+#endif
 using namespace std;
 
 DSettings::DSettings () : DSkeleton ()
@@ -41,10 +45,12 @@ DSettings::DSettings () : DSkeleton ()
 	init();
 }
 
+#if WITH_EXCEPTIONS
 DSettings::DSettings ( bool use_dexceptions ) : DSkeleton ( use_dexceptions )
 {
 	init();
 }
+#endif
 
 DSettings::~DSettings ()
 {
@@ -80,10 +86,12 @@ int DSettings::setGroup ( const DString & group, bool create )
 	if ( !DomOK )
 	{
 		m_error = NO_DOM;
+#if WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_DOM );
 		}
+#endif
 		return m_error;
 	}
 
@@ -106,10 +114,12 @@ int DSettings::setGroup ( const DString & group, bool create )
 			if ( newNode == NULL )
 			{
 				m_error =  ENTRY_NOT_CREATED;
+#if WITH_EXCEPTIONS
 				if ( _use_dexceptions )
 				{
 					throw DEXCEPTION_XML ( getLastError(), ENTRY_NOT_CREATED );
 				}
+#endif
 			}
 			else
 			{
@@ -118,10 +128,12 @@ int DSettings::setGroup ( const DString & group, bool create )
 		}
 		else
 		{
+#if WITH_EXCEPTIONS
 			if ( _use_dexceptions )
 			{
 				throw DEXCEPTION_XML ( getLastError(), GROUP_NOT_EXISTS );
 			}
+#endif
 		}
 	}
 	else
@@ -144,10 +156,12 @@ bool DSettings::hasGroup ( const DString & group )
 	if ( !DomOK )
 	{
 		m_error = NO_DOM;
+#if WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_DOM );
 		}
+#endif
 		return false;
 	}
 
@@ -264,10 +278,12 @@ int DSettings::readEntry ( const DString & key, DString & value )
 	{
 		m_error = NO_DOM;
 		value.clear();
+#if WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_DOM );
 		}
+#endif
 		return m_error;
 	}
 
@@ -278,21 +294,23 @@ int DSettings::readEntry ( const DString & key, DString & value )
 	buffer += m_group;
 	buffer += "/";
 	buffer += key;
-	n = getNodeByXPath ( buffer.c_str() );
+	n = getNodeByXPath ( buffer );
 
 	if ( n != NULL )
 	{
-		value = ( char* ) xmlNodeGetContent ( n );
+		value = reinterpret_cast<char*> ( xmlNodeGetContent ( n ) );
 		m_error = SUCCESS;
 	}
 	else
 	{
 		m_error = NO_ENTRY;
 		value.clear();
+#if WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_ENTRY );
 		}
+#endif
 	}
 	return m_error;
 }
@@ -307,10 +325,12 @@ int DSettings::writeEntry ( const DString & key, const DString & value )
 	if ( !DomOK )
 	{
 		m_error = NO_DOM;
+#if WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_DOM );
 		}
+#endif
 		return m_error;
 	}
 
@@ -321,7 +341,7 @@ int DSettings::writeEntry ( const DString & key, const DString & value )
 	buffer += m_group;
 	buffer += "/";
 	buffer += key;
-	xpathnode = getNodeByXPath ( buffer.c_str() );
+	xpathnode = getNodeByXPath ( buffer );
 
 	// no node yet, create it
 	if ( xpathnode == NULL )
@@ -342,20 +362,24 @@ int DSettings::writeEntry ( const DString & key, const DString & value )
 			if ( newNode == NULL )
 			{
 				m_error = ENTRY_NOT_SAVED;
+#if WITH_EXCEPTIONS
 				if ( _use_dexceptions )
 				{
 					throw DEXCEPTION_XML ( getLastError(), ENTRY_NOT_SAVED );
 				}
+#endif
 				return m_error;
 			}
 		}
 		else
 		{
 			m_error = ENTRY_NOT_CREATED;
+#if WITH_EXCEPTIONS
 			if ( _use_dexceptions )
 			{
 				throw DEXCEPTION_XML ( getLastError(), ENTRY_NOT_CREATED );
 			}
+#endif
 			return m_error;
 		}
 	}
@@ -372,10 +396,12 @@ int DSettings::writeEntry ( const DString & key, const DString & value )
 	else
 	{
 		m_error = FILE_NOT_SAVED;
+#if WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), FILE_NOT_SAVED );
 		}
+#endif
 	}
 	return m_error;
 }
@@ -388,10 +414,12 @@ int DSettings::makeDOM ( void )
 	{
 		deleteDOM();
 		m_error = NO_FILE;
+#if WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_FILE );
 		}
+#endif
 		return m_error;
 	}
 	// Get root nood
@@ -400,10 +428,12 @@ int DSettings::makeDOM ( void )
 	{
 		deleteDOM();
 		m_error = NO_ROOT_NODE;
+#if WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_ROOT_NODE );
 		}
+#endif
 		return m_error;
 	}
 	
@@ -415,14 +445,16 @@ int DSettings::makeDOM ( void )
 	{
 		deleteDOM();
 		m_error = NO_CONTEXT;
+#if WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_CONTEXT );
 		}
+#endif
 		return m_error;
 	}
 	
-	m_rootNodeName = ( char* ) m_rootNode->name;
+	m_rootNodeName = reinterpret_cast<const char*> ( m_rootNode->name );
 	m_error = SUCCESS;
 	DomOK = true;
 	return m_error;
@@ -447,7 +479,6 @@ xmlNodePtr DSettings::getNodeByXPath ( const DString & key )
 {
 	xmlNodePtr n = NULL;
 	xmlXPathObjectPtr xpathRes;
-	DString path;
 
 	xpathRes = xmlXPathEvalExpression ( xmlCharStrdup ( key.c_str() ), m_context );
 	if ( ( xpathRes ) &&
@@ -459,6 +490,29 @@ xmlNodePtr DSettings::getNodeByXPath ( const DString & key )
 	xmlXPathFreeObject ( xpathRes );
 
 	return n;
+}
+
+xmlNodePtrList DSettings::getNodesByXPath ( const DString & key )
+{
+	xmlNodePtrList list;
+	xmlNodePtr n = NULL;
+	xmlXPathObjectPtr xpathRes;
+
+	xpathRes = xmlXPathEvalExpression ( xmlCharStrdup ( key.c_str() ), m_context );
+	if ( ( xpathRes ) &&
+	     ( xpathRes->type == XPATH_NODESET ) )
+	{
+		int i = 0;
+		n = xpathRes->nodesetval->nodeTab[i];
+		while( n != NULL ) {
+			list.push_back( n );
+			i++;
+			n = xpathRes->nodesetval->nodeTab[i];
+		}
+	}
+	xmlXPathFreeObject ( xpathRes );
+
+	return list;
 }
 
 const DString & DSettings::getSettings ( DSettings & sets,
