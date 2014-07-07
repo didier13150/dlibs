@@ -33,15 +33,21 @@
 
 #include "ddatabase.h"
 
+#ifndef WITH_EXCEPTIONS
+#define WITH_EXCEPTIONS 0
+#endif
+
 DDatabase::DDatabase() : DSkeleton()
 {
 	internal_init();
 }
 
+#if WITH_EXCEPTIONS
 DDatabase::DDatabase( bool useException ) : DSkeleton( useException )
 {
 	internal_init();
 }
+#endif
 
 DDatabase::~DDatabase()
 {

@@ -6,6 +6,10 @@
 #include <cstdlib>
 #include "dlibs.h" // replace it by #include <dlibs/dlibs.h>
 
+#ifndef WITH_EXCEPTIONS
+#define WITH_EXCEPTIONS 0
+#endif
+
 using namespace std;
 
 int testdsqlite()
@@ -73,6 +77,7 @@ int testdsqlite()
 	params.base = "/tmp/testdsqlite.db";
 	sql.setParams ( params );
 
+#if WITH_EXCEPTIONS
 	sql.useDExceptions( true );
 	try
 	{
@@ -98,6 +103,6 @@ int testdsqlite()
 		cout << "Another unknow exception encoured" << endl;
 	}
 	sql.close();
-	
+#endif
 	return 0;
 }

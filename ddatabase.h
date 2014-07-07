@@ -46,6 +46,9 @@
 #include "dprototype.h"
 
 
+#ifndef WITH_EXCEPTIONS
+#define WITH_EXCEPTIONS 0
+#endif
 /**
  * @relates DMyDatabase
  */
@@ -190,11 +193,13 @@ class DDatabase : public DSkeleton, public DPrototype<DDatabase>
 		 */
 		DDatabase();
 
+#if WITH_EXCEPTIONS
 		/**
 		 * Default constructor for managing exceptions
 		 */
 		DDatabase ( bool );
-
+#endif
+		
 		/**
 		 * Virtual destructor
 		 */

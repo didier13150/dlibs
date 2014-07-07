@@ -745,12 +745,24 @@ DLogEngineDatabase::DLogEngineDatabase ( void )
 	m_pattern = "\"%DATE\", \"%TYPE\", \"%MESSAGE\"";
 	m_dateFormat = DString::getFormat( DString::ISO_DATETIME_T );
 #ifdef DLIBS_HAVE_MYSQL
+#if WITH_EXCEPTIONS
 	DFactory<DDatabase>::Register ( "dmysql", new DMySQL( true ) );
+#else
+	DFactory<DDatabase>::Register ( "dmysql", new DMySQL() );
+#endif
 #endif
 #ifdef DLIBS_HAVE_PGSQL
+#if WITH_EXCEPTIONS
 	DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL( true ) );
+#else
+	DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL() );
 #endif
+#endif
+#if WITH_EXCEPTIONS
 	DFactory<DDatabase>::Register ( "dsqlite", new DSQLite( true ) );
+#else
+	DFactory<DDatabase>::Register ( "dsqlite", new DSQLite() );
+#endif
 	m_database = 0;
 	m_valid = true;
 }

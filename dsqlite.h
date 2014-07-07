@@ -63,11 +63,13 @@ class DSQLite : public DDatabase
 		 */
 		DSQLite();
 
+#if WITH_EXCEPTIONS
 		/**
 		 * Default Constructor
 		 */
 		DSQLite ( bool use_dexceptions );
-
+#endif
+		
 		/**
 		 * Destructor
 		 */

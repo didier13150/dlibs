@@ -12,12 +12,24 @@ int testdfactory()
 
 	// Register available types
 #ifdef DLIBS_HAVE_MYSQL
+#if WITH_EXCEPTIONS
 	DFactory<DDatabase>::Register ( "dmysql", new DMySQL( true ) );
+#else
+	DFactory<DDatabase>::Register ( "dmysql", new DMySQL() );
+#endif
 #endif
 #ifdef DLIBS_HAVE_PGSQL
+#if WITH_EXCEPTIONS
 	DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL( true ) );
+#else
+	DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL() );
 #endif
+#endif
+#if WITH_EXCEPTIONS
 	DFactory<DDatabase>::Register ( "dsqlite", new DSQLite( true ) );
+#else
+	DFactory<DDatabase>::Register ( "dsqlite", new DSQLite() );
+#endif
 
 	DDatabase * db1 = factory.create ( "dmysql" );
 	DDatabase * db2 = factory.create ( "dsqlite" );
