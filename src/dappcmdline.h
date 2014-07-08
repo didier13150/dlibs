@@ -187,6 +187,11 @@ class DAppHelp
 		 * @return the option summary
 		 */
 		const DString & getSummary() const;
+
+		/**
+		 * Print DAppHelp object in flux
+		 */
+		friend std::ostream& operator<< ( std::ostream& s, const DAppHelp & help );
 		
 	protected:
 		DString _name;
@@ -359,11 +364,6 @@ class DAppCmdLine
 		 * @return the last error encoured.
 		 */
 		const DString & getLastError() const;
-		
-		/**
-		 * Set maximum position about summary of options
-		 */
-		void setSummaryMaxPos( unsigned int pos );
 
 	protected:
 		/// alias for option (long) name ( alias => name )
@@ -393,7 +393,6 @@ class DAppCmdLine
 	private:
 		unsigned int m_autoID;
 		unsigned int m_found;
-		unsigned int m_summaryMaxPos;
 		unsigned int m_maxSummarySize;
 };
 
