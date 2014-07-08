@@ -110,4 +110,4 @@ set(DLIBSTEST_EXE_SRCS
 #add an install target here
 install( FILES ${Dlibs_HEADERS_INSTALL} ${Dlibs_BINARY_DIR}/dlibs.h DESTINATION include/dlibs)
 install( TARGETS dlibs DESTINATION lib )
-install( PROGRAMS dlibspath DESTINATION bin )
+install( PROGRAMS ${Dlibs_BINARY_DIR}/src/dlibspath DESTINATION bin )
