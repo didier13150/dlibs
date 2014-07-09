@@ -459,6 +459,16 @@ bool operator > ( const DString & str1, const DString & str2 )
 	return str1.m_str > str2.m_str;
 }
 
+bool operator <= ( const DString & str1, const DString & str2 )
+{
+	return str1.m_str <= str2.m_str;
+}
+
+bool operator >= ( const DString & str1, const DString & str2 )
+{
+	return str1.m_str >= str2.m_str;
+}
+
 std::ostream& operator << ( std::ostream& s, const DString & str )
 {
 	s << str.m_str;
@@ -641,7 +651,7 @@ DString DString::removeWhiteSpace ( void ) const
 	return buffer;
 }
 
-std::list<DString> DString::splitConstantSize ( unsigned int max_size )
+std::list<DString> DString::splitConstantSize ( const DString & sep, unsigned int max_size )
 {
 	std::list<DString> tmplist;
 	std::list<DString> returnedlist;
@@ -684,7 +694,7 @@ std::list<DString> DString::splitConstantSize ( unsigned int max_size )
 	return returnedlist;
 }
 
-DStringList DString::split ( const DString sep, bool allowNull ) const
+DStringList DString::split ( const DString & sep, bool allowNull ) const
 {
 	DString buffer;
 	std::list<DString> liststr;
@@ -745,13 +755,7 @@ DStringList DString::split ( const DString sep, bool allowNull ) const
 
 DString & DString::toLower()
 {
-	for ( unsigned int i = 0 ; i < m_str.length() ; i++ )
-	{
-		if ( m_str[i] >= 0x41 && m_str[i] <= 0x5A )
-		{
-			m_str[i] += 0x20;
-		}
-	}
+	*this = this->lower();
 	return *this;
 }
 
@@ -771,13 +775,7 @@ DString DString::lower() const
 
 DString & DString::toUpper()
 {
-	for ( unsigned int i = 0 ; i < m_str.length() ; i++ )
-	{
-		if ( m_str[i] >= 0x61 && m_str[i] <= 0x7A )
-		{
-			m_str[i] -= 0x20;
-		}
-	}
+	*this = this->upper();
 	return *this;
 }
 
@@ -787,7 +785,7 @@ DString DString::upper() const
 	
 	for ( unsigned int i = 0 ; i < buffer.length() ; i++ )
 	{
-		if ( buffer[i] >= 0x41 && buffer[i] <= 0x5A )
+		if ( buffer[i] >= 0x61 && buffer[i] <= 0x7A )
 		{
 			buffer[i] -= 0x20;
 		}
@@ -795,7 +793,7 @@ DString DString::upper() const
 	return buffer;
 }
 
-DString DString::leftJustify ( unsigned int width, char fill )
+DString & DString::leftJustify ( unsigned int width, char fill )
 {
 	unsigned int i;
 
@@ -807,11 +805,11 @@ DString DString::leftJustify ( unsigned int width, char fill )
 	return *this;
 }
 
-DString DString::rightJustify ( unsigned int width, char fill )
+DString & DString::rightJustify ( unsigned int width, char fill )
 {
-	unsigned int i;
+	unsigned int i = m_str.length();
 
-	for ( i = m_str.length() ; i < width ; i++ )
+	for ( ; i < width ; i++ )
 	{
 		m_str = fill + m_str;
 	}
@@ -819,12 +817,13 @@ DString DString::rightJustify ( unsigned int width, char fill )
 	return *this;
 }
 
-void DString::truncate ( unsigned int width )
+DString & DString::truncate ( unsigned int width )
 {
 	if ( width < m_str.length() )
 	{
 		m_str.resize ( width );
 	}
+	return *this;
 }
 
 DString & DString::fill ( char c, unsigned int length )
@@ -1020,20 +1019,22 @@ DString & DString::replace ( const DString & before,
                              const DString & after,
                              bool cs )
 {
-	DString buffer ( before );
+	DString buffer ( m_str );
+	DString target ( before );
 	int index = 0;
 
 	if ( !cs )
 	{
-		buffer.lower();
+		buffer.toLower();
+		target.toLower();
 	}
 
 	while ( index >= 0 )
 	{
-		index = find ( buffer, index, cs );
+		index = buffer.find ( target, index, cs );
 		if ( index >= 0 )
 		{
-			replace ( index, buffer.length(), after );
+			replace ( index, target.length(), after );
 			index += after.length();
 		}
 	}
@@ -1231,19 +1232,19 @@ DString DString::section ( const DString sep, int start, int end ) const
 	return buffer;
 }
 
-DString DString::timeToString ( const time_t & t, const char * format )
+DString DString::timeToString ( const time_t & t, DString format )
 {
-	char szBuffer[80];
-	struct tm *stTm;
-	DString buffer;
-
+	char buffer[80];
+	DString date;
+	
 	// Get local time
-	stTm = localtime ( &t );
+	struct tm *stm = localtime ( &t );
+	if ( ! stm ) return date;
 	//translate format's time and writting on file
-	strftime ( szBuffer, sizeof ( szBuffer ), format, stTm );
-	buffer = szBuffer;
+	strftime ( buffer, sizeof( buffer ), format.c_str(), stm );
+	date = buffer;
 
-	return buffer;
+	return date;
 }
 
 DString DString::timeToString ( const time_t & t, DateFormat format )
@@ -1265,14 +1266,13 @@ DString & DString::convertTime ( const char * oldformat,
                                  const char * newformat )
 {
 	//char *strptime(const char *buf, const char *format, struct tm *tm);
-	struct tm stTm;
-	DString buffer;
-	char szBuffer[80];
+	struct tm stm;
+	char buffer[80];
 
 	// Get local time
-	strptime ( m_str.c_str(), oldformat, &stTm );
-	strftime ( szBuffer, sizeof ( szBuffer ), newformat, &stTm );
-	m_str = szBuffer;
+	strptime ( m_str.c_str(), oldformat, &stm );
+	strftime ( buffer, sizeof ( buffer ), newformat, &stm );
+	m_str = buffer;
 
 	return *this;
 }
@@ -1562,12 +1562,12 @@ DString DString::replaceEscapeSequence ( const DString & begin,
 	return withoutEscape;
 }
 
-bool DString::containsOnlyLegalChar ( std::list<char> & legalChar ) const
+bool DString::containsOnlyLegalChar ( const std::list<char> & legalChar ) const
 {
 	unsigned int i;
 	bool correct = true;
 	bool found;
-	std::list<char>::iterator it;
+	std::list<char>::const_iterator it;
 
 	i = 0;
 	while ( correct && i < m_str.length() )
@@ -1597,22 +1597,22 @@ bool DString::containsOnlyLegalChar ( BaseFlag base, CaseFlag caseflag ) const
 
 	switch ( base )
 	{
-		case BINARY:
+		case DString::BINARY:
 		{
 			legal = containsOnlyLegalChar ( onlyBinary() );
 			break;
 		}
-		case OCTAL:
+		case DString::OCTAL:
 		{
 			legal = containsOnlyLegalChar ( onlyOctal() );
 			break;
 		}
-		case DECIMAL:
+		case DString::DECIMAL:
 		{
 			legal = containsOnlyLegalChar ( onlyDecimal() );
 			break;
 		}
-		case HEXA:
+		case DString::HEXA:
 		{
 			legal = containsOnlyLegalChar ( onlyHexa ( caseflag ) );
 			break;
@@ -1630,6 +1630,7 @@ std::list<char> & DString::onlyBinary() const
 {
 	static std::list<char> legalCharDec;
 
+	legalCharDec.clear();
 	legalCharDec.push_back ( '0' );
 	legalCharDec.push_back ( '1' );
 
@@ -1640,6 +1641,7 @@ std::list<char> & DString::onlyOctal() const
 {
 	static std::list<char> legalCharDec;
 
+	legalCharDec.clear();
 	legalCharDec.push_back ( '0' );
 	legalCharDec.push_back ( '1' );
 	legalCharDec.push_back ( '2' );
@@ -1656,6 +1658,7 @@ std::list<char> & DString::onlyDecimal() const
 {
 	static std::list<char> legalCharDec;
 
+	legalCharDec.clear();
 	legalCharDec.push_back ( '0' );
 	legalCharDec.push_back ( '1' );
 	legalCharDec.push_back ( '2' );
@@ -1670,10 +1673,11 @@ std::list<char> & DString::onlyDecimal() const
 	return legalCharDec;
 }
 
-std::list<char> & DString::onlyHexa ( CaseFlag caseflag ) const
+std::list<char> & DString::onlyHexa ( DString::CaseFlag caseflag ) const
 {
 	static std::list<char> legalCharDec;
 
+	legalCharDec.clear();
 	legalCharDec.push_back ( '0' );
 	legalCharDec.push_back ( '1' );
 	legalCharDec.push_back ( '2' );
@@ -1684,7 +1688,7 @@ std::list<char> & DString::onlyHexa ( CaseFlag caseflag ) const
 	legalCharDec.push_back ( '7' );
 	legalCharDec.push_back ( '8' );
 	legalCharDec.push_back ( '9' );
-	if ( ( caseflag & UPPERCASE ) == UPPERCASE )
+	if ( ( caseflag & DString::UPPERCASE ) == DString::UPPERCASE )
 	{
 		legalCharDec.push_back ( 'A' );
 		legalCharDec.push_back ( 'B' );
@@ -1693,7 +1697,7 @@ std::list<char> & DString::onlyHexa ( CaseFlag caseflag ) const
 		legalCharDec.push_back ( 'E' );
 		legalCharDec.push_back ( 'F' );
 	}
-	if ( ( caseflag & LOWERCASE ) == LOWERCASE )
+	if ( ( caseflag & DString::LOWERCASE ) == DString::LOWERCASE )
 	{
 		legalCharDec.push_back ( 'a' );
 		legalCharDec.push_back ( 'b' );
@@ -1711,22 +1715,22 @@ const char * DString::getFormat ( DateFormat format )
 	DString buffer;
 	switch ( format )
 	{
-		case ISO_DATETIME:
+		case DString::ISO_DATETIME:
 		{
 			buffer = "%Y-%m-%d %H:%M:%S";
 			break;
 		}
-		case ISO_DATETIME_T:
+		case DString::ISO_DATETIME_T:
 		{
 			buffer = "%Y-%m-%dT%H:%M:%S";
 			break;
 		}
-		case ISO_DATE:
+		case DString::ISO_DATE:
 		{
 			buffer = "%Y-%m-%d";
 			break;
 		}
-		case ISO_TIME:
+		case DString::ISO_TIME:
 		default:
 		{
 			buffer = "%H:%M:%S";

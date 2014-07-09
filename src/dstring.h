@@ -408,11 +408,25 @@ class DString
 		friend bool operator < ( const DString & str1, const DString & str2 );
 
 		/**
+		 * Returns TRUE if str1 is lesser or equal than str2; otherwise returns FALSE.\n
+		 * This friendly method is necessary to define standart key-value pair
+		 * container ( ex std::map ) with a DString key.
+		 */
+		friend bool operator <= ( const DString & str1, const DString & str2 );
+
+		/**
 		 * Returns TRUE if str1 is greater than str2; otherwise returns FALSE.\n
 		 * This friendly method is necessary to define standart key-value pair
 		 * container ( ex std::map ) with a DString key.
 		 */
 		friend bool operator > ( const DString & str1, const DString & str2 );
+
+		/**
+		 * Returns TRUE if str1 is greater or equal than str2; otherwise returns FALSE.\n
+		 * This friendly method is necessary to define standart key-value pair
+		 * container ( ex std::map ) with a DString key.
+		 */
+		friend bool operator >= ( const DString & str1, const DString & str2 );
 
 		/**
 		* Writes DString to the stream s and returns a reference to the stream.
@@ -750,14 +764,14 @@ class DString
 		 * DStringList if two separators are found without string in the middle of
 		 * them.
 		 */
-		DStringList split ( const DString sep, bool allowNull = false ) const;
+		DStringList split ( const DString & sep, bool allowNull = false ) const;
 
 		/**
 		 * Splits the string into strings standard list wherever the \em max_size
 		 * occurs (entire word only), and returns the list of those strings.\n
 		 * Each size's element is equal or lower than the value of \em max_size. \n
 		 */
-		DStringList splitConstantSize ( unsigned int max_size );
+		DStringList splitConstantSize ( const DString & sep,  unsigned int max_size );
 
 		/**
 		 * Returns a uppercase copy of the string.
@@ -789,7 +803,7 @@ class DString
 		 * If the length of the string is more than width, then the returned string
 		 * is a copy of the string.
 		 */
-		DString leftJustify ( unsigned int width, char fill = ' ' );
+		DString & leftJustify ( unsigned int width, char fill = ' ' );
 
 		/**
 		 * Returns a string of length width that contains the fill character
@@ -797,7 +811,7 @@ class DString
 		 * If the length of the string is more than width, then the returned string
 		 * is a copy of the string.
 		 */
-		DString rightJustify ( unsigned int width, char fill = ' ' );
+		DString & rightJustify ( unsigned int width, char fill = ' ' );
 
 		/**
 		 * Fill the string with length \em length c character
@@ -808,7 +822,7 @@ class DString
 		 * If newLen is less than the length of the string, then the string is
 		 * truncated at position newLen. Otherwise nothing happens.
 		 */
-		void truncate ( unsigned int width );
+		DString & truncate ( unsigned int width );
 
 		/**
 		 * Returns the number of times the string \em str occurs in the string.\n
@@ -1090,7 +1104,7 @@ class DString
 		 * return true if no illegal character was found, false otherwise.
 		 *
 		 */
-		bool containsOnlyLegalChar ( std::list<char> & legalChar ) const;
+		bool containsOnlyLegalChar ( const std::list<char> & legalChar ) const;
 
 		/**
 		 * Check if string contains only characters which are allowed for value
@@ -1181,7 +1195,7 @@ class DString
 		* - \%% A literal '%' character.
 		*/
 		static DString timeToString ( const time_t & t,
-		                              const char * format = "%Y-%m-%d %H-%M-%S" );
+		                              DString format = DString( "%Y-%m-%d %H:%M:%S" ) );
 
 		/**
 		 * Convert timestamp (time_t) t to a human readable string in ISO 8601
