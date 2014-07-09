@@ -66,9 +66,43 @@ void TestDString::add_test()
 	string str2 = "Add";
 	
 	str += str2;
+	TEST_ASSERT_MSG( str == "UTF-8 &éèêàâçAdd", "Add 2 DStrings failed" )
 	char c = 0x41; // A
 	str += c;
-	TEST_ASSERT_MSG( str == "UTF-8 &éèêàâçAddA", "Add 2 DStrings failed" )
+	TEST_ASSERT_MSG( str == "UTF-8 &éèêàâçAddA", "Add char failed (operator +=)" )
+	str = str + 0x24; // $
+	TEST_ASSERT_MSG( str == "UTF-8 &éèêàâçAddA$", "Add char failed (operator +)" )
+}
+
+void TestDString::compare_test()
+{
+	DString str = "U";
+	TEST_ASSERT_MSG( str == "U", "Compare DString with const char * failed" )
+	TEST_ASSERT_MSG( str == std::string("U"), "Compare DString with std string failed" )
+	TEST_ASSERT_MSG( str == 'U', "Compare DString with char failed" )
+	TEST_ASSERT_MSG( str != "u", "Compare DString with const char * failed" )
+	TEST_ASSERT_MSG( str != std::string("u"), "Compare DString with std string failed" )
+	TEST_ASSERT_MSG( str != 'u', "Compare DString with char failed" )
+}
+
+void TestDString::others_operators_test()
+{
+	DString str1 = "a";
+	DString str2 = "b";
+	TEST_ASSERT_MSG( str1 < str2, "Compare DStrings (lesser than) failed" )
+	TEST_ASSERT_MSG( str1 <= str2, "Compare DStrings (lesser or equal than) failed" )
+	TEST_ASSERT_MSG( str2 > str1, "Compare DStrings (greater than) failed" )
+	TEST_ASSERT_MSG( str2 >= str1, "Compare DStrings (greater or equal than) failed" )
+	str1 = "aaaaa";
+	str2 = "bb";
+	TEST_ASSERT_MSG( str1 < str2, "Compare DStrings (lesser than) failed" )
+		
+	str1 = "bcdef";
+	str1.getReference().insert( 0, "a" );
+	TEST_ASSERT_MSG( str1 == "abcdef", "get reference failed" )
+	TEST_ASSERT_MSG( str1.at(0) == "a", "extracts char (dstring) failed" )
+	TEST_ASSERT_MSG( str1[2] == 'c', "extracts char failed" )
+	
 }
 
 void TestDString::number_test()
@@ -155,13 +189,15 @@ void TestDString::number_test()
 	str.setNum( d, 6 );
 	TEST_ASSERT_MSG( str == "3.14159", "Convert double to DString failed" )
 
-	str = "-123456789.258";
+	/*
+	 * str = "-123456789.258";
 	long double ld = str.toLongDouble();
 	TEST_ASSERT_DELTA_MSG( ld, -123456789.258, 0.001, "Convert DString to long double failed" )
 	str.clear();
 	TEST_ASSERT_MSG( str == DString::empty(), "clear failed" )
 	str.setNum( ld, 6 );
 	TEST_ASSERT_MSG( str == "-123456789.258", "Convert long double to DString failed" )
+	*/
 }
 
 void TestDString::binary_test()
@@ -238,195 +274,252 @@ void TestDString::binary_test()
 	str.toBase2 ( ulli );
 	TEST_ASSERT_MSG( str == "10010100", "Convert  to DString binary failed" )
 }
-/*
-	cout << "#########################################################" << endl;
-	str = "Chaine pleine";
-	if ( str.isEmpty() )
-	{
-		cout << "La chaine est vide" << endl;
-		cout << "Longueur = " << str.length() << endl;
-	}
-	else
-	{
-		cout << "La chaine n'est pas vide" << endl;
-		cout << "Longueur = " << str.length() << endl;
-	}
-	cout << "str.clear()" << endl;
+
+void TestDString::length_test()
+{
+	DString str = "10010100";
+	
+	TEST_ASSERT_MSG( str.length() == 8, "Calculate length failed" )
+	TEST_ASSERT_MSG( str.isEmpty() == false, "Check if not empty failed" )
 	str.clear();
-	if ( str.isEmpty() )
-	{
-		cout << "La chaine est vide" << endl;
-		cout << "Longueur = " << str.length() << endl;
-	}
-	else
-	{
-		cout << "La chaine n'est pas vide" << endl;
-		cout << "Longueur = " << str.length() << endl;
-	}
+	TEST_ASSERT_MSG( str.length() == 0, "Calculate length about empty DString failed" )
+	TEST_ASSERT_MSG( str == DString::empty(), "Check if DString is equal to an empty DString failed" )
+	TEST_ASSERT_MSG( str.isEmpty() == true, "Check if empty failed" )
+}
 
-	cout << "#########################################################" << endl;
-	str = "abcdefghijklmnopqrstuvwxyz0123456789";
-	cout << "27 first char (from the left) : " << str.left ( 27 ) << endl;
-	cout << "50 first char (from the left) : " << str.left ( 50 ) << endl;
-	cout << "10 first char (from the right) : " << str.right ( 10 ) << endl;
-	cout << "50 first char (from the right) : " << str.right ( 50 ) << endl;
-	cout << "01234 are 5 char (begin at position 26) : " << str.mid ( 26, 5 ) << endl;
-	cout << "the 50 first char (begin at position 0) : " << str.mid ( 0, 50 ) << endl;
-
-	cout << "#########################################################" << endl;
-	cout << "la dstring de base = \"" << str << "\"" << endl;
-	cout << "str length = " << str.length() << endl;
-	str = str.at ( 3 );
-	cout << "un DString qui est le caractère n 3 =" << str << endl;
-	str = str.at ( 73 );
-	cout << "un DString qui est le caractère n 73 =" << str << endl;
-	str = str.at ( 173 );
-	cout << "un DString qui est le caractère n 173 =" << str << endl;
-	sstr = str[3];
-	cout << "un standard string qui est le caractère n 3 =" << sstr << endl;
-	sstr = str[73];
-	cout << "un standard string qui est le caractère n 73 =" << sstr << endl;
-	sstr = str[173];
-	cout << "un standard string qui est le caractère n 173 =" << sstr << endl;
-
-	cout << "#########################################################" << endl;
-	str = "abcdefghijklmnopqrstuvwxyz0123456789";
-	cout << str << endl;
-	if ( str.containsOnlyLegalChar ( DString::HEXA, DString::LOWERCASE ) )
-	{
-		cout << "La chaine est valide (hexa in lowercase)" << endl;
-	}
-	else
-	{
-		cout << "La chaine n'est pas valide (hexa in lowercase)" << endl;
-	}
-	str = "abcdef0123456789";
-	cout << str << endl;
-	if ( str.containsOnlyLegalChar ( DString::HEXA, DString::LOWERCASE ) )
-	{
-		cout << "La chaine est valide (hexa in lowercase)" << endl;
-	}
-	else
-	{
-		cout << "La chaine n'est pas valide (hexa in lowercase)" << endl;
-	}
-	str = "ABCDEF0123456789";
-	cout << str << endl;
-	if ( str.containsOnlyLegalChar ( DString::HEXA, DString::LOWERCASE ) )
-	{
-		cout << "La chaine est valide (hexa in lowercase)" << endl;
-	}
-	else
-	{
-		cout << "La chaine n'est pas valide (hexa in lowercase)" << endl;
-	}
-	str = "ABCDEF0123456789";
-	cout << str << endl;
-	if ( str.containsOnlyLegalChar ( DString::HEXA, DString::UPPERCASE ) )
-	{
-		cout << "La chaine est valide (hexa in uppercase)" << endl;
-	}
-	else
-	{
-		cout << "La chaine n'est pas valide (hexa in uppercase)" << endl;
-	}
+void TestDString::substr_test()
+{
+	DString str = "abcdefghijklmnopqrstuvwxyz0123456789";
+	TEST_ASSERT_MSG( str.left( 26 ) == "abcdefghijklmnopqrstuvwxyz", "Extract substring from the left failed" )
+	TEST_ASSERT_MSG( str.right( 10 ) == "0123456789", "Extract substring from the right failed" )
+	TEST_ASSERT_MSG( str.mid ( 26, 5 ) == "01234", "Extract substring from the middle failed" )
+	TEST_ASSERT_MSG( str.mid ( 0, 50 ) == str, "Extract substring from the middle failed" )
+	TEST_ASSERT_MSG( str.at( 3 ) == DString('d'), "Extract char from the middle failed" )
+	TEST_ASSERT_MSG( str.at( 173 ) == DString::empty(), "Extract char from the middle failed" )
+	TEST_ASSERT_MSG( str[3] == 'd', "Extract char from the middle failed" )
+	TEST_ASSERT_MSG( str[173] == 0, "Extract char from the middle failed" )
+	
+	str = "ABC;DEF 01234;56789 abc;def";
+	TEST_ASSERT_MSG( str.section( " ", 1, 1 ) == "01234;56789", "Extract section failed" )
+	TEST_ASSERT_MSG( str.section( " ", 1, 2 ) == "01234;56789 abc;def", "Extract section from beginning failed" )
+	TEST_ASSERT_MSG( str.section( ";", -1, -2 ) == "56789 abc;def", "Extract section from end failed" )
+	str = "ABC;DEF 01234;56789 abc;def";
+	TEST_ASSERT_MSG( str.remove( ";" ).remove( ' ' ) == "ABCDEF0123456789abcdef", "Remove string or char failed" )
 	str = "ABCDEF0123456789abcdef";
-	cout << str << endl;
-	if ( str.containsOnlyLegalChar ( DString::HEXA, DString::BOTHCASE ) )
-	{
-		cout << "La chaine est valide (hexa, case insensitive)" << endl;
-	}
-	else
-	{
-		cout << "La chaine n'est pas valide (hexa, case insensitive)" << endl;
-	}
+	str.remove( 16, 4 );
+	TEST_ASSERT_MSG( str == "ABCDEF0123456789ef", "Remove by place failed" )
+	str = "ABCDEF0123456789abcdef";
+	str.replace( "a", ",", false );
+	TEST_ASSERT_MSG( str == ",BCDEF0123456789,bcdef", "Replace string or char failed" )
+	str = "ABCDEF0123456789abcdef";
+	str.replace( "a", ",", true );
+	TEST_ASSERT_MSG( str == "ABCDEF0123456789,bcdef", "Replace string or char failed" )
+	str = "ABCDEF0123456789abcdef";
+	str.replace( 6, 10, "--" );
+	TEST_ASSERT_MSG( str == "ABCDEF--abcdef", "Replace by place failed" )
+	str = "ABCDEFabcdef";
+	str.insert( 6, "0123456789" );
+	TEST_ASSERT_MSG( str == "ABCDEF0123456789abcdef", "Insert by place failed" )
+}
 
-	cout << "#########################################################" << endl;
+void TestDString::legal_char_test()
+{
+	DString str = "abcdefghijklmnopqrstuvwxyz0123456789";
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::BOTHCASE ) == false, 
+					 "Check legal char failed for not hexa char" )
+	
+	str = "abcdef0123456789";
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::BOTHCASE ) == true,
+					 "Check legal char failed for both case (string on lower case)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::LOWERCASE ) == true,
+					 "Check legal char failed for lower case (string on lower case)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::UPPERCASE ) == false,
+					 "Check legal char failed for upper case (string on lower case)" )
+	
+	str = "ABCDEF0123456789";
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::BOTHCASE ) == true,
+					 "Check legal char failed for both case (string on upper case)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::UPPERCASE ) == true,
+					 "Check legal char failed for upper case (string on upper case)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::LOWERCASE ) == false,
+					 "Check legal char failed for lower case (string on upper case)" )
+	
+	str = "ABCdef0123456789";
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::BOTHCASE ) == true,
+					 "Check legal char failed for both case (string on both case)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::UPPERCASE ) == false,
+					 "Check legal char failed for upper case (string on both case)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::LOWERCASE ) == false,
+					 "Check legal char failed for lower case (string on both case)" )
+	
+	str = "0123456789";
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::BOTHCASE ) == true,
+					 "Check legal char failed for both case (decimal string)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::UPPERCASE ) == true,
+					 "Check legal char failed for upper case (decimal )" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::LOWERCASE ) == true,
+					 "Check legal char failed for lower case (decimal )" )
+					 
+	str = "1010101110";
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::BINARY ) == true,
+					 "Check legal char failed for binary (binary string)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::OCTAL ) == true,
+					 "Check legal char failed for octal (binary string)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::DECIMAL ) == true,
+					 "Check legal char failed for decimal (binary string)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA ) == true,
+					 "Check legal char failed for hexa (binary string)" )
+	
+	str = "1012501710";
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::BINARY ) == false,
+					 "Check legal char failed for binary (octal string)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::OCTAL ) == true,
+					 "Check legal char failed for octal (octal string)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::DECIMAL ) == true,
+					 "Check legal char failed for decimal (octal string)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA ) == true,
+					 "Check legal char failed for hexa (binary string)" )
+	
+	str = "1812591710";
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::BINARY ) == false,
+					 "Check legal char failed for binary (decimal string)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::OCTAL ) == false,
+					 "Check legal char failed for octal (decimal string)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::DECIMAL ) == true,
+					 "Check legal char failed for decimal (decimal string)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA ) == true,
+					 "Check legal char failed for hexa (decimal string)" )
+	
+	str = "181A59F7c0";
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::BINARY ) == false,
+					 "Check legal char failed for binary (hexa string)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::OCTAL ) == false,
+					 "Check legal char failed for octal (hexa string)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::DECIMAL ) == false,
+					 "Check legal char failed for decimal (hexa string)" )
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA ) == true,
+					 "Check legal char failed for hexa (hexa string)" )
 
-	cout << "split" << endl;
-	str = "text1\ntext2\ntext3\ntext4";
+}
+void TestDString::split_test()
+{
+	DString str = "\ntext1\ntext2\ntext3\ntext4\n";
+	DString sub;
 	DStringList strl = str.split ( "\n" );
-	DStringList::iterator it;
-	for ( it = strl.begin() ; it != strl.end() ; ++it )
-	{
-		cout << *it << endl;
+	TEST_ASSERT_MSG( strl.size() == 4, "Split with wrong number of substr" )
+	
+	DStringList::iterator it = strl.begin();
+	TEST_ASSERT_MSG( it != strl.end(), "Split with wrong number of substr" )
+	unsigned short int i = 1;
+	while ( it != strl.end() ) {
+		sub.clear();
+		sub.setNum( i );
+		sub.prepend( "text" );
+		TEST_ASSERT_MSG( *it == sub, "Substr is wrong" )
+		++it;
+		i++;
 	}
-	cout << "#########################################################" << endl;
+	// Must be separated by space
+	str = " text1 text2 text3 text4 ";
+	strl.clear();
+	strl = str.splitConstantSize( " ", 6 );
+	TEST_ASSERT_MSG( strl.size() == 4, "Split with wrong number of substr" )
+	
+	it = strl.begin();
+	TEST_ASSERT_MSG( it != strl.end(), "Split with wrong number of substr" )
+	i = 1;
+	while ( it != strl.end() ) {
+		sub.clear();
+		sub.setNum( i );
+		sub.prepend( "text" );
+		TEST_ASSERT_MSG( *it == sub, "Substr is wrong" )
+		++it;
+		i++;
+	}
+}
 
-	cout << "Time" << endl;
-	cout << "static now : " << DString::Now ( "%Y-%m-%dT%H-%M-%S" ) << endl;
-	cout << "static now : " << DString::Now ( DString::ISO_DATETIME ) << endl;
-	str = DString::timeToString ( time ( NULL ), DString::ISO_DATETIME );
-	cout << str << endl;
+void TestDString::time_test()
+{
+	DString str = DString::timeToString ( 1404831621, DString::ISO_DATETIME_T );
+	TEST_ASSERT_MSG( str == "2014-07-08T17:00:21", "Get Date-Time failed" )
+	str = DString::timeToString ( 1404831621, "%Y-%m-%d %H-%M-%S" );
+	TEST_ASSERT_MSG( str == "2014-07-08 17-00-21", "Get Date-Time failed" )
 	str.convertTime ( DString::ISO_DATETIME, DString::ISO_DATE );
-	cout << "convert datetime to date : " << str << endl;
+	TEST_ASSERT_MSG( str == "2014-07-08", "Convert Date-Time to Date failed" )
+	str = DString::timeToString ( 1404831621, "%Y-%m-%dT%H-%M-%S" );
+	str.convertTime ( "%Y-%m-%dT%H-%M-%S", "%H:%M:%S" );
+	TEST_ASSERT_MSG( str == "17:00:21", "Convert Date-Time to Time failed" )
+}
 
-	cout << "#########################################################" << endl;
-
-	cout << "std::map" << endl;
-
+void TestDString::map_key_test()
+{
 	std::map<DString, DString> mp;
-
+	DString str;
+	
 	str = "1";
 	mp[str] = "123456789";
 	str = "2";
 	mp[str] = "987654321";
-
 	str = "1";
-	cout << "good if '123456789' is displayed : " << mp[str] << endl;
+	TEST_ASSERT_MSG( mp[str] == "123456789", "MAp Key failed" )
 	str = "2";
-	cout << "good if '987654321' is displayed : " << mp[str] << endl;
-	
-	cout << "#########################################################" << endl;
-	
-	cout << "section test" << endl;
-	
-	str = "ABC;DEF 01234;56789 abc;def";
-	cout << "la dstring de base = \"" << str << "\"" << endl;
-	cout << "Section ( \" \", 1, 1 ) = \"" << str.section( " ", 1, 1 ) << "\"" << endl;
-	cout << "Section ( \";\", 1, 2 ) = \"" << str.section( ";", 1, 2 ) << "\"" << endl;
-	cout << "Section ( \";\", 1, 3 ) = \"" << str.section( ";", 1, 3 ) << "\"" << endl;
-	cout << "Section ( \";\", 1, 30 ) = \"" << str.section( ";", 1, 30 ) << "\"" << endl;
-	cout << "Section ( \";\", -1, -1 ) = \"" << str.section( ";", -1, -1 ) << "\"" << endl;
-	
-	
-#if 0
-	cout << "getline test" << endl;
-	ifstream iss;
-	bool finished = false;
-	while ( !finished )
-	{
-		cout << endl << "Enter file name to read : ";
-		cin >> str;
-		if ( str == "quit" || str == "exit" )
-		{
-			finished = true;
-		}
-		else
-		{
-			iss.open ( str.c_str() );
-			if ( iss )
-			{
-				while ( getline ( iss, strDStr ) )
-				{
-					cout << strDStr << endl;
-				}
-				finished = true;
-			}
-			else
-			{
-				cout << "Cannot open file " << str << endl;
-			}
-		}
-	}
-
-	iss.close();
-#endif
-	cout << endl << "End of DString test" << endl;
-	return 0;
+	TEST_ASSERT_MSG( mp[str] == "987654321", "MAp Key failed" )
 }
-*/
 
+void TestDString::space_test()
+{
+	DString str = "\n\t a b    c\n d\te\t ";
+	
+	TEST_ASSERT_MSG( str.stripWhiteSpace() == "a b    c\n d\te", "Strip white space failed" )
+	TEST_ASSERT_MSG( str.simplifyWhiteSpace() == "a b c d e", "Simplify white space failed" )
+	TEST_ASSERT_MSG( str.removeWhiteSpace() == "abcde", "Remove white space failed" )
+	
+	str = "toto";
+	str += 0x14;
+	str += 0x17;
+	str += '\r';
+	str += '\n';
+	TEST_ASSERT_MSG( str.removeEscapeSequence() == "toto\n\n", "Remove escape failed" )
+	TEST_ASSERT_MSG( str.replaceEscapeSequence() == "toto<DC4><ETB><CR><LF>", "Replace escape failed" )
+	TEST_ASSERT_MSG( str.replaceEscapeSequence( "<@", "@>" ) == "toto<@DC4@><@ETB@><@CR@><@LF@>", "Replace escape failed" )
+}
+
+void TestDString::case_test()
+{
+	DString str = "abcdef";
+	TEST_ASSERT_MSG( str.upper() == "ABCDEF", "Convert to upper case failed" )
+	str.toUpper();
+	TEST_ASSERT_MSG( str == "ABCDEF", "Switch to upper case failed" )
+	
+	str = "ABCDEF018";
+	TEST_ASSERT_MSG( str.lower() == "abcdef018", "Convert to lower case failed" )
+	str.toLower();
+	TEST_ASSERT_MSG( str == "abcdef018", "Switch to lower case failed" )
+}
+
+void TestDString::justify_test()
+{
+	DString str = "abcdef";
+	
+	str.leftJustify( 10, '-');
+	TEST_ASSERT_MSG( str == "abcdef----", "Left justify failed" )
+	str.rightJustify( 14, '-');
+	TEST_ASSERT_MSG( str == "----abcdef----", "Right justify failed" )
+	str.clear();
+	str.fill( '-', 10 );
+	TEST_ASSERT_MSG( str == "----------", "Fill failed" )
+	str.truncate( 6 );
+	TEST_ASSERT_MSG( str == "------", "Truncate failed" )
+}
+
+void TestDString::contains_test()
+{
+	DString str = "aaabbbcccdddeeefffaaaabbaaaaaa";
+	TEST_ASSERT_MSG( str.contains( 'a' ) == 13, "Contains char failed" )
+	TEST_ASSERT_MSG( str.contains( "aa" ) == 10, "Contains string failed" )
+	TEST_ASSERT_MSG( str.contains( std::string( "aaa" ) ) == 7, "Contains string failed" )
+	
+}
 
 int main( int argc, char** argv )
 {
