@@ -421,7 +421,7 @@ DSMTP::ERRNO DSMTP::send()
 	for (it = formatedBody.begin() ; it != formatedBody.end() ; it++)
 	{
 		buffer = *it;
-		lines = buffer.splitConstantSize(78);
+		lines = buffer.splitConstantSize( " ", 78 );
 		// send line by line
 		for (it2 = lines.begin() ; it2 != lines.end() ; it2++)
 		{
