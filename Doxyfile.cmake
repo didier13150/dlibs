@@ -678,6 +678,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
+INPUT                  = @CMAKE_SOURCE_DIR@/src \
 INPUT                  = @CMAKE_SOURCE_DIR@ \
                          @CMAKE_BINARY_DIR@
 
@@ -699,7 +700,8 @@ INPUT_ENCODING         = UTF-8
 
 FILE_PATTERNS          = *.cpp \
                          *.h \
-                         *.dox
+                         *.dox \
+                         *.md
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories
 # should be searched for input files as well. Possible values are YES and NO.
@@ -750,7 +752,8 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@
+EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@ \
+                         @CMAKE_SOURCE_DIR@/src
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
