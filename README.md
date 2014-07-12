@@ -51,7 +51,7 @@ Howto to use it
 
 You just need to include the all in one header file.
 
-    &#35;include &lt;dlibs/dlibs.h&gt;
+    #include <dlibs/dlibs.h>
 
 or add the header files directory to the cpp flags and include file in your code like this :
 
@@ -59,7 +59,7 @@ or add the header files directory to the cpp flags and include file in your code
 
 In this example, the prefix path ( /usr/local ) can be found with the 'dlibspath --prefix' command line
 
-    &#35;include &lt;dlibs.h&gt;
+    #include <dlibs.h>
 
 And for linking your application against the dlibss library, just add this option into your Makefile :
 
