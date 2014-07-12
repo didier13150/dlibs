@@ -35,15 +35,21 @@
 #include "dmysql.h"
 #include <mysql.h>
 
+#ifndef WITH_EXCEPTIONS
+#define WITH_EXCEPTIONS 0
+#endif
+
 DMySQL::DMySQL() : DDatabase()
 {
 	init();
 }
 
+#if WITH_EXCEPTIONS
 DMySQL::DMySQL ( bool use_dexceptions ) : DDatabase ( use_dexceptions )
 {
 	init();
 }
+#endif
 
 DMySQL::~DMySQL()
 {
@@ -87,10 +93,12 @@ DDatabaseResult & DMySQL::open()
 		m_result.errnb = NO_CONNECTED;
 		m_result.error = _errors[NO_CONNECTED];
 		m_opened = false;
+#if WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 		}
+#endif
 		return this->m_result;
 	}
 
@@ -103,10 +111,12 @@ DDatabaseResult & DMySQL::open()
 		{
 			m_result.errnb = SET_OPT_CONNECT_FAILED;
 			m_result.error = _errors[SET_OPT_CONNECT_FAILED];
+#if WITH_EXCEPTIONS
 			if ( _use_dexceptions )
 			{
 				throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 			}
+#endif
 			return this->m_result;
 		}
 
@@ -117,10 +127,12 @@ DDatabaseResult & DMySQL::open()
 		{
 			m_result.errnb = SET_OPT_READ_FAILED;
 			m_result.error = _errors[SET_OPT_READ_FAILED];
+#if WITH_EXCEPTIONS
 			if ( _use_dexceptions )
 			{
 				throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 			}
+#endif
 			return this->m_result;
 		}
 
@@ -131,10 +143,12 @@ DDatabaseResult & DMySQL::open()
 		{
 			m_result.errnb = SET_OPT_WRITE_FAILED;
 			m_result.error = _errors[SET_OPT_WRITE_FAILED];
+#if WITH_EXCEPTIONS
 			if ( _use_dexceptions )
 			{
 				throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 			}
+#endif
 			return this->m_result;
 		}
 	}
@@ -145,10 +159,12 @@ DDatabaseResult & DMySQL::open()
 		m_result.errnb = WRONG_PARAM;
 		m_result.error = _errors[WRONG_PARAM];
 		m_opened = false;
+#if WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 		}
+#endif
 		return this->m_result;
 	}
 
@@ -173,10 +189,12 @@ DDatabaseResult & DMySQL::open()
 			m_result.error += ", port=" + m_params.port + ")";
 		}
 		m_opened = false;
+#if WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 		}
+#endif
 		return this->m_result;
 	}
 	m_result.errnb = SUCCESS;
@@ -222,10 +240,12 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 		{
 			m_result.errnb = NO_CONNECTED;
 			m_result.error = _errors[NO_CONNECTED];
+#if WITH_EXCEPTIONS
 			if ( _use_dexceptions )
 			{
 				throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 			}
+#endif
 			return this->m_result;
 		}
 	}
@@ -237,10 +257,12 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 	{
 		m_result.errnb = CONNECTION_LOSE;
 		m_result.error = _errors[CONNECTION_LOSE];
+#if WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 		}
+#endif
 		return this->m_result;
 	}
 
@@ -251,10 +273,12 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 	{
 		m_result.errnb = QUERY_ERROR;
 		m_result.error = mysql_error ( mysql );
+#if WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 		}
+#endif
 		return this->m_result;
 	}
 	// Get the last AUTO_INCREMENT
@@ -263,7 +287,7 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 
 	// Get the number of affected rows
 	llu = mysql_affected_rows ( mysql );
-	if ( llu != -1 )
+	if ( llu != static_cast<my_ulonglong>(-1) )
 	{
 		m_result.affected_row = ( long long unsigned int ) llu;
 	}

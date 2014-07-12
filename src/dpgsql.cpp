@@ -34,14 +34,20 @@
 #include "dpgsql.h"
 #include <postgres.h>
 
+#ifndef WITH_EXCEPTIONS
+#define WITH_EXCEPTIONS 0
+#endif
+
 DPgSQL::DPgSQL()
  : DDatabase()
 {
 }
 
+#if WITH_EXCEPTIONS
 DPgSQL::DPgSQL( bool use_dexceptions ) : DDatabase ( use_dexceptions )
 {
 }
+#endif
 
 
 DPgSQL::~DPgSQL()
