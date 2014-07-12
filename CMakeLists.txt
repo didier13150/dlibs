@@ -8,7 +8,7 @@ mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE )
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH};${CMAKE_SOURCE_DIR})
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR};${CMAKE_MODULE_PATH})
 #CMAKE_ROOT
 #this is just a basic CMakeLists.txt, for more information see the cmake manpage
 
@@ -49,7 +49,7 @@ if(COMMAND CMAKE_POLICY)
 endif(COMMAND CMAKE_POLICY)
 
 find_package (LibXml2 REQUIRED)
-find_package (Mysql QUIET)
+find_package (MySQL QUIET)
 #find_package (PostgreSQL QUIET)
 find_package(Threads REQUIRED)
 find_library(REALTIME_LIBRARY NAMES rt PATH /usr/lib /usr/local/lib REQUIRED)
@@ -57,6 +57,7 @@ find_library(REALTIME_LIBRARY NAMES rt PATH /usr/lib /usr/local/lib REQUIRED)
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
+    find_program(DOT_EXECUTABLE dot PATH)
     add_custom_target(doc
                       ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
                       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
