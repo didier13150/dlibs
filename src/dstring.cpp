@@ -1631,8 +1631,10 @@ std::list<char> & DString::onlyBinary() const
 	static std::list<char> legalCharDec;
 
 	legalCharDec.clear();
-	legalCharDec.push_back ( '0' );
-	legalCharDec.push_back ( '1' );
+	// '0', '1'
+	for ( char c = 0x30 ; c <= 0x31 ; c++ ) {
+		legalCharDec.push_back ( c );
+	}
 
 	return legalCharDec;
 }
@@ -1642,14 +1644,9 @@ std::list<char> & DString::onlyOctal() const
 	static std::list<char> legalCharDec;
 
 	legalCharDec.clear();
-	legalCharDec.push_back ( '0' );
-	legalCharDec.push_back ( '1' );
-	legalCharDec.push_back ( '2' );
-	legalCharDec.push_back ( '3' );
-	legalCharDec.push_back ( '4' );
-	legalCharDec.push_back ( '5' );
-	legalCharDec.push_back ( '6' );
-	legalCharDec.push_back ( '7' );
+	for ( char c = 0x30 ; c <= 0x37 ; c++ ) {
+		legalCharDec.push_back ( c );
+	}
 
 	return legalCharDec;
 }
@@ -1659,16 +1656,9 @@ std::list<char> & DString::onlyDecimal() const
 	static std::list<char> legalCharDec;
 
 	legalCharDec.clear();
-	legalCharDec.push_back ( '0' );
-	legalCharDec.push_back ( '1' );
-	legalCharDec.push_back ( '2' );
-	legalCharDec.push_back ( '3' );
-	legalCharDec.push_back ( '4' );
-	legalCharDec.push_back ( '5' );
-	legalCharDec.push_back ( '6' );
-	legalCharDec.push_back ( '7' );
-	legalCharDec.push_back ( '8' );
-	legalCharDec.push_back ( '9' );
+	for ( char c = 0x30 ; c <= 0x39 ; c++ ) {
+		legalCharDec.push_back ( c );
+	}
 
 	return legalCharDec;
 }
@@ -1678,33 +1668,20 @@ std::list<char> & DString::onlyHexa ( DString::CaseFlag caseflag ) const
 	static std::list<char> legalCharDec;
 
 	legalCharDec.clear();
-	legalCharDec.push_back ( '0' );
-	legalCharDec.push_back ( '1' );
-	legalCharDec.push_back ( '2' );
-	legalCharDec.push_back ( '3' );
-	legalCharDec.push_back ( '4' );
-	legalCharDec.push_back ( '5' );
-	legalCharDec.push_back ( '6' );
-	legalCharDec.push_back ( '7' );
-	legalCharDec.push_back ( '8' );
-	legalCharDec.push_back ( '9' );
+	for ( char c = 0x30 ; c <= 0x39 ; c++ ) {
+		legalCharDec.push_back ( c );
+	}
 	if ( ( caseflag & DString::UPPERCASE ) == DString::UPPERCASE )
 	{
-		legalCharDec.push_back ( 'A' );
-		legalCharDec.push_back ( 'B' );
-		legalCharDec.push_back ( 'C' );
-		legalCharDec.push_back ( 'D' );
-		legalCharDec.push_back ( 'E' );
-		legalCharDec.push_back ( 'F' );
+		for ( char c = 0x41 ; c <= 0x46 ; c++ ) {
+			legalCharDec.push_back ( c );
+		}
 	}
 	if ( ( caseflag & DString::LOWERCASE ) == DString::LOWERCASE )
 	{
-		legalCharDec.push_back ( 'a' );
-		legalCharDec.push_back ( 'b' );
-		legalCharDec.push_back ( 'c' );
-		legalCharDec.push_back ( 'd' );
-		legalCharDec.push_back ( 'e' );
-		legalCharDec.push_back ( 'f' );
+		for ( char c = 0x61 ; c <= 0x66 ; c++ ) {
+			legalCharDec.push_back ( c );
+		}
 	}
 
 	return legalCharDec;
