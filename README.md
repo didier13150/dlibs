@@ -28,34 +28,42 @@ Some of the functionality provide includes :
 Build library
 -------------
 
-mkdir build
+    mkdir build
 
-cd build
+    cd build
 
-cmake -i ..
+    cmake -i ..
 
-make make install
+    make install
 
 After the install process, you can rediscover the prefix by the 'dlibspath --prefix' command line ( in a terminal or directly in cmake )
+
+Documentation (doxygen) can be built as well
+
+    make doc
+    
+Run Unit-tests for library elements
+
+    make test
 
 Howto to use it
 ---------------
 
 You just need to include the all in one header file.
 
-&#35;include &lt;dlibs/dlibs.h&gt;
+    &#35;include &lt;dlibs/dlibs.h&gt;
 
 or add the header files directory to the cpp flags and include file in your code like this :
 
--I/usr/local/dlibs
+    -I/usr/local/dlibs
 
 In this example, the prefix path ( /usr/local ) can be found with the 'dlibspath --prefix' command line
 
-&#35;include &lt;dlibs.h&gt;
+    &#35;include &lt;dlibs.h&gt;
 
 And for linking your application against the dlibss library, just add this option into your Makefile :
 
--L/usr/local/libs -ldlibs
+    -L/usr/local/libs -ldlibs
 
 Supported Platforms
 -------------------
