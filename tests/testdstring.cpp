@@ -189,15 +189,13 @@ void TestDString::number_test()
 	str.setNum( d, 6 );
 	TEST_ASSERT_MSG( str == "3.14159", "Convert double to DString failed" )
 
-	/*
-	 * str = "-123456789.258";
+	str = "-3.1415927";
 	long double ld = str.toLongDouble();
-	TEST_ASSERT_DELTA_MSG( ld, -123456789.258, 0.001, "Convert DString to long double failed" )
+	TEST_ASSERT_DELTA_MSG( ld, -3.1415927, 0.0000001, "Convert DString to long double failed" )
 	str.clear();
 	TEST_ASSERT_MSG( str == DString::empty(), "clear failed" )
 	str.setNum( ld, 6 );
-	TEST_ASSERT_MSG( str == "-123456789.258", "Convert long double to DString failed" )
-	*/
+	TEST_ASSERT_MSG( str == "-3.14159", "Convert long double to DString failed" )
 }
 
 void TestDString::binary_test()
@@ -523,7 +521,18 @@ void TestDString::contains_test()
 
 int main( int argc, char** argv )
 {
-	Test::TextOutput output(Test::TextOutput::Verbose);
+	std::ofstream file;
 	TestDString ets;
+	
+	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
+	//Test::CompilerOutput output( Test::CompilerOutput::GCC, std::cout );
+	Test::HtmlOutput html;
+	
+	file.open( "dstring.html" );
+	ets.run( html );
+	html.generate( file, true, "DString" );
+	file.close();
+	
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
+
