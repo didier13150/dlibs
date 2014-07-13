@@ -525,7 +525,6 @@ int main( int argc, char** argv )
 	TestDString ets;
 	
 	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	//Test::CompilerOutput output( Test::CompilerOutput::GCC, std::cout );
 	Test::HtmlOutput html;
 	
 	file.open( "dstring.html" );
