@@ -15,3 +15,6 @@ build
 doc
 dlibs.kdev4
 *.zip
+logo-old.png
+tests/make.sh
+tests/template.*
