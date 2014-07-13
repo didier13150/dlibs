@@ -42,7 +42,26 @@
 void TestDEnv::constructor_test()
 {
 	DEnv * env = DEnv::getInstance();
-	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == DString::empty(), "Get toto var failed" )
+	
+	TEST_ASSERT_MSG( env->getVar( "HOME" ).left(5) == "/home", "Get HOME env var failed" )
+	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == DString::empty(), "Get empty toto env var failed" )
+}
+
+void TestDEnv::setenv_test()
+{
+	DEnv * env = DEnv::getInstance();
+	
+	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == DString::empty(), "Get toto env var failed" )
+	env->setVar( "toto95123", "DLibs test" );
+	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == "DLibs test", "Get toto env var failed after set" )
+}
+
+void TestDEnv::getenv_test()
+{
+	DEnv * env = DEnv::getInstance();
+	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == "DLibs test", "Get toto env var failed after set" )
+	env->setVar( "toto95123", DString::empty() );
+	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == DString::empty(), "Set empty env var to toto failed" )
 }
 
 int main( int argc, char** argv )
