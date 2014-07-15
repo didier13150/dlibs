@@ -46,11 +46,13 @@ class TestDTimer : public Test::Suite
 public:
 	TestDTimer()
 	{
-		TEST_ADD( TestDTimer::constructor_test )
+		TEST_ADD( TestDTimer::start_precision_test )
+		TEST_ADD( TestDTimer::start_rounded_test )
 	}
 
 private:
-	void constructor_test();
+	void start_precision_test();
+	void start_rounded_test();
 };
 
 #endif // _TESTDTIMER_H
