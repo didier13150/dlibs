@@ -42,7 +42,7 @@
  * Get and set easily environment variables.
  * @brief Manage environment variables.
  * @author Didier FABERT <didier.fabert@gmail.com>
- * @include testdenv.cpp
+ * @include denv.dox
  */
 class DEnv : public DSingleton<DEnv>
 {
