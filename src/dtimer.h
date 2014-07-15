@@ -43,7 +43,7 @@
 
 /**
  * Just a simple example to learn how to use it
- * @include testdtimer.cpp
+ * @include dtimer.dox
  * @brief Timer.
  * @author Didier Fabert <didier.fabert@gmail.com>
  */
