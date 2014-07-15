@@ -56,11 +56,11 @@ void DTimer::start ( unsigned int timeout )
 	m_countdown = timeout;
 	
 	setRunMode( DThread::MULTI_LOOP );
-	setSleep( 50000 );
+	setSleep( 100000 );
 	
 	if ( timeout > 2000 )
 	{
-		m_timeout = ( long double ) ( timeout/1000 );
+		m_timeout = static_cast<long double> ( timeout/1000 );
 		m_precision = false;
 		m_zeroTime = time ( NULL );
 		//cout << "timeout is " << m_timeout << endl;
@@ -119,6 +119,7 @@ long unsigned int DTimer::timeToTimeout()
 	if ( timestamp >= m_timeout )
 	{
 		time_to_timeout = 0.0;
+		stop();
 	}
 	else
 	{
@@ -136,7 +137,7 @@ long unsigned int DTimer::timeToTimeout()
 		time_to_timeout = 0.0;
 		stop();
 	}
-	return ( unsigned long int ) time_to_timeout;
+	return static_cast<unsigned long int>( time_to_timeout );
 }
 
 void DTimer::run()
