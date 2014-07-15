@@ -13,7 +13,7 @@
  *   \_|  o|                                             ,__,                 *
  *    \___/      Copyright (C) 2009 by didier fabert     (oo)____             *
  *     ||||__                                            (__)    )\           *
- *     (___)_)   File : testdpoint.cpp                  ||--|| *          *
+ *     (___)_)   File : testdpoint.cpp                      ||--|| *          *
  *                                                                            *
  *   This program is free software; you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published by     *
@@ -30,7 +30,7 @@
  *   Free Software Foundation, Inc.,                                          *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                *
  *                                                                            *
- *   Unit Test for DPoint                                                 *
+ *   Unit Test for DPoint                                                     *
  *                                                                            *
  ******************************************************************************/
 
@@ -41,6 +41,12 @@
 
 void TestDPoint::constructor_test()
 {
+	DPoint<unsigned int> point;
+	TEST_ASSERT_MSG( point.getX() == 0, "Get initial X var failed" )
+	TEST_ASSERT_MSG( point.getY() == 0, "Get initial Y var failed" )
+	TEST_ASSERT_MSG( point.isNull() == true, "Initial vars are not null" )
+	point.setPoint( 2, 2 );
+	
 }
 
 int main( int argc, char** argv )

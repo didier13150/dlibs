@@ -47,10 +47,14 @@ public:
 	TestDURL()
 	{
 		TEST_ADD( TestDURL::constructor_test )
+		TEST_ADD( TestDURL::setUrl_test )
+		TEST_ADD( TestDURL::getUrl_test )
 	}
 
 private:
 	void constructor_test();
+	void setUrl_test();
+	void getUrl_test();
 };
 
 #endif // _TESTDURL_H
