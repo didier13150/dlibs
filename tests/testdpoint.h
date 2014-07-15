@@ -47,10 +47,17 @@ public:
 	TestDPoint()
 	{
 		TEST_ADD( TestDPoint::constructor_test )
+		TEST_ADD( TestDPoint::reference_test )
+		TEST_ADD( TestDPoint::operator_test )
+		TEST_ADD( TestDPoint::stream_test )
 	}
 
 private:
 	void constructor_test();
+	void reference_test();
+	void operator_test();
+	void comparator_test();
+	void stream_test();
 };
 
 #endif // _TESTDPOINT_H
