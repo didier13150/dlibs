@@ -65,6 +65,13 @@ if(DOXYGEN_FOUND)
                      )
 endif(DOXYGEN_FOUND)
 
+find_program(GIT_EXECUTABLE git PATH)
+add_custom_target(changelog
+                  ${GIT_EXECUTABLE} log --graph --decorate --abbrev-commit > ChangeLog
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                  COMMENT "Regenerating ChangeLog" VERBATIM
+                 )
+
 # project version
 set( Dlibs_MAJOR_VERSION 1 )
 set( Dlibs_MINOR_VERSION 2 )
