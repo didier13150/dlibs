@@ -32,105 +32,56 @@
  ******************************************************************************/
 
 #include <cstdlib>
-#include <getopt.h>
 #include <iostream>
-#include <string>
-#include <unistd.h>
 
 #include "dlibs.h"
 
-using namespace std;
-
-/**
- * @brief Displays the syntax of the program command line.
- */
-void show_help()
-{
-	cout << "Syntax: dlibspath [options]" << endl;
-	cout << "Options" << endl;
-	cout << "  -h, --help      Print this help" << endl;
-	cout << "  -v, --version   Show version" << endl;
-	cout << "  --tarname       Show package name" << endl;
-	cout << "  --bugreport     Show address where bug report must be sent" << endl;
-	cout << "  --prefix        Show the prefix where dlibs are installed" << endl;
-	
-	cout << endl;
-}
-
-/**
- * @brief Parses command line options. *
- * @param int argc: number of arguments in the command line.
- * @param char ** argv: the list of arguments in the command line.
- */
-void parse_options(int argc, char *argv[])
-{
-	int option_index = 0;
-	int opt;
-
-    // Parse arg
-	while (1)
-	{
-		static struct option long_options[] =
-		{
-			{ "help",       no_argument,       0, 'h' },
-			{ "version",    no_argument,       0, 'v' },
-			{ "prefix",     no_argument,       0, 0   },
-			{ "tarname",    no_argument,       0, 0   },
-			{ "bugreport",  no_argument,       0, 0   },
-			{ 0, 0, 0, 0 }
-		};
-
-        // Get optionnal argument number
-		opt = getopt_long( argc, argv, "h?v", long_options, &option_index );
-
-        // Leave the loop when all optionnal arguments have been parsed.
-		if( opt < 0 )
-		{
-			break;
-		}
-
-		switch( opt )
-		{
-			case '?':
-			case 'h':
-			{
-				show_help();
-				exit(EXIT_SUCCESS);
-			}
-			case 'v':
-			{
-				cout << DLIBS_VERSION << endl;
-				exit(EXIT_SUCCESS);
-			}
-			case 0:
-			{
-				if (long_options[option_index].name == std::string("prefix") )
-				{
-					cout << DLIBS_PREFIX_PATH << endl;
-					exit(EXIT_SUCCESS);
-				}
-				if (long_options[option_index].name == std::string("tarname") )
-				{
-					cout << DLIBS_PACKAGE_NAME << "-" << DLIBS_VERSION << endl;
-					exit(EXIT_SUCCESS);
-				}
-				if (long_options[option_index].name == std::string("bugreport") )
-				{
-					cout << DLIBS_BUG_REPORT << endl;
-					exit(EXIT_SUCCESS);
-				}
-				break;
-			}
-			default:
-			{
-				show_help();
-				exit(EXIT_FAILURE);
-			}
-		}
-	}
-}
-
 int main (int argc, char *argv[])
 {
-	parse_options(argc, argv);
+	DAppCmdLine args;
+	
+	args.setAppVersion( DLIBS_VERSION );
+	args.addOption( "help", "Print this help", 'h' );
+	args.addOption( "version", "Show version", 'v' );
+	args.addOption( "prefix", "Show the prefix where dlibs are installed" );
+	args.addOption( "tarname", "Show package name" );
+	args.addOption( "bugreport", "Show address where bug report must be sent" );
+
+	if ( !args.parse( argc, argv ) )
+	{
+		std::cout << "Error on parsing command line : " << args.getLastError() << std::endl;
+		exit( EXIT_FAILURE );
+	}
+	
+	if ( args.haveOption( "version" ) )
+	{
+		args.showVersion();
+		exit ( EXIT_SUCCESS );
+	}
+	
+	else if ( args.haveOption( "help" ) )
+	{
+		args.showHelp();
+		exit ( EXIT_SUCCESS );
+	}
+	
+	else if ( args.haveOption( "prefix" ) )
+	{
+		std::cout << DLIBS_PREFIX_PATH << std::endl;
+		exit ( EXIT_SUCCESS );
+	}
+	
+	else if ( args.haveOption( "tarname" ) )
+	{
+		std::cout << DLIBS_PACKAGE_NAME << "-" << DLIBS_VERSION << std::endl;
+		exit ( EXIT_SUCCESS );
+	}
+	
+	else if ( args.haveOption( "bugreport" ) )
+	{
+		std::cout << DLIBS_BUG_REPORT << std::endl;
+		exit ( EXIT_SUCCESS );
+	}
+	args.showHelp();
+	exit( EXIT_FAILURE );
 }
