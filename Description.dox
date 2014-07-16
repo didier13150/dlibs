@@ -71,7 +71,7 @@
  * or add the header files directory to the cpp flags and include file in
  * your code like this :
  * @code
- * -I/usr/local/dlibs
+ * -I/usr/local/include/dlibs
  * @endcode
  * In this example, the prefix path ( /usr/local ) can be found with the
  * 'dlibspath --prefix' command line
@@ -83,13 +83,13 @@
  * option into your Makefile :
  *
  * @code
- * -L/usr/local/libs -ldlibs
+ * -L/usr/local/lib -ldlibs
  * @endcode
  *
  * @section supports Supported Platforms
  * The application has been successfully built on the following platforms:
  *
- *   - Linux (x86, x86_64) : on debian and gentoo.
+ *   - Linux (x86, x86_64) : on Debian, Gentoo and Fedora.
  *
  * @section depends Dependencies
  *
