@@ -1,0 +1,329 @@
+* commit 8a302e1 (HEAD, master)
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 16 07:27:26 2014 +0200
+| 
+|     Update doxyfile
+|  
+* commit a0e34f2
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 16 07:27:14 2014 +0200
+| 
+|     Update doxyfile
+|  
+* commit 0e0dd9d
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 16 07:26:34 2014 +0200
+| 
+|     Add target to regenerate ChangeLog
+|  
+* commit f7466a7
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 16 07:05:55 2014 +0200
+| 
+|     Remove autotools required files (empty)
+|  
+* commit 9f0541f (origin/master, origin/HEAD)
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 16 06:33:14 2014 +0200
+| 
+|     Modify header file: change GPL version (v3+), change FSF address
+|  
+* commit 3103c3b
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Tue Jul 15 16:03:54 2014 +0200
+| 
+|     Improve DTimer test
+|  
+* commit d9acb96
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Tue Jul 15 16:03:29 2014 +0200
+| 
+|     Minor change on doc
+|  
+* commit e3c2b52
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Tue Jul 15 16:03:16 2014 +0200
+| 
+|     Minor change on doc
+|  
+* commit c421829
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Tue Jul 15 16:02:46 2014 +0200
+| 
+|     Static cast
+|  
+* commit 7222971
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Tue Jul 15 15:13:26 2014 +0200
+| 
+|     Improve DPoint test
+|  
+* commit 09d254b
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Tue Jul 15 15:13:00 2014 +0200
+| 
+|     Improve DEnv test
+|  
+* commit 0e326ca
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Tue Jul 15 15:12:12 2014 +0200
+| 
+|     Move example to dox file
+|  
+* commit 175b60e
+| Author: Didier Fabert <didier.fabert@gmail.com>
+| Date:   Tue Jul 15 06:48:25 2014 +0200
+| 
+|     Improve test
+|  
+* commit 2203be2
+| Author: Didier Fabert <didier.fabert@gmail.com>
+| Date:   Sun Jul 13 19:32:28 2014 +0200
+| 
+|     Add DEnv test
+|  
+* commit ed14a34
+| Author: Didier Fabert <didier.fabert@gmail.com>
+| Date:   Sun Jul 13 19:31:58 2014 +0200
+| 
+|     Remove old test files
+|  
+* commit e81ba24
+| Author: Didier Fabert <didier.fabert@gmail.com>
+| Date:   Sun Jul 13 12:49:46 2014 +0200
+| 
+|     gitignore
+|  
+* commit 0abf56a
+| Author: Didier Fabert <didier.fabert@gmail.com>
+| Date:   Sun Jul 13 12:48:37 2014 +0200
+| 
+|     Add logo source
+|  
+* commit 5d99e29
+| Author: Didier Fabert <didier.fabert@gmail.com>
+| Date:   Sun Jul 13 12:47:47 2014 +0200
+| 
+|     New logo
+|  
+* commit c7fc2a4
+| Author: Didier Fabert <didier.fabert@gmail.com>
+| Date:   Sun Jul 13 12:10:08 2014 +0200
+| 
+|     Add missing test files (empty)
+|  
+* commit 8efe66a
+| Author: Didier Fabert <didier.fabert@gmail.com>
+| Date:   Sat Jul 12 12:57:23 2014 +0200
+| 
+|     Modify MySQL find cmake macro, Search for dot application
+|  
+* commit 13bd0fa
+| Author: Didier Fabert <didier.fabert@gmail.com>
+| Date:   Sat Jul 12 12:55:51 2014 +0200
+| 
+|     Modify doxygen after moving sources to src
+|  
+* commit 2d5f231
+| Author: Didier Fabert <didier.fabert@gmail.com>
+| Date:   Sat Jul 12 12:54:56 2014 +0200
+| 
+|     Add conditionnal exception support
+|  
+* commit 9e0d955
+| Author: Didier Fabert <didier.fabert@gmail.com>
+| Date:   Sat Jul 12 12:52:39 2014 +0200
+| 
+|     Add FindMySQL cmake file
+|  
+* commit 41bd22f
+| Author: Didier Fabert <didier.fabert@gmail.com>
+| Date:   Sat Jul 12 12:05:39 2014 +0200
+| 
+|     Improve README
+|  
+* commit 1285b58
+| Author: Didier Fabert <didier.fabert@gmail.com>
+| Date:   Sat Jul 12 12:03:19 2014 +0200
+| 
+|     Improve README
+|  
+* commit b2feff9
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Sat Jul 12 11:43:39 2014 +0200
+| 
+|     Add HTML output
+|  
+* commit a6d2e66
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Sat Jul 12 11:41:51 2014 +0200
+| 
+|     Simplify legal char list creation
+|  
+* commit 9a2d241
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 9 19:25:04 2014 +0200
+| 
+|     Improve DString test
+|  
+* commit 8a855d8
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 9 19:24:46 2014 +0200
+| 
+|     Add operator <= and >=, Add sep char to splitConstantSize, Replace string by ref if possible, improve toUpper and toLower, debug replace and date operation.
+|  
+* commit 39703ba
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 9 19:19:57 2014 +0200
+| 
+|     DString method was modified (splitConstantSize)
+|  
+* commit b10e7c2
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Tue Jul 8 15:31:55 2014 +0200
+| 
+|     Modify source path for dlibspath exe (install target)
+|  
+* commit aba6999
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Tue Jul 8 15:15:38 2014 +0200
+| 
+|     Improve DAppCmdLine
+|  
+* commit 190f267
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Tue Jul 8 15:01:30 2014 +0200
+| 
+|     Remove deprecated cmake file
+|  
+* commit 6d61aee
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Tue Jul 8 15:00:28 2014 +0200
+| 
+|     Add cmake file for src dir
+|  
+* commit 2205af2
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Tue Jul 8 15:00:05 2014 +0200
+| 
+|     Add first unit test for DString
+|  
+* commit c300c0e
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Tue Jul 8 14:59:09 2014 +0200
+| 
+|     Remove deprecated config file
+|  
+* commit 5487046
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Tue Jul 8 14:56:11 2014 +0200
+| 
+|     lower case for all cmake commands. Add src directory. Improve tests (beginning)
+|  
+* commit 44af4b2
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Tue Jul 8 14:54:32 2014 +0200
+| 
+|     Move dlibs.h.cmake to src dir
+|  
+* commit e272459
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Mon Jul 7 12:07:12 2014 +0200
+| 
+|     Move source files to src dir
+|  
+* commit 0880502
+| Author: Didier Fabert <didier.fabert@gmail.com>
+| Date:   Mon Jul 7 09:13:32 2014 +0200
+| 
+|     Add ifdef WITH_EXCEPTIONS preprocessor macro
+|  
+* commit 0b01413
+| Author: Didier Fabert <didier.fabert@gmail.com>
+| Date:   Mon Jul 7 09:12:35 2014 +0200
+| 
+|     Search for MySQL and PostgreSQL quietly
+|  
+* commit 6385819
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Fri Jul 4 20:05:53 2014 +0200
+| 
+|     Add DAppHelp class to print nicer help
+|  
+* commit ba53edb
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Fri Jul 4 20:03:56 2014 +0200
+| 
+|     Remove old-style cast. Add ifdef WITH_EXCEPTIONS preprocessor macro
+|  
+* commit 767424d
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Thu Jul 3 16:11:08 2014 +0200
+| 
+|     Follow appcmdline modifications
+|  
+* commit d2834e0
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Thu Jul 3 16:10:12 2014 +0200
+| 
+|     BUGFIX: option without parameter is not visible with haveOption function, and add option example (DString) instead of boolean for required arg
+|  
+* commit 22db875
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Thu Jul 3 16:07:07 2014 +0200
+| 
+|     Test section function for dstring
+|  
+* commit bbac747
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Thu Jul 3 16:05:44 2014 +0200
+| 
+|     Add cflags and cxxflags (not used yet)
+|  
+* commit 381db89
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Thu Jul 3 16:04:41 2014 +0200
+| 
+|     Remove old-style cast. binToDec function return result directly ( returned by reference before )
+|  
+* commit d8e3b55
+| Author: didier <dfabert@b2pweb.com>
+| Date:   Mon Jun 24 16:32:22 2013 +0200
+| 
+|     Update sqlite
+|  
+* commit c5d3909
+| Author: didier <dfabert@b2pweb.com>
+| Date:   Mon Jun 24 16:22:53 2013 +0200
+| 
+|     Remove warnings at compile time
+|  
+* commit 2c64857
+| Author: didier <dfabert@b2pweb.com>
+| Date:   Mon Jun 24 10:36:42 2013 +0200
+| 
+|     Update doc
+|  
+* commit 89e5692
+| Author: didier <dfabert@b2pweb.com>
+| Date:   Mon Jun 24 10:29:42 2013 +0200
+| 
+|     Remove README, README.md is used
+|  
+* commit ccdcf13
+| Author: didier <dfabert@b2pweb.com>
+| Date:   Mon Jun 24 09:38:35 2013 +0200
+| 
+|     First import
+|  
+* commit f915d44
+| Author: didier <dfabert@b2pweb.com>
+| Date:   Mon Jun 24 09:33:26 2013 +0200
+| 
+|     First import
+|  
+* commit e67ef45
+  Author: Didier <didier.fabert@gmail.com>
+  Date:   Mon Jun 24 00:32:07 2013 -0700
+  
+      Initial commit
