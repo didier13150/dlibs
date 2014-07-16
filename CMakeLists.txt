@@ -3,25 +3,35 @@ project(Dlibs)
 cmake_minimum_required(VERSION 2.4)
 #if you don't want the full compiler output, remove the following line
 
+# project version
+set( Dlibs_MAJOR_VERSION 1 )
+set( Dlibs_MINOR_VERSION 2 )
+set( Dlibs_PATCH_LEVEL 1 )
+set( Dlibs_SOVERSION 0 )
+set( Dlibs_VERSION ${Dlibs_MAJOR_VERSION}.${Dlibs_MINOR_VERSION}.${Dlibs_PATCH_LEVEL} )
+set( Dlibs_BUGREPORT "didier.fabert@gmail.com" )
+
 mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 # allow more human readable "if then else" constructs
 set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE )
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR};${CMAKE_MODULE_PATH})
-#CMAKE_ROOT
-#this is just a basic CMakeLists.txt, for more information see the cmake manpage
-
-#add definitions, compiler switches, etc.
-add_definitions(-Wall -O2)
 
 option(WITH_TESTS "Enable building of unit tests" ON)
 option(WITH_CXX11 "Build with the C++ 11 standard" ON)
+option(WITH_EXCEPTIONS "Build with exceptions enabled" ON)
 option( BUILD_SHARED_LIBS "Set to OFF to build static libraries" ON )
 
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(CheckCXXSourceCompiles)
+
+if(WITH_EXCEPTIONS)
+  add_definitions(-Wall -O2 -fexceptions)
+else(WITH_EXCEPTIONS)
+  add_definitions(-Wall -O2)
+endif(WITH_EXCEPTIONS)
 
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-common -fstack-protector --param=ssp-buffer-size=4")
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wundef -Wpointer-arith -Wno-long-long")
@@ -44,9 +54,9 @@ include(CheckCXXSourceCompiles)
 #set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--no-add-needed -Wl,--as-needed")
 #set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,-z,relro")
 
-if(COMMAND CMAKE_POLICY)
-   cmake_policy(SET CMP0003 NEW)
-endif(COMMAND CMAKE_POLICY)
+#if(COMMAND CMAKE_POLICY)
+#   cmake_policy(SET CMP0003 NEW)
+#endif(COMMAND CMAKE_POLICY)
 
 find_package (LibXml2 REQUIRED)
 find_package (MySQL QUIET)
@@ -71,14 +81,6 @@ add_custom_target(changelog
                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                   COMMENT "Regenerating ChangeLog" VERBATIM
                  )
-
-# project version
-set( Dlibs_MAJOR_VERSION 1 )
-set( Dlibs_MINOR_VERSION 2 )
-set( Dlibs_PATCH_LEVEL 1 )
-set( Dlibs_SOVERSION 0 )
-set( Dlibs_VERSION ${Dlibs_MAJOR_VERSION}.${Dlibs_MINOR_VERSION}.${Dlibs_PATCH_LEVEL} )
-set( Dlibs_BUGREPORT "didier.fabert@gmail.com" )
 
 # project options
 if( NOT CMAKE_BUILD_TYPE )
