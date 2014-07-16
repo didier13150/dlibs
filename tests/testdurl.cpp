@@ -42,7 +42,6 @@
 void TestDURL::constructor_test()
 {
 	DURL url( "127.0.0.1" );
-	std::cout << std::endl << url.getLastError() << std::endl;
 	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url constructor failed" )
 }
 
@@ -53,16 +52,17 @@ void TestDURL::setUrl_test()
 	url.setURL( "127.0.0.1" );
 	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url set failed" )
 	url.setURL( "localhost/var/www/dlibs/" );
-	std::cout << std::endl << url.getLastError() << std::endl;
 	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with path set failed" )
-	url.setURL( "http://www.google.fr/ig" );
+	url.setURL( "http://www.google.fr" );
 	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with path and protocol set failed" )
-	url.setURL( "smtp://localhost" );
-	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with protocol set failed" )
+	url.setURL( "smtp://localhost/svn" );
+	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with path and protocol set failed" )
 	url.setURL( "ssh://localhost:2222/svn/dlibs/" );
 	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with path,port and protocol set failed" )
 	url.setURL( "toto://localhost:12345" );
 	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with port and protocol set failed" )
+	url.setURL( "toto://localhost/ip" );
+	TEST_ASSERT_MSG( url.getLastErrno() == DURL::NO_SERVICE, "Url with false protocol set successfully" )
 }
 
 void TestDURL::getUrl_test()

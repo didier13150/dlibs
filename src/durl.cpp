@@ -37,6 +37,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <netdb.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -60,8 +61,10 @@ int DURL::setURL( const DString & address )
 
 	struct hostent *host_addr;
 	struct sockaddr_in addr;
+	//struct addrinfo hints;
 	DString buffer;
 
+	clear();
 	m_url.url = address;
 	
 	// if protocol is set
@@ -98,18 +101,28 @@ int DURL::setURL( const DString & address )
 		}
 	}
 	m_url.ip = m_url.hostname;
-	if ( !m_url.path.isEmpty() )
-	{
-		m_url.path.prepend( "/" );
-	}
+	
+	m_url.path.prepend( "/" );
 
+	m_error = "";
+	m_errno = SUCCESS;
+	
 	if ( isIP( m_url.ip ) )
 	{
 		m_isIPAddress = true;
-				
-		host_addr = gethostbyaddr( m_url.ip.c_str(), m_url.ip.length(), AF_INET );
-
-		if ( !host_addr )
+		char host[1024];
+		char service[20];
+		memset( &addr, 0, sizeof( addr ) );
+		addr.sin_family      = AF_INET; //TODO use AF_UNSPEC instead for IPv4 and IPv6, or AF_INET6 to force IPv6
+		addr.sin_addr.s_addr = inet_addr( m_url.ip.c_str() );
+		int result = 0;
+		for ( int i = 0 ; i < 10 ; i++ )
+		{
+			result = getnameinfo( reinterpret_cast<sockaddr*> ( &addr ), sizeof( addr ), host, sizeof( host ), service, sizeof( service ), 0 );
+			if ( result != EAI_AGAIN ) break;
+			usleep( 500000 );
+		}
+		if ( result )
 		{
 			m_error = "Cannot get hostname by address";
 			m_errno = NO_HOST_BY_ADDR;
@@ -117,14 +130,13 @@ int DURL::setURL( const DString & address )
 		}
 		else
 		{
-			m_url.hostname = host_addr->h_name;
+			m_url.hostname = host;
 		}
 	}
 
 	else
 	{
-		m_isIPAddress = false;
-		
+		m_isIPAddress = false;		
 		host_addr = gethostbyname( m_url.hostname.c_str() );
 
 		if ( !host_addr )
@@ -153,18 +165,12 @@ int DURL::setURL( const DString & address )
 		}
 	}
 	
-	if ( m_errno != NO_HOST_BY_ADDR )
-	{
-		m_error = "";
-		m_errno = SUCCESS;
-	}
-
 	return m_errno;
 }
 
 bool DURL::isIP( const DString & address )
 {
-	unsigned short int seg, place = 0;
+	unsigned short int val, place = 0;
 	DString segment;
 	bool isIP = false;
 	DStringList segments;
@@ -178,10 +184,11 @@ bool DURL::isIP( const DString & address )
 		place = 0;
 		for ( it = segments.begin() ; it != segments.end() ; ++it )
 		{
-			seg = it->toUShort();
+			segment = *it;
+			val = segment.toUShort();
 			// if segment is greater than 255, it's not an valid IPv4 address
 
-			if ( seg > 255 )
+			if ( val > 255 )
 			{
 				isIP = false;
 				break;
@@ -189,14 +196,14 @@ bool DURL::isIP( const DString & address )
 
 			// if segment is null and not provided by a 0 char
 			// it's not an IP address
-			if ( ( seg == 0 ) && ( ( ( *it ) != "0" ) || ( ( *it ) != "00" ) || ( ( *it ) != "000" ) ) )
+			if ( ( val == 0 ) && ( segment != "0" ) )
 			{
 				isIP = false;
 				break;
 			}
 
 			// First or last segment cannot be null
-			if ((( place == 0 ) || ( place == 3 ) ) && ( seg == 0 ) )
+			if ((( place == 0 ) || ( place == 3 ) ) && ( val == 0 ) )
 			{
 				isIP = false;
 				break;
