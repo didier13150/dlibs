@@ -38,8 +38,6 @@
 #include <sstream>
 
 #include "dpoint.h"
-#include "dstring.h"
-
 
 /**
  * A simple way to define and use rect.\n
