@@ -63,6 +63,7 @@ public:
 		TEST_ADD( TestDString::case_test )
 		TEST_ADD( TestDString::justify_test )
 		TEST_ADD( TestDString::contains_test )
+		TEST_ADD( TestDString::stream_test )
 	}
     
 private:
@@ -82,6 +83,7 @@ private:
 	void case_test();
 	void justify_test();
 	void contains_test();
+	void stream_test();
 };
 
 #endif // _TESTDSTRING_H

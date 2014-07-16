@@ -38,8 +38,6 @@
 #include <map>
 #include "testdstring.h"
 
-using namespace std;
-
 void TestDString::constructor_test()
 {
 	DString str = "UTF-8 &éèêàâç";
@@ -63,7 +61,7 @@ void TestDString::constructor_test()
 void TestDString::add_test()
 {
 	DString str = "UTF-8 &éèêàâç";
-	string str2 = "Add";
+	std::string str2 = "Add";
 	
 	str += str2;
 	TEST_ASSERT_MSG( str == "UTF-8 &éèêàâçAdd", "Add 2 DStrings failed" )
@@ -517,6 +515,20 @@ void TestDString::contains_test()
 	TEST_ASSERT_MSG( str.contains( "aa" ) == 10, "Contains string failed" )
 	TEST_ASSERT_MSG( str.contains( std::string( "aaa" ) ) == 7, "Contains string failed" )
 	
+}
+
+void TestDString::stream_test()
+{
+	std::istringstream iss;
+	std::ostringstream oss;
+	DString str;
+	
+	iss.str( "abcdef" );
+	iss >> str;
+	TEST_ASSERT_MSG( str == "abcdef", "Inputting stream failed" )
+	str += "123456789";
+	oss << str;
+	TEST_ASSERT_MSG( oss.str() == "abcdef123456789", "Outputting stream failed" )
 }
 
 int main( int argc, char** argv )
