@@ -45,6 +45,12 @@
 #include <errno.h>
 #include <unistd.h>
 
+#ifndef WITH_EXCEPTIONS
+  #define COMPILE_WITH_EXCEPTIONS 0
+#else
+  #define COMPILE_WITH_EXCEPTIONS 1
+  #include "dexception.h"
+#endif
 
 struct sqlite3;
 
@@ -63,7 +69,7 @@ class DSQLite : public DDatabase
 		 */
 		DSQLite();
 
-#if WITH_EXCEPTIONS
+#if COMPILE_WITH_EXCEPTIONS
 		/**
 		 * Default Constructor
 		 */

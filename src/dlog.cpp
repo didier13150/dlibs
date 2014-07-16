@@ -34,7 +34,14 @@
 #include <stdio.h>
 #include <syslog.h>
 #include "dlog.h"
-#include "dlibs.h"
+#include "dsqlite.h"
+
+#ifdef DLIBS_HAVE_MYSQL
+  #include "dmysql.h"
+#endif
+#ifdef DLIBS_HAVE_PGSQL
+  #include "dpgsql.h"
+#endif
 
 #define DATE_FORMAT "%Y-%m-%d %H:%M:%S"
 #define MESSAGE_PATTERN "%DATE %TYPE %MESSAGE"
@@ -745,20 +752,20 @@ DLogEngineDatabase::DLogEngineDatabase ( void )
 	m_pattern = "\"%DATE\", \"%TYPE\", \"%MESSAGE\"";
 	m_dateFormat = DString::getFormat( DString::ISO_DATETIME_T );
 #ifdef DLIBS_HAVE_MYSQL
-#if WITH_EXCEPTIONS
+#if COMPILE_WITH_EXCEPTIONS
 	DFactory<DDatabase>::Register ( "dmysql", new DMySQL( true ) );
 #else
 	DFactory<DDatabase>::Register ( "dmysql", new DMySQL() );
 #endif
 #endif
 #ifdef DLIBS_HAVE_PGSQL
-#if WITH_EXCEPTIONS
+#if COMPILE_WITH_EXCEPTIONS
 	DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL( true ) );
 #else
 	DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL() );
 #endif
 #endif
-#if WITH_EXCEPTIONS
+#if COMPILE_WITH_EXCEPTIONS
 	DFactory<DDatabase>::Register ( "dsqlite", new DSQLite( true ) );
 #else
 	DFactory<DDatabase>::Register ( "dsqlite", new DSQLite() );

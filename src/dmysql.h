@@ -45,6 +45,13 @@
 #include <errno.h>
 #include <unistd.h>
 
+#ifndef WITH_EXCEPTIONS
+  #define COMPILE_WITH_EXCEPTIONS 0
+#else
+  #define COMPILE_WITH_EXCEPTIONS 1
+  #include "dexception.h"
+#endif
+
 struct st_mysql;
 
 /**
@@ -125,16 +132,18 @@ typedef DDatabaseOptions DSQLOptions;
  */
 class DMySQL : public DDatabase
 {
-	public:
+public:
 	/**
 	 * Empty Constructor
 	 */
 	DMySQL();
 
+#if COMPILE_WITH_EXCEPTIONS
 	/**
 	 * Default Constructor
 	 */
 	DMySQL( bool use_dexceptions );
+#endif
 
 	/**
 	 * Destructor
@@ -173,7 +182,7 @@ class DMySQL : public DDatabase
 	 */
 	DDatabaseResult & exec ( const DString & query );
 
-	private:
+private:
 	/// MySQL connect parameters : Host, User, Password, Database and Port.
 	DDatabaseParams m_params;
 

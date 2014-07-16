@@ -40,6 +40,7 @@
 #define DLIBS_PATCH @Dlibs_PATCH_LEVEL@
 #define DLIBS_SOVERSION @Dlibs_SOVERSION@
 #define DLIBS_VERSION "@Dlibs_VERSION@"
+#cmakedefine WITH_EXCEPTIONS
 #cmakedefine DLIBS_HAVE_MYSQL
 #cmakedefine DLIBS_HAVE_PGSQL
 

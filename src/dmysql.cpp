@@ -31,20 +31,16 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.             *
  ******************************************************************************/
 
-#include "dexception.h"
 #include "dmysql.h"
 #include <mysql.h>
 
-#ifndef WITH_EXCEPTIONS
-#define WITH_EXCEPTIONS 0
-#endif
 
 DMySQL::DMySQL() : DDatabase()
 {
 	init();
 }
 
-#if WITH_EXCEPTIONS
+#if COMPILE_WITH_EXCEPTIONS
 DMySQL::DMySQL ( bool use_dexceptions ) : DDatabase ( use_dexceptions )
 {
 	init();
@@ -93,7 +89,7 @@ DDatabaseResult & DMySQL::open()
 		m_result.errnb = NO_CONNECTED;
 		m_result.error = _errors[NO_CONNECTED];
 		m_opened = false;
-#if WITH_EXCEPTIONS
+#if COMPILE_WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
@@ -111,7 +107,7 @@ DDatabaseResult & DMySQL::open()
 		{
 			m_result.errnb = SET_OPT_CONNECT_FAILED;
 			m_result.error = _errors[SET_OPT_CONNECT_FAILED];
-#if WITH_EXCEPTIONS
+#if COMPILE_WITH_EXCEPTIONS
 			if ( _use_dexceptions )
 			{
 				throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
@@ -127,7 +123,7 @@ DDatabaseResult & DMySQL::open()
 		{
 			m_result.errnb = SET_OPT_READ_FAILED;
 			m_result.error = _errors[SET_OPT_READ_FAILED];
-#if WITH_EXCEPTIONS
+#if COMPILE_WITH_EXCEPTIONS
 			if ( _use_dexceptions )
 			{
 				throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
@@ -143,7 +139,7 @@ DDatabaseResult & DMySQL::open()
 		{
 			m_result.errnb = SET_OPT_WRITE_FAILED;
 			m_result.error = _errors[SET_OPT_WRITE_FAILED];
-#if WITH_EXCEPTIONS
+#if COMPILE_WITH_EXCEPTIONS
 			if ( _use_dexceptions )
 			{
 				throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
@@ -159,7 +155,7 @@ DDatabaseResult & DMySQL::open()
 		m_result.errnb = WRONG_PARAM;
 		m_result.error = _errors[WRONG_PARAM];
 		m_opened = false;
-#if WITH_EXCEPTIONS
+#if COMPILE_WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
@@ -189,7 +185,7 @@ DDatabaseResult & DMySQL::open()
 			m_result.error += ", port=" + m_params.port + ")";
 		}
 		m_opened = false;
-#if WITH_EXCEPTIONS
+#if COMPILE_WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
@@ -240,7 +236,7 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 		{
 			m_result.errnb = NO_CONNECTED;
 			m_result.error = _errors[NO_CONNECTED];
-#if WITH_EXCEPTIONS
+#if COMPILE_WITH_EXCEPTIONS
 			if ( _use_dexceptions )
 			{
 				throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
@@ -257,7 +253,7 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 	{
 		m_result.errnb = CONNECTION_LOSE;
 		m_result.error = _errors[CONNECTION_LOSE];
-#if WITH_EXCEPTIONS
+#if COMPILE_WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
@@ -273,7 +269,7 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 	{
 		m_result.errnb = QUERY_ERROR;
 		m_result.error = mysql_error ( mysql );
-#if WITH_EXCEPTIONS
+#if COMPILE_WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );

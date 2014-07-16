@@ -47,7 +47,9 @@
 
 
 #ifndef WITH_EXCEPTIONS
-#define WITH_EXCEPTIONS 0
+  #define COMPILE_WITH_EXCEPTIONS 0
+#else
+  #define COMPILE_WITH_EXCEPTIONS 1
 #endif
 /**
  * @relates DMyDatabase
@@ -193,7 +195,7 @@ class DDatabase : public DSkeleton, public DPrototype<DDatabase>
 		 */
 		DDatabase();
 
-#if WITH_EXCEPTIONS
+#if COMPILE_WITH_EXCEPTIONS
 		/**
 		 * Default constructor for managing exceptions
 		 */
