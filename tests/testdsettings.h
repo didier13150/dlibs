@@ -46,11 +46,17 @@ class TestDSettings : public Test::Suite
 public:
 	TestDSettings()
 	{
-		TEST_ADD( TestDSettings::constructor_test )
+		TEST_ADD( TestDSettings::write_config )
+		TEST_ADD( TestDSettings::get_test )
+		TEST_ADD( TestDSettings::set_test )
+		TEST_ADD( TestDSettings::delete_config )
 	}
 
 private:
-	void constructor_test();
+	void write_config();
+	void delete_config();
+	void get_test();
+	void set_test();
 };
 
 #endif // _TESTDSETTINGS_H

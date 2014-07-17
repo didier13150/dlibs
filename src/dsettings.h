@@ -41,6 +41,12 @@
 #include "dstring.h"
 #include "dskeleton.h"
 
+#ifndef WITH_EXCEPTIONS
+  #define COMPILE_WITH_EXCEPTIONS 0
+#else
+  #define COMPILE_WITH_EXCEPTIONS 1
+#endif
+
 /**
  * @typedef xmlNodePtrList
  */
@@ -65,7 +71,7 @@ typedef std::list<xmlNodePtr> xmlNodePtrList;
  * </settings>
  * @endcode
  * A little example program.
- * @include testdsettings.cpp
+ * @include dsettings.dox
  * @brief Config file.
  */
 class DSettings : public DSkeleton
@@ -76,7 +82,7 @@ class DSettings : public DSkeleton
 		 * Empty constructor
 		 */
 		DSettings ( void );
-#ifdef WITH_EXCEPTIONS
+#ifdef COMPILE_WITH_EXCEPTIONS
 		/**
 		 * Default constructor
 		 */
@@ -94,6 +100,23 @@ class DSettings : public DSkeleton
 		 * @see #sets_errors enum for returned values
 		 */
 		int readEntry ( const DString & key, DString & value );
+
+		/**
+		 * Read the entry
+		 * @attention the group must be set before calling this function.
+		 * @see #setGroup
+		 * @see #sets_errors enum for returned values
+		 */
+		const DString & getEntry ( const DString & key );
+
+		/**
+		 * Read all entries
+		 * @attention the group must be set before calling this function.
+		 * @see #setGroup
+		 * @see #sets_errors enum for returned values
+		 */
+		const DStringList & getEntries ( const DString & key );
+		
 		/**
 		 * Write the entry
 		 * For now, Only a content of an existing node is possible.
@@ -131,7 +154,7 @@ class DSettings : public DSkeleton
 		/**
 		 * Get the current settings group
 		 */
-		DString & getGroup ( void );
+		const DString & getGroup ( void ) const;
 
 		/**
 		 * Return true if DOM have group \em group entry, false otherwise.
@@ -199,6 +222,10 @@ class DSettings : public DSkeleton
 		DString m_group;
 		/// The last entry name
 		DString m_key;
+		/// The last entry value
+		DString m_val;
+		/// The last entries value
+		DStringList m_values;
 		/// The XML document
 		xmlDocPtr m_doc;
 		/// The XML root node
@@ -234,6 +261,11 @@ class DSettings : public DSkeleton
 		 * Init the class
 		 */
 		void init ( void );
+		
+		/**
+		 * Read the entry matching xpath
+		 */
+		void read ( const DString & xpath, bool onlyone = true );
 };
 
 /**
