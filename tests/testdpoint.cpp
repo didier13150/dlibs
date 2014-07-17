@@ -38,7 +38,6 @@
 #include <iostream>
 #include <fstream>
 #include "testdpoint.h"
-#include "dstring.h"
 
 typedef DPoint<unsigned int> UPoint;
 typedef DPoint<int> Point;
@@ -126,15 +125,16 @@ void TestDPoint::stream_test()
 {
 	FPoint pt( 3.2, 5.4);
 	TEST_ASSERT_MSG( pt.toString() == "{3.2,5.4}", "Get string dump failed" )
-	std::istringstream stin( "{8.6,7.1}" );
-	stin >> pt;
+	std::istringstream iss;
+	std::ostringstream oss;
+	
+	iss.str( "{8.6,7.1}" );
+	iss >> pt;
 	TEST_ASSERT_DELTA_MSG( pt.getX(), 8.6, 0.0001, "Get X float var after stream push failed" )
 	TEST_ASSERT_DELTA_MSG( pt.getY(), 7.1, 0.0001, "Get Y float var after stream push failed" )
 	TEST_ASSERT_MSG( pt.toString() == "{8.6,7.1}", "Get string dump failed after stream push" )
-	std::ostringstream stout;
-	stout << pt;
-	DString buffer( stout.str() );
-	TEST_ASSERT_MSG( buffer == "{8.6,7.1}", "Get string dump failed after stream push" )
+	oss << pt;
+	TEST_ASSERT_MSG( oss.str() == "{8.6,7.1}", "Get string dump failed after stream push" )
 	
 }
 
