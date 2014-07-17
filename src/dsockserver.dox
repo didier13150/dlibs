@@ -3,34 +3,42 @@
  ******************************************************************************/
 #include <iostream>
 #include <cstdlib>
-#include "dlibs.h" // replace it by #include <dlibs/dlibs.h>
+#include <signal.h>
+
+#include "dlibs.h"
+#define PORT 12345
 
 using namespace std;
 
-int testdsockserver()
+bool loop = true;
+
+void sighandler( int signum )
+{
+   cout << "Caught signal" << signum << endl;
+   loop = false;
+}
+
+int main( int argc, char **argv )
 {
 	DServerSock server;
 	int hSock = -1;
 	DString buffer;
 	DURL url;
 	int port = 0;
+	
+	signal( SIGTERM, sighandler );
 
-	cout << "Port to open ( 0 to quit ) : ";
-	cin >> port;
+	server.setTimeout ( 3000 );
 
-	if ( ( port > 0 ) && ( port < 65535 ) )
+	if ( server.openSock ( PORT ) != DSock::SUCCESS )
 	{
-		cout << "Launch the client application (dlibstestdsockclient)" << endl;
-		cout << "Text must be appear inside this console." << endl;
-		server.setTimeout ( 3000 );
+		cout << "port " << PORT << " cannot be opened" << endl;
+		cout << server.getLastError() << endl;
+		return EXIT_FAILURE;
+	}
 
-		if ( server.openSock ( port ) != DSock::SUCCESS )
-		{
-			cout << "port " << port << " cannot be opened" << endl;
-			cout << server.getLastError() << endl;
-			return EXIT_FAILURE;
-		}
-
+	while ( loop )
+	{
 		if ( server.openConnection ( hSock ) != DSock::SUCCESS )
 		{
 			cout << "Server cannot accept new client" << endl;
@@ -55,12 +63,12 @@ int testdsockserver()
 					cout << server.getLastError() << endl;
 				}
 			}
-			errno = server.writeMessage( hSock, "123456789012345678901234567890123456789012345678901234567890123456789012345678901" );
+			errno = server.writeMessage( hSock, buffer );
 		}
 		cout << "Close client connection" << endl;
 		server.closeConnection ( hSock );
-
-		server.closeSock();
 	}
+
+	server.closeSock();
 	return EXIT_SUCCESS;
 }

@@ -46,11 +46,11 @@ class TestDSocket : public Test::Suite
 public:
 	TestDSocket()
 	{
-		TEST_ADD( TestDSocket::constructor_test )
+		TEST_ADD( TestDSocket::basic_com_test )
 	}
 
 private:
-	void constructor_test();
+	void basic_com_test();
 };
 
 #endif // _TESTDSOCKET_H

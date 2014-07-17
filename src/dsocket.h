@@ -185,7 +185,7 @@ protected:
  * with a hostname, a DURL object must be passed.\n
  * @brief Tools for working with sockets, client part
  * @author Didier Fabert <didier.fabert@gmail.com>
- * @include testdsockclient.cpp
+ * @include dsockclient.dox
  */
 class DClientSock : public DSock
 {
@@ -284,7 +284,7 @@ public:
 
 /**
  * This class give tools for working with socket (Server part)\n
- * @include testdsockserver.cpp
+ * @include dsockserver.dox
  * @brief Tools for working with sockets, server part
  * @author Didier Fabert <didier.fabert@gmail.com>
  */
