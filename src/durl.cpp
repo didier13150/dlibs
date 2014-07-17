@@ -39,8 +39,6 @@
 #include <netdb.h>
 #include <unistd.h>
 
-using namespace std;
-
 DURL::DURL()
 {
 	clear();
@@ -102,7 +100,8 @@ int DURL::setURL( const DString & address )
 	}
 	m_url.ip = m_url.hostname;
 	
-	m_url.path.prepend( "/" );
+	if ( ! m_url.path.isEmpty() )
+		m_url.path.prepend( "/" );
 
 	m_error = "";
 	m_errno = SUCCESS;
@@ -110,27 +109,28 @@ int DURL::setURL( const DString & address )
 	if ( isIP( m_url.ip ) )
 	{
 		m_isIPAddress = true;
+		
 		char host[1024];
 		char service[20];
 		memset( &addr, 0, sizeof( addr ) );
 		addr.sin_family      = AF_INET; //TODO use AF_UNSPEC instead for IPv4 and IPv6, or AF_INET6 to force IPv6
 		addr.sin_addr.s_addr = inet_addr( m_url.ip.c_str() );
-		int result = 0;
+		int failure = 1;
 		for ( int i = 0 ; i < 10 ; i++ )
 		{
-			result = getnameinfo( reinterpret_cast<sockaddr*> ( &addr ), sizeof( addr ), host, sizeof( host ), service, sizeof( service ), 0 );
-			if ( result != EAI_AGAIN ) break;
-			usleep( 500000 );
+			failure = getnameinfo( reinterpret_cast<sockaddr*> ( &addr ), sizeof( addr ), host, sizeof( host ), service, sizeof( service ), 0 );
+			if ( failure != EAI_AGAIN ) break;
+			usleep( 100000 );
 		}
-		if ( result )
-		{
+		
+		buffer = host;
+		if ( ( ! failure ) && ( buffer != m_url.ip ) ) {
+			m_url.hostname = host;
+		}
+		else {
+			m_url.hostname.clear();
 			m_error = "Cannot get hostname by address";
 			m_errno = NO_HOST_BY_ADDR;
-			m_url.hostname.clear();
-		}
-		else
-		{
-			m_url.hostname = host;
 		}
 	}
 
@@ -148,16 +148,16 @@ int DURL::setURL( const DString & address )
 		}
 		else
 		{
-			addr.sin_addr.s_addr = (( struct in_addr* ) host_addr->h_addr )->s_addr;
+			addr.sin_addr.s_addr = reinterpret_cast<struct in_addr*> ( host_addr->h_addr )->s_addr;
 			m_url.ip = inet_ntoa( addr.sin_addr );
 		}
 	}
 
 	// If port is already set, no need to search it
-	if ( !m_url.service.isEmpty() && !m_url.port )
+	if ( ! m_url.service.isEmpty() && ! m_url.port )
 	{
 		m_url.port = getPortByService( m_url.service );
-		if ( !m_url.port )
+		if ( ! m_url.port )
 		{
 			m_error = "Cannot get port by service name";
 			m_errno = NO_SERVICE;
@@ -196,7 +196,7 @@ bool DURL::isIP( const DString & address )
 
 			// if segment is null and not provided by a 0 char
 			// it's not an IP address
-			if ( ( val == 0 ) && ( segment != "0" ) )
+			if ( ( val == 0 ) && ! ( segment == "0" || segment == "00" || segment == "000" ) )
 			{
 				isIP = false;
 				break;

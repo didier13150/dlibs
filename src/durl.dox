@@ -5,35 +5,23 @@
 #include <iostream>
 #include <cstdlib>
 
-#include "dlibs.h" // replace it by #include <dlibs/dlibs.h>
+#include "dlibs.h"
 
 using namespace std;
 
-int testdurl()
+int main( int argc, char **argv )
 {
 	DURL url;
 	DStringList hosts;
 	DStringList::iterator it;
 
-	hosts.push_back( "localhost/var/www/dlibs/" );
-	hosts.push_back( "127.0.0.1" );
-	hosts.push_back( "http://www.google.fr:8080/ig" );
-	hosts.push_back( "smtp://localhost" );
-	hosts.push_back( "ssh://localhost:2222/svn/dlibs/" );
-	hosts.push_back( "toto://localhost" );
+	url.setURL( "http://localhost:8080/svn/dlibs/" );
 	
-	for ( it = hosts.begin() ; it != hosts.end() ; ++it )
-	{
-		url.setURL ( *it );
-		cout << "URL = " << *it << endl;
-		if ( url.getLastErrno() != DURL::SUCCESS )
-		{
-			cout << url.getLastError() << endl;
-		}
-		cout << url << endl;
-		url.clear();
-		cout << "-----------------------------------------------------" << endl;
-	}
+	cout << "IP Address: " << url.getIPAddress() << endl;
+	cout << "Hostname: " << url.getHost() << endl;
+	cout << "Port: " << url.getPort() << endl;
+	cout << "Service: " << url.getServiceName() << endl;
+	cout << "Path: " << url.getPath() << endl;
 	
 	return 0;
 }

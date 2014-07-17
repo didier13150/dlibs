@@ -32,19 +32,16 @@
  ******************************************************************************/
 
 #ifndef DURL_H
- #define DURL_H
+#define DURL_H
 
- #include "dstring.h"
-
-using namespace std;
-
+#include "dstring.h"
  
 /**
-* Class to manage network address
-* @include testdurl.cpp
-* @brief Network address.
-* @author Didier Fabert <didier.fabert@gmail.com>
-*/
+ * Class to manage network address
+ * @include durl.dox
+ * @brief Network address.
+ * @author Didier Fabert <didier.fabert@gmail.com>
+ */
 class DURL
 {
 public:

@@ -45,49 +45,88 @@ void TestDURL::constructor_test()
 	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url constructor failed" )
 }
 
-void TestDURL::setUrl_test()
+void TestDURL::url_test()
 {
 	DURL url;
 	
 	url.setURL( "127.0.0.1" );
 	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url set failed" )
+	TEST_ASSERT_MSG( url.getIPAddress() == "127.0.0.1", "Url doesn't report good IP" )
+	TEST_ASSERT_MSG( url.getHost() == "localhost", "Url doesn't report good hostname" )
+	TEST_ASSERT_MSG( url.getPort() == 0, "Url doesn't report good port" )
+	TEST_ASSERT_MSG( url.getServiceName() == DString::empty(), "Url doesn't report good service" )
+	TEST_ASSERT_MSG( url.getPath() == DString::empty(), "Url doesn't report good path" )
+	TEST_ASSERT_MSG( url.isIPAddress() == true, "Url not reported as an IP address" )
+	TEST_ASSERT_MSG( url.isHostname() == false, "Url reported as a hostname" )
+	
 	url.setURL( "localhost/var/www/dlibs/" );
 	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with path set failed" )
+	TEST_ASSERT_MSG( url.getIPAddress() == "127.0.0.1", "Url doesn't report good IP" )
+	TEST_ASSERT_MSG( url.getHost() == "localhost", "Url doesn't report good hostname" )
+	TEST_ASSERT_MSG( url.getPort() == 0, "Url doesn't report good port" )
+	TEST_ASSERT_MSG( url.getServiceName() == DString::empty(), "Url doesn't report good service" )
+	TEST_ASSERT_MSG( url.getPath() == "/var/www/dlibs", "Url doesn't report good path" )
+	TEST_ASSERT_MSG( url.isIPAddress() == false, "Url reported as an IP address" )
+	TEST_ASSERT_MSG( url.isHostname() == true, "Url not reported as a hostname" )
+	
 	url.setURL( "http://www.google.fr" );
 	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with path and protocol set failed" )
-	url.setURL( "smtp://localhost/svn" );
+	TEST_ASSERT_MSG( url.getHost() == "www.google.fr", "Url doesn't report good hostname" )
+	TEST_ASSERT_MSG( url.getPort() == 80, "Url doesn't report good port" )
+	TEST_ASSERT_MSG( url.getServiceName() == "http", "Url doesn't report good service" )
+	TEST_ASSERT_MSG( url.getPath() == DString::empty(), "Url doesn't report good path" )
+	TEST_ASSERT_MSG( url.isIPAddress() == false, "Url reported as an IP address" )
+	TEST_ASSERT_MSG( url.isHostname() == true, "Url not reported as a hostname" )
+	
+	url.setURL( "ssh://localhost/svn" );
 	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with path and protocol set failed" )
+	TEST_ASSERT_MSG( url.getIPAddress() == "127.0.0.1", "Url doesn't report good IP" )
+	TEST_ASSERT_MSG( url.getHost() == "localhost", "Url doesn't report good hostname" )
+	TEST_ASSERT_MSG( url.getPort() == 22, "Url doesn't report good port" )
+	TEST_ASSERT_MSG( url.getServiceName() == "ssh", "Url doesn't report good service" )
+	TEST_ASSERT_MSG( url.getPath() == "/svn", "Url doesn't report good path" )
+	TEST_ASSERT_MSG( url.isIPAddress() == false, "Url reported as an IP address" )
+	TEST_ASSERT_MSG( url.isHostname() == true, "Url not reported as a hostname" )
+	
 	url.setURL( "ssh://localhost:2222/svn/dlibs/" );
 	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with path,port and protocol set failed" )
-	url.setURL( "toto://localhost:12345" );
+	TEST_ASSERT_MSG( url.getIPAddress() == "127.0.0.1", "Url doesn't report good IP" )
+	TEST_ASSERT_MSG( url.getHost() == "localhost", "Url doesn't report good hostname" )
+	TEST_ASSERT_MSG( url.getPort() == 2222, "Url doesn't report good port" )
+	TEST_ASSERT_MSG( url.getServiceName() == "ssh", "Url doesn't report good service" )
+	TEST_ASSERT_MSG( url.getPath() == "/svn/dlibs", "Url doesn't report good path" )
+	TEST_ASSERT_MSG( url.isIPAddress() == false, "Url reported as an IP address" )
+	TEST_ASSERT_MSG( url.isHostname() == true, "Url not reported as a hostname" )
+	
+	url.setURL( "toto://localhost:12345/svn/dlibs" );
 	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with port and protocol set failed" )
+	TEST_ASSERT_MSG( url.getIPAddress() == "127.0.0.1", "Url doesn't report good IP" )
+	TEST_ASSERT_MSG( url.getHost() == "localhost", "Url doesn't report good hostname" )
+	TEST_ASSERT_MSG( url.getPort() == 12345, "Url doesn't report good port" )
+	TEST_ASSERT_MSG( url.getServiceName() == "toto", "Url doesn't report good service" )
+	TEST_ASSERT_MSG( url.getPath() == "/svn/dlibs", "Url doesn't report good path" )
+	TEST_ASSERT_MSG( url.isIPAddress() == false, "Url reported as an IP address" )
+	TEST_ASSERT_MSG( url.isHostname() == true, "Url not reported as a hostname" )
+	
 	url.setURL( "toto://localhost/ip" );
-	TEST_ASSERT_MSG( url.getLastErrno() == DURL::NO_SERVICE, "Url with false protocol set successfully" )
-}
-
-void TestDURL::getUrl_test()
-{
-	DURL url;
+	TEST_ASSERT_MSG( url.getLastErrno() == DURL::NO_SERVICE, "Url with wrong protocol set successfully" )
+	TEST_ASSERT_MSG( url.getIPAddress() == "127.0.0.1", "Url doesn't report good IP" )
+	TEST_ASSERT_MSG( url.getHost() == "localhost", "Url doesn't report good hostname" )
+	TEST_ASSERT_MSG( url.getPort() == 0, "Url doesn't report good port" )
+	TEST_ASSERT_MSG( url.getServiceName() == "toto", "Url doesn't report good service" )
+	TEST_ASSERT_MSG( url.getPath() == "/ip", "Url doesn't report good path" )
+	TEST_ASSERT_MSG( url.isIPAddress() == false, "Url reported as an IP address" )
+	TEST_ASSERT_MSG( url.isHostname() == true, "Url not reported as a hostname" )
 	
-	url.setURL( "127.0.0.1" );
-	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url set failed" )
-	TEST_ASSERT_MSG( url.isIPAddress() == true, "Url don't reported as an IP address" )
-	url.setURL( "localhost/var/www/dlibs/" );
-	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with path set failed" )
-	TEST_ASSERT_MSG( url.isIPAddress() == false, "Url reported as an IP address" )
-	url.setURL( "http://www.google.fr/ig" );
-	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with path and protocol set failed" )
-	TEST_ASSERT_MSG( url.isIPAddress() == false, "Url reported as an IP address" )
-	url.setURL( "smtp://localhost" );
-	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with protocol set failed" )
-	TEST_ASSERT_MSG( url.isIPAddress() == false, "Url reported as an IP address" )
-	url.setURL( "ssh://localhost:2222/svn/dlibs/" );
-	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with path,port and protocol set failed" )
-	TEST_ASSERT_MSG( url.isIPAddress() == false, "Url reported as an IP address" )
-	url.setURL( "toto://localhost:12345" );
-	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with port and protocol set failed" )
-	TEST_ASSERT_MSG( url.isIPAddress() == false, "Url reported as an IP address" )
-	
+	url.setURL( "http://1.1.1.1:8080/ip" );
+	TEST_ASSERT_MSG( url.getLastErrno() == DURL::NO_HOST_BY_ADDR, "Url with IP address set successfully" )
+	TEST_ASSERT_MSG( url.getIPAddress() == "1.1.1.1", "Url doesn't report good IP" )
+	TEST_ASSERT_MSG( url.getHost() == DString::empty(), "Url report wrong hostname" )
+	TEST_ASSERT_MSG( url.getPort() == 8080, "Url doesn't report good port" )
+	TEST_ASSERT_MSG( url.getServiceName() == "http", "Url doesn't report good service" )
+	TEST_ASSERT_MSG( url.getPath() == "/ip", "Url doesn't report good path" )
+	TEST_ASSERT_MSG( url.isIPAddress() == true, "Url reported as an IP address" )
+	TEST_ASSERT_MSG( url.isHostname() == false, "Url not reported as a hostname" )
 }
 
 int main( int argc, char** argv )
