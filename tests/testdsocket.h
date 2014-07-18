@@ -47,10 +47,12 @@ public:
 	TestDSocket()
 	{
 		TEST_ADD( TestDSocket::basic_com_test )
+		TEST_ADD( TestDSocket::url_test )
 	}
 
 private:
 	void basic_com_test();
+	void url_test();
 };
 
 #endif // _TESTDSOCKET_H

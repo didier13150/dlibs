@@ -90,6 +90,60 @@ void TestDSocket::basic_com_test()
 	server.closeSock();
 }
 
+void TestDSocket::url_test()
+{
+	DServerSock server;
+	DClientSock client;
+	int h = -1;
+	DString buffer;
+	int err;
+	DURL url;
+	
+	buffer.setNum( PORT );
+	buffer.prepend( "localhost:" );
+	url.setURL( buffer );
+	
+	server.setTimeout ( 1500 );
+	client.setTimeout ( 1500 );
+	err = server.openSock ( PORT );
+	TEST_ASSERT_MSG( err == DSock::SUCCESS, "Can not open socket on server side" )
+	
+	err = client.openSock ( url );
+	TEST_ASSERT_MSG( err == DSock::SUCCESS, "Can not open socket on client side" )
+	if ( err != DSock::SUCCESS )
+	{
+		server.closeSock();
+		return;
+	}
+	
+	err = server.openConnection ( h );
+	TEST_ASSERT_MSG( err == DSock::SUCCESS, "Can not open new connection on server side" )
+	if ( err != DSock::SUCCESS )
+	{
+		server.closeSock();
+		return;
+	}
+	
+	err = client.writeMessage ( "Hello Server !" );
+	TEST_ASSERT_MSG( err == DSock::SUCCESS, "Client can not write message" )
+	
+	err = server.readMessage ( h, buffer );
+	TEST_ASSERT_MSG( err == DSock::SUCCESS, "Server can not read message" )
+	TEST_ASSERT_MSG( buffer.simplifyWhiteSpace() == "Hello Server !", "Server receive wrong message" )
+	
+	err = server.writeMessage ( h, "Hello Client !" );
+	TEST_ASSERT_MSG( err == DSock::SUCCESS, "Server can not write message" )
+	
+	err = client.readMessage ( buffer );
+	TEST_ASSERT_MSG( err == DSock::SUCCESS, "Client can not read message" )
+	TEST_ASSERT_MSG( buffer.simplifyWhiteSpace() == "Hello Client !", "Client receive wrong message" )
+	
+	client.closeSock();
+	
+	server.closeConnection ( h );
+	server.closeSock();
+}
+
 int main( int argc, char** argv )
 {
 	std::ofstream file;
