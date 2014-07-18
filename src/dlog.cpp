@@ -164,10 +164,8 @@ const DString & DLogParams::toString ( const DLogShared::Mode & mode )
 std::map<DString, DString> DLogger::m_userVar = std::map<DString, DString>();
 
 DLogger::DLogger()
-		: m_initialized ( false ), m_have_stdout ( false )
+		: m_initialized ( false ), m_stdout ( 0 )
 {
-	m_have_stdout = false;
-
 	// Register available types
 	DFactory<DLogEngine>::Register ( FILE, new DLogEngineFile() );
 	DFactory<DLogEngine>::Register ( STDOUT, new DLogEngineStdout() );
@@ -184,19 +182,19 @@ DLogger::~DLogger()
 DLogEngine * DLogger::addLogEngine ( Type type, DLogParams & params )
 {
 	// Only one stdout can be exists
-	if ( type == STDOUT )
+	if ( type == DLogShared::STDOUT )
 	{
-		if ( m_have_stdout )
+		if ( m_stdout )
 		{
-			return 0;
-		}
-		else
-		{
-			m_have_stdout = true;
+			return m_stdout;
 		}
 	}
 
 	DLogEngine * log = m_factory.create ( type );
+	if ( type == DLogShared::STDOUT )
+	{
+		m_stdout = log;
+	}
 	log->setParam ( params );
 	m_logs.push_back ( log );
 	return log;
@@ -204,6 +202,11 @@ DLogEngine * DLogger::addLogEngine ( Type type, DLogParams & params )
 
 void DLogger::addLogEngine ( DLogEngine * engine )
 {
+	if ( engine->getType() == DLogShared::STDOUT )
+	{
+		// Only one stdout can be exists
+		if ( m_stdout ) return;
+	}
 	m_logs.push_back ( engine );
 }
 
@@ -217,6 +220,11 @@ void DLogger::removeLogEngine ( DLogEngine * engine )
 	{
 		if ( *it == engine )
 		{
+			if ( engine->getType() == DLogShared::STDOUT )
+			{
+				// Only one stdout can be exists
+				m_stdout = 0;
+			}
 			m_logs.erase ( it );
 			delete ( engine );
 			// not necessary to continue
@@ -916,12 +924,9 @@ bool DLogEngineSocket::open()
 {
 	if ( m_client.openSock ( m_host ) != DSock::SUCCESS )
 	{
-		std::cout << m_host << std::endl;
 		m_valid = false;
 		return false;
 	}
-	//TODO
-	std::cout << m_host << std::endl;
 
 	m_client.setTimeout ( 2000 );
 	if ( m_bufsize )
@@ -950,7 +955,7 @@ void DLogEngineSocket::insert ( const DString & text, Level loglevel )
 	{
 		open();
 	}
-	m_client.writeMessage ( text );
+	m_client.writeMessage ( DLogger::prepare ( text, m_dateFormat, m_pattern, loglevel ) );
 	if ( m_mode == DLogShared::OPENCLOSE )
 	{
 		close();

@@ -839,10 +839,10 @@ class DLogger : public DLogShared, public DSingleton<DLogger>
 		/// Initialisation flag
 		bool m_initialized;
 
-		/** stdout engine presence flag.\n
+		/** stdout engine pointer.\n
 		 * It's impossible to have more than one stdout in same time.
 		 */
-		bool m_have_stdout;
+		DLogEngine * m_stdout;
 		
 		/// user variables
 		static std::map<DString, DString> m_userVar;
