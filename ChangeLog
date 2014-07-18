@@ -1,4 +1,106 @@
-* commit 8a302e1 (HEAD, master)
+* commit 635117e (HEAD, master)
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Fri Jul 18 12:07:23 2014 +0200
+| 
+|     Improve tests for DLog
+|  
+* commit 7ec3aff
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Fri Jul 18 12:06:39 2014 +0200
+| 
+|     Improve tests: Add DURL test
+|  
+* commit 325520b (origin/master, origin/HEAD)
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Thu Jul 17 12:08:15 2014 +0200
+| 
+|     Improve tests
+|  
+* commit 2b2027c
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Thu Jul 17 12:06:16 2014 +0200
+| 
+|     Remove old empty test files
+|  
+* commit 221511a
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Thu Jul 17 12:04:51 2014 +0200
+| 
+|     Move old test sources to doxygen examples
+|  
+* commit 13d3d3f
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Thu Jul 17 11:19:35 2014 +0200
+| 
+|     Improve tests
+|  
+* commit abef9d6
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Thu Jul 17 11:05:32 2014 +0200
+| 
+|     Improve tests
+|  
+* commit c90c049
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Thu Jul 17 11:05:03 2014 +0200
+| 
+|     Improve tests
+|  
+* commit 41b385d
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Thu Jul 17 11:04:09 2014 +0200
+| 
+|     Move old test sources to doxygen examples
+|  
+* commit 1e79ae8
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 16 12:36:32 2014 +0200
+| 
+|     Remove dstring.h header
+|  
+* commit f93ae0e
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 16 12:35:25 2014 +0200
+| 
+|     Add stream tests for DString
+|  
+* commit be6efaa
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 16 12:35:04 2014 +0200
+| 
+|     Improve DURL tests
+|  
+* commit a497dd5
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 16 09:23:12 2014 +0200
+| 
+|     Use DAppCmdLine on dlibspath binary
+|  
+* commit ae0ca83
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 16 09:22:37 2014 +0200
+| 
+|     Update sqlite
+|  
+* commit 646d83a
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 16 09:22:17 2014 +0200
+| 
+|     Improve exception support on preprocessor macro
+|  
+* commit 80bc82f
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 16 09:20:46 2014 +0200
+| 
+|     Remove CMP0003 cmake policy. Add exception flag
+|  
+* commit 569ce71
+| Author: Didier Fabert <dfabert@b2pweb.com>
+| Date:   Wed Jul 16 07:28:20 2014 +0200
+| 
+|     Regenerating ChangeLog
+|  
+* commit 8a302e1
 | Author: Didier Fabert <dfabert@b2pweb.com>
 | Date:   Wed Jul 16 07:27:26 2014 +0200
 | 
@@ -22,7 +124,7 @@
 | 
 |     Remove autotools required files (empty)
 |  
-* commit 9f0541f (origin/master, origin/HEAD)
+* commit 9f0541f
 | Author: Didier Fabert <dfabert@b2pweb.com>
 | Date:   Wed Jul 16 06:33:14 2014 +0200
 | 
