@@ -1051,8 +1051,8 @@ int DString::find ( const DString & str, int index, bool cs ) const
 
 	if ( !cs )
 	{
-		buf1.lower();
-		buf2.lower();
+		buf1.toLower();
+		buf2.toLower();
 	}
 
 	if ( index < 0 )
@@ -1236,14 +1236,19 @@ DString DString::timeToString ( const time_t & t, DString format )
 {
 	char buffer[80];
 	DString date;
+	struct tm *stm = 0;
 	
 	// Get local time
-	struct tm *stm = localtime ( &t );
+	stm = localtime ( &t );
 	if ( ! stm ) return date;
+	mktime( stm );
 	//translate format's time and writting on file
-	strftime ( buffer, sizeof( buffer ), format.c_str(), stm );
+	if ( ! strftime ( buffer, sizeof( buffer ), format.c_str(), stm ) )
+	{
+		return DString::empty();
+	}
 	date = buffer;
-
+	
 	return date;
 }
 
@@ -1252,9 +1257,9 @@ DString DString::timeToString ( const time_t & t, DateFormat format )
 	return timeToString ( t, getFormat ( format ) );
 }
 
-DString DString::Now ( const char * format )
+DString DString::Now ( const DString & format )
 {
-	return timeToString ( time ( NULL ), format );
+	return timeToString ( time ( NULL ), format.c_str() );
 }
 
 DString DString::Now ( DateFormat format )
@@ -1262,25 +1267,21 @@ DString DString::Now ( DateFormat format )
 	return timeToString ( time ( NULL ), getFormat ( format ) );
 }
 
-DString & DString::convertTime ( const char * oldformat,
-                                 const char * newformat )
+DString & DString::convertTime ( const DString & oldformat,
+                                 const DString & newformat )
 {
 	//char *strptime(const char *buf, const char *format, struct tm *tm);
 	struct tm stm;
 	char buffer[80];
 
 	// Get local time
-	strptime ( m_str.c_str(), oldformat, &stm );
-	strftime ( buffer, sizeof ( buffer ), newformat, &stm );
-	m_str = buffer;
+	strptime ( m_str.c_str(), oldformat.c_str(), &stm );
+	size_t t = strftime ( buffer, sizeof ( buffer ), newformat.c_str(), &stm );
+	if ( t )
+	{
+		m_str = buffer;
+	}
 
-	return *this;
-}
-
-DString & DString::convertTime ( DateFormat oldformat,
-                                 DateFormat newformat )
-{
-	convertTime( getFormat ( oldformat ), getFormat ( newformat ) );
 	return *this;
 }
 
@@ -1687,7 +1688,7 @@ std::list<char> & DString::onlyHexa ( DString::CaseFlag caseflag ) const
 	return legalCharDec;
 }
 
-const char * DString::getFormat ( DateFormat format )
+DString DString::getFormat ( DateFormat format )
 {
 	DString buffer;
 	switch ( format )
@@ -1714,7 +1715,7 @@ const char * DString::getFormat ( DateFormat format )
 			break;
 		}
 	}
-	return buffer.c_str();
+	return buffer;
 }
 
 double binToDec ( const std::string & str )

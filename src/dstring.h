@@ -1209,7 +1209,7 @@ class DString
 		 * Convert current time to a human readable string formated as
 		 * desired.\n
 		 */
-		static DString Now ( const char * format = "%Y-%m-%d %H-%M-%S" );
+		static DString Now ( const DString & format = "%Y-%m-%d %H:%M:%S" );
 		/**
 		 * Convert current time to a human readable string in ISO 8601
 		 * extended format.\n
@@ -1223,17 +1223,8 @@ class DString
 		 * another string formated with \p newformat.
 		 * \see #timeToString for format string.
 		 */
-		DString & convertTime ( const char * oldformat,
-		                        const char * newformat = "%Y-%m-%d %H-%M-%S" );
-
-
-		/**
-		 * Convert time in a human readable string formated with \p oldformat to
-		 * another string formated with \p newformat.
-		 * This is an overloaded member function, provided for convenience.
-		 * It behaves essentially like the above function.
-		 */
-		DString & convertTime ( DateFormat oldformat, DateFormat newformat );
+		DString & convertTime ( const DString & oldformat,
+		                        const DString & newformat = "%Y-%m-%d %H:%M:%S" );
 
 		/**
 		 * Return an empty string
@@ -1243,7 +1234,7 @@ class DString
 		/**
 		 * Get string format from \p format
 		 */
-		static const char * getFormat ( DateFormat format );
+		static DString getFormat ( DateFormat format );
 
 	private:
 		std::string m_str;

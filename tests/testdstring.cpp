@@ -316,6 +316,15 @@ void TestDString::substr_test()
 	str = "ABCDEFabcdef";
 	str.insert( 6, "0123456789" );
 	TEST_ASSERT_MSG( str == "ABCDEF0123456789abcdef", "Insert by place failed" )
+	str = "ABCDEF0123456789abcdef";
+	TEST_ASSERT_MSG( str.find( "abc" ) == 16, "Find substring failed (case sensitive)" )
+	TEST_ASSERT_MSG( str.find( "abc", -1 ) == 16, "Find substring failed (case sensitive)" )
+	TEST_ASSERT_MSG( str.find( "ABC" ) == 0, "Find substring failed (case sensitive)" )
+	TEST_ASSERT_MSG( str.find( "ABC", 0 ) == 0, "Find substring failed (case sensitive)" )
+	TEST_ASSERT_MSG( str.find( "abc", -1, false ) == 16, "Reverse find substring failed (case insensitive)" )
+	TEST_ASSERT_MSG( str.find( "ABC", -1, false ) == 16, "Reverse find substring failed (case insensitive)" )
+	TEST_ASSERT_MSG( str.find( "abc", 0, false ) == 0, "Find substring failed (case insensitive)" )
+	TEST_ASSERT_MSG( str.find( "ABC", 0, false ) == 0, "Find substring failed (case insensitive)" )
 }
 
 void TestDString::legal_char_test()
@@ -436,11 +445,12 @@ void TestDString::split_test()
 
 void TestDString::time_test()
 {
-	DString str = DString::timeToString ( 1404831621, DString::ISO_DATETIME_T );
-	TEST_ASSERT_MSG( str == "2014-07-08T17:00:21", "Get Date-Time failed" )
+	DString str;
 	str = DString::timeToString ( 1404831621, "%Y-%m-%d %H-%M-%S" );
 	TEST_ASSERT_MSG( str == "2014-07-08 17-00-21", "Get Date-Time failed" )
-	str.convertTime ( DString::ISO_DATETIME, DString::ISO_DATE );
+	str = DString::timeToString ( 1404831621, DString::ISO_DATETIME_T );
+	TEST_ASSERT_MSG( str == "2014-07-08T17:00:21", "Get Date-Time failed" )
+	str.convertTime ( "%Y-%m-%dT%H-%M-%S", "%Y-%m-%d" );
 	TEST_ASSERT_MSG( str == "2014-07-08", "Convert Date-Time to Date failed" )
 	str = DString::timeToString ( 1404831621, "%Y-%m-%dT%H-%M-%S" );
 	str.convertTime ( "%Y-%m-%dT%H-%M-%S", "%H:%M:%S" );
