@@ -57,7 +57,7 @@ public:
 #ifdef DLIBS_HAVE_PGSQL
 		TEST_ADD( TestDLog::pgsql_test )
 #endif
-		TEST_ADD( TestDLog::unintialized_test )
+		//TEST_ADD( TestDLog::unintialized_test )
 	}
 
 private:

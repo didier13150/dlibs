@@ -78,6 +78,7 @@ void TestDLog::logfile_test()
 		
 	log->removeLogEngine ( filelog );
 	log->close();
+	DLogger::deleteInstance();
 	
 	std::ifstream file;
 	DString buffer, content, awaiting;
@@ -117,8 +118,17 @@ void TestDLog::stream_test()
 	log->insertMessage ( "Debug message", DLogShared::DEBUG );
 	log->insertMessage ( "Info message", DLogShared::INFO );
 	
+	log->debug( "Debug message" );
+	log->verbose( "Verbose message" );
+	log->info( "Info message" );
+	log->signal( "Signal message" );
+	log->warning( "Warning message" );
+	log->error( "Error message" );
+	log->critical( "Critical message" );
+	
 	log->removeLogEngine ( console );
 	log->close();
+	DLogger::deleteInstance();
 }
 
 void TestDLog::socket_test()
@@ -179,6 +189,7 @@ void TestDLog::socket_test()
 	server.closeSock();
 	log->removeLogEngine ( sockclient );
 	log->close();
+	DLogger::deleteInstance();
 }
 
 void TestDLog::syslog_test()
@@ -200,6 +211,7 @@ void TestDLog::syslog_test()
 		
 	log->removeLogEngine ( syslog );
 	log->close();
+	DLogger::deleteInstance();
 }
 
 void TestDLog::unintialized_test()
@@ -211,6 +223,7 @@ void TestDLog::unintialized_test()
 	// it's just a test with an unitialized pointer to be sure this
 	// class is safe.
 	log->removeLogEngine ( uninitializedlog );
+	DLogger::deleteInstance();
 }
 
 void TestDLog::sqlite_test()
@@ -224,9 +237,6 @@ void TestDLog::sqlite_test()
 	params.specific["dbbase"] = DBLOGFILE;
 	params.specific["dbcreate"] = "CREATE TABLE applog (date, level, message);";
 
-	// params for file log engine
-	params.mode = DLogShared::OPENCLOSE; // can be DLogShared::PERSISTANT;
-
 	// params for stdout log engine
 	params.minlevel = DLogShared::INFO;
 	params.optionnal["dateformat"] = DString::getFormat ( DString::ISO_DATE );
@@ -237,8 +247,10 @@ void TestDLog::sqlite_test()
 
 	log->insertMessage ( "Debug message", DLogShared::DEBUG );
 	log->insertMessage ( "Info message", DLogShared::INFO );
+	
 	log->removeLogEngine ( dblog );
 	log->close();
+	DLogger::deleteInstance();
 	
     DFactory<DDatabase> factory;
     DDatabaseParams dbparams;
@@ -254,8 +266,10 @@ void TestDLog::sqlite_test()
     dbparams.base = params.specific["dbbase"];
 	
 	db->setParams ( dbparams );
-	db->open();
+	results = db->open();
+	TEST_ASSERT_MSG( results.errnb == 0, "Database not opened" )
 	results = db->exec ( "SELECT * FROM applog;" );
+	TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully" )
 	db->close();
     delete db;
 	
@@ -265,22 +279,24 @@ void TestDLog::sqlite_test()
 	TEST_ASSERT_MSG( it->at("level") == "INFOS", "Wrong level on database sqlite" )
 	TEST_ASSERT_MSG( it->at("message") == "Info message", "Wrong message on database sqlite" )
 	
+	
 	int removed = remove( DBLOGFILE );
-	TEST_ASSERT_MSG( removed == 0, "Can not deleting log file" )
+	TEST_ASSERT_MSG( removed == 0, "Can not deleting database file" )
 }
 
 #ifdef DLIBS_HAVE_MYSQL
 void TestDLog::mysql_test()
 {
-		// specific to dmysql
-		params.specific["dbtype"] = "dmysql";
-		params.specific["dbuser"] = "dlibs";
-		params.specific["dbpassword"] = "dlibspw";
-		params.specific["dbhost"] = "localhost";
-		params.specific["dbbase"] = "dlibs";
+	// specific to dmysql
+	params.specific["dbtype"] = "dmysql";
+	params.specific["dbuser"] = "dlibs";
+	params.specific["dbpassword"] = "dlibspw";
+	params.specific["dbhost"] = "localhost";
+	params.specific["dbbase"] = "dlibs";
 }
 
 #endif
+
 #ifdef DLIBS_HAVE_PGSQL
 void TestDLog::pgsql_test()
 {

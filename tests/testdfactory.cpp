@@ -39,8 +39,72 @@
 #include <fstream>
 #include "testdfactory.h"
 
-void TestDFactory::constructor_test()
+#ifdef DLIBS_HAVE_MYSQL
+  #include "dmysql.h"
+#endif
+#ifdef DLIBS_HAVE_PGSQL
+  #include "dpgsql.h"
+#endif
+#include "dsqlite.h"
+
+#ifndef WITH_EXCEPTIONS
+  #define COMPILE_WITH_EXCEPTIONS 0
+#else
+  #define COMPILE_WITH_EXCEPTIONS 1
+  #include "dexception.h"
+#endif
+
+void TestDFactory::basic_test()
 {
+	DFactory<Object> factory;
+	
+	DFactory<Object>::Register ( "round", new Round () );
+	DFactory<Object>::Register ( "square", new Square () );
+	
+	Object * obj = factory.create ( "round" );
+	TEST_ASSERT_MSG( obj->what() == "Round", "Wrong object created" )
+	delete( obj );
+	
+	obj = factory.create ( "square" );
+	TEST_ASSERT_MSG( obj->what() == "Square", "Wrong object created" )
+	delete( obj );
+}
+
+void TestDFactory::ddatabase_test()
+{
+	DFactory<DDatabase> factory;
+#ifdef DLIBS_HAVE_MYSQL
+#if COMPILE_WITH_EXCEPTIONS
+	DFactory<DDatabase>::Register ( "dmysql", new DMySQL( true ) );
+#else
+	DFactory<DDatabase>::Register ( "dmysql", new DMySQL() );
+#endif
+#endif
+#ifdef DLIBS_HAVE_PGSQL
+#if COMPILE_WITH_EXCEPTIONS
+	DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL( true ) );
+#else
+	DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL() );
+#endif
+#endif
+#if COMPILE_WITH_EXCEPTIONS
+	DFactory<DDatabase>::Register ( "dsqlite", new DSQLite( true ) );
+#else
+	DFactory<DDatabase>::Register ( "dsqlite", new DSQLite() );
+#endif
+	
+	DDatabase * db = factory.create( "dsqlite" );
+	delete( db );
+	
+#ifdef DLIBS_HAVE_MYSQL
+	db = factory.create( "dsqlite" );
+	delete( db );
+#endif
+	
+#ifdef DLIBS_HAVE_PGSQL
+	db = factory.create( "dpgsql" );
+	delete( db );
+#endif
 }
 
 int main( int argc, char** argv )

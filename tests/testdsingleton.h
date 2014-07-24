@@ -73,10 +73,12 @@ public:
 	TestDSingleton()
 	{
 		TEST_ADD( TestDSingleton::singleton_test )
+		TEST_ADD( TestDSingleton::killonly_test )
 	}
 	
 private:
 	void singleton_test();
+	void killonly_test();
 };
 
 #endif // TESTDSINGLETON_H
