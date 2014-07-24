@@ -45,6 +45,7 @@ void TestDEnv::constructor_test()
 	
 	TEST_ASSERT_MSG( env->getVar( "HOME" ).left(5) == "/home", "Get HOME env var failed" )
 	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == DString::empty(), "Get empty toto env var failed" )
+	DEnv::deleteInstance();
 }
 
 void TestDEnv::setenv_test()
@@ -54,13 +55,13 @@ void TestDEnv::setenv_test()
 	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == DString::empty(), "Get toto env var failed" )
 	env->setVar( "toto95123", "/tmp" );
 	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == "/tmp", "Get toto env var failed after set" )
-	std::cout << std::endl << "toto95123=\"" << env->getVar( "toto95123" ) << "\"" << std::endl;
 	env->setVar( "toto95123", "/usr", false );
 	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == "/tmp", "Get toto env var failed after set (no overwrite)" )
 	env->setVar( "toto95123", "/usr", true );
 	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == "/usr", "Get toto env var failed after set (overwrite)" )
 	env->setVar( "toto95123", DString::empty() );
 	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == DString::empty(), "Set empty env var to toto failed" )
+	DEnv::deleteInstance();
 }
 
 void TestDEnv::getenv_test()
@@ -70,6 +71,7 @@ void TestDEnv::getenv_test()
 	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == "DLibs test", "Get toto env var failed after set" )
 	env->setVar( "toto95123", DString::empty() );
 	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == DString::empty(), "Set empty env var to toto failed" )
+	DEnv::deleteInstance();
 }
 
 int main( int argc, char** argv )
