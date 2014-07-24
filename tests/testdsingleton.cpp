@@ -42,6 +42,7 @@
 void TestDSingleton::singleton_test()
 {
 	int i;
+	
 	Foo::getInstance()->reset();
 	i = Foo::getInstance()->getVal();
 	TEST_ASSERT_MSG( i == 0, "Initialisation failed" )
@@ -51,6 +52,15 @@ void TestDSingleton::singleton_test()
 	Foo::getInstance()->increment();
 	i = Foo::getInstance()->getVal();
 	TEST_ASSERT_MSG( i == 2, "Second Increment failed" )
+	Foo::getInstance()->reset();
+	i = Foo::getInstance()->getVal();
+	TEST_ASSERT_MSG( i == 0, "Reset failed" )
+	Foo::deleteInstance();
+}
+
+void TestDSingleton::killonly_test()
+{
+	Foo::deleteInstance();
 }
 
 int main( int argc, char** argv )
