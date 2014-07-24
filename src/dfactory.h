@@ -46,7 +46,16 @@ template <class Object, class Key=DString>
 class DFactory
 {
 public:
-
+	~DFactory()
+	{
+		typename std::map<Key, Object*>::iterator it;
+		for ( it = m_map.begin() ; it != m_map.end() ; ++it )
+		{
+			delete ( *it ).second;
+		}
+		m_map.clear();
+	}
+	
 	static void Register ( Key key, Object* obj )
 	{
 		if ( m_map.find ( key ) == m_map.end() )
