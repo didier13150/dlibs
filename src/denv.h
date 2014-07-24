@@ -47,7 +47,10 @@
 class DEnv : public DSingleton<DEnv>
 {
 	// To let DSingleton have access to DEnv protected constructor
-	friend class DSingleton<DEnv>;
+	//friend class DSingleton<DEnv>;
+	friend DEnv* DSingleton<DEnv>::getInstance();
+	friend void DSingleton<DEnv>::deleteInstance();
+	
 protected:
 	/**
 	 * Constructor
@@ -63,6 +66,7 @@ protected:
 	static std::map<DString, DString> m_vars;
 	
 public:
+	
 	/**
 	 * Get environment variable
 	 * @attention case sensitive
