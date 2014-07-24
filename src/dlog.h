@@ -69,60 +69,60 @@ typedef std::list<DLogEngine*, std::allocator<DLogEngine*> > DLogCollection;
  */
 class DLogShared
 {
-	public:
-		/**
-		 * @typedef Level
-		 * Defining the log level for message
-		 */
-		typedef enum level
-		{
-			/// No Level
-			NONE = 0x00,
-			/// Debug
-			DEBUG = 0x01,
-			/// Verbose
-			VERBOSE = 0x02,
-			/// Information
-			INFO = 0x03,
-			/// Receive signal
-			SIGNALS = 0x04,
-			/// Warning
-			WARNING = 0x05,
-			/// Error
-			ERROR = 0x06,
-			/// Critical Error
-			CRITICAL = 0x07,
-		} Level;
+public:
+    /**
+     * @typedef Level
+     * Defining the log level for message
+     */
+    typedef enum level
+    {
+        /// No Level
+        NONE = 0x00,
+        /// Debug
+        DEBUG = 0x01,
+        /// Verbose
+        VERBOSE = 0x02,
+        /// Information
+        INFO = 0x03,
+        /// Receive signal
+        SIGNALS = 0x04,
+        /// Warning
+        WARNING = 0x05,
+        /// Error
+        ERROR = 0x06,
+        /// Critical Error
+        CRITICAL = 0x07,
+    } Level;
 
-		/**
-		 * @typedef Mode
-		 * Defining the connection mode
-		 */
-		typedef enum mode
-		{
-			/// Persistant connection
-			PERSISTANT,
-			/// Connection need to be opened at the beginning and closed at the end
-			OPENCLOSE,
-		} Mode;
+    /**
+     * @typedef Mode
+     * Defining the connection mode
+     */
+    typedef enum mode
+    {
+        /// Persistant connection
+        PERSISTANT,
+        /// Connection need to be opened at the beginning and closed at the end
+        OPENCLOSE,
+    } Mode;
 
-		/**
-		 * @typedef Type
-		 * Defining the log engine type
-		 */
-		typedef enum engine_type
-		{
-			/// stdout log engine
-			STDOUT,
-			/// file log engine
-			FILE,
-			/// socket log engine
-			SOCKET,
-			/// syslog log engine
-			SYSLOG,
-			/// database log engine
-			DATABASE,
-		} Type;
+    /**
+     * @typedef Type
+     * Defining the log engine type
+     */
+    typedef enum engine_type
+    {
+        /// stdout log engine
+        STDOUT,
+        /// file log engine
+        FILE,
+        /// socket log engine
+        SOCKET,
+        /// syslog log engine
+        SYSLOG,
+        /// database log engine
+        DATABASE,
+    } Type;
 };
 
 /**
@@ -134,48 +134,48 @@ class DLogShared
 
 class DLogParams : public DLogShared
 {
-	public:
-		/**
-		 * Constructor
-		 */
-		DLogParams();
-		
-		/**
-		 * Destructor
-		 */
-		~DLogParams();
+public:
+    /**
+     * Constructor
+     */
+    DLogParams();
 
-		/**
-		 * Clear the parameters
-		 */
-		void clear();
+    /**
+     * Destructor
+     */
+    ~DLogParams();
 
-		/**
-		 * Writes DLogParams to the stream s and returns a reference to the stream.
-		 */
-		friend std::ostream& operator << ( std::ostream& s, const DLogParams & params );
+    /**
+     * Clear the parameters
+     */
+    void clear();
 
-		/**
-		 * convert Level enum value to a representing string
-		 */
-		static const DString & toString ( const DLogShared::Level & level );
+    /**
+     * Writes DLogParams to the stream s and returns a reference to the stream.
+     */
+    friend std::ostream& operator << ( std::ostream& s, const DLogParams & params );
 
-		/**
-		 * convert Mode enum value to a representing string
-		 */
-		static const DString & toString ( const DLogShared::Mode & mode );
+    /**
+     * convert Level enum value to a representing string
+     */
+    static const DString & toString ( const DLogShared::Level & level );
 
-		/// Optionnal options for the logger.
-		std::map<DString, DString> optionnal;
+    /**
+     * convert Mode enum value to a representing string
+     */
+    static const DString & toString ( const DLogShared::Mode & mode );
 
-		/// Specific options for the logger.
-		std::map<DString, DString> specific;
+    /// Optionnal options for the logger.
+    std::map<DString, DString> optionnal;
 
-		/// The minimum log level for the logger.
-		Level minlevel;
+    /// Specific options for the logger.
+    std::map<DString, DString> specific;
 
-		/// The mode for the logger.
-		Mode mode;
+    /// The minimum log level for the logger.
+    Level minlevel;
+
+    /// The mode for the logger.
+    Mode mode;
 };
 
 /**
@@ -187,117 +187,117 @@ class DLogParams : public DLogShared
 class DLogEngine : public DLogShared, public DSkeleton, public DPrototype<DLogEngine>
 {
 
-	public:
+public:
 
-		/**
-		 * Constructor
-		 */
-		DLogEngine();
+    /**
+     * Constructor
+     */
+    DLogEngine();
 
-		/**
-		 * Virtual destructor
-		 */
-		virtual ~DLogEngine();
+    /**
+     * Virtual destructor
+     */
+    virtual ~DLogEngine();
 
-		/**
-		 * Set the minimum log level
-		 * @see #Level
-		 */
-		virtual void setMinLogLevel ( const DLogShared::Level & level );
+    /**
+     * Set the minimum log level
+     * @see #Level
+     */
+    virtual void setMinLogLevel ( const DLogShared::Level & level );
 
-		/**
-		 * Get the minimum log level
-		 * @see #Level
-		 */
-		virtual const Level & getMinLogLevel ( void ) const;
+    /**
+     * Get the minimum log level
+     * @see #Level
+     */
+    virtual const Level & getMinLogLevel ( void ) const;
 
-		/**
-		 * Set the mode
-		 * @see #Mode
-		 */
-		virtual void setMode ( const DLogShared::Mode & mode );
+    /**
+     * Set the mode
+     * @see #Mode
+     */
+    virtual void setMode ( const DLogShared::Mode & mode );
 
-		/**
-		 * Get the current mode
-		 * @see #Mode
-		 */
-		virtual const Mode & getMode ( void ) const;
+    /**
+     * Get the current mode
+     * @see #Mode
+     */
+    virtual const Mode & getMode ( void ) const;
 
-		/**
-		 * Get the current type
-		 */
-		virtual const Type & getType ( void ) const;
+    /**
+     * Get the current type
+     */
+    virtual const Type & getType ( void ) const;
 
-		/**
-		 * Set the date format
-		 * @see #DLogger
-		 */
-		virtual void setDateFormat ( const DString & format );
+    /**
+     * Set the date format
+     * @see #DLogger
+     */
+    virtual void setDateFormat ( const DString & format );
 
-		/**
-		 * Get the date format
-		 * @see #DLogger
-		 */
-		virtual const DString & getDateFormat ( void ) const;
+    /**
+     * Get the date format
+     * @see #DLogger
+     */
+    virtual const DString & getDateFormat ( void ) const;
 
-		/**
-		 * Set the log message pattern. The current implementation
-		 * give only three variables :
-		 * - \%DATE for date ( @see date format )
-		 * - \%TYPE for type ( @see type )
-		 * - \%MESSAGE for log message
-		 */
-		virtual void setLogPattern ( const DString & pattern );
+    /**
+     * Set the log message pattern. The current implementation
+     * give only three variables :
+     * - \%DATE for date ( @see date format )
+     * - \%TYPE for type ( @see type )
+     * - \%MESSAGE for log message
+     */
+    virtual void setLogPattern ( const DString & pattern );
 
-		/**
-		 * Get the log message pattern
-		 */
-		virtual const DString & getLogPattern ( void ) const;
+    /**
+     * Get the log message pattern
+     */
+    virtual const DString & getLogPattern ( void ) const;
 
-		/**
-		 * Set Log engine parameters
-		 */
-		virtual void setParam ( DLogParams & params );
+    /**
+     * Set Log engine parameters
+     */
+    virtual void setParam ( DLogParams & params );
 
-		/**
-		 * return TRUE if engine is valid ( correctly initialized ) and ready
-		 * to receive messages, FALSE otherwise.
-		 */
-		virtual bool isValid();
+    /**
+     * return TRUE if engine is valid ( correctly initialized ) and ready
+     * to receive messages, FALSE otherwise.
+     */
+    virtual bool isValid();
 
-		/**
-		 * Open the log
-		 */
-		virtual bool open() = 0;
+    /**
+     * Open the log
+     */
+    virtual bool open() = 0;
 
-		/**
-		 * Close the log
-		 */
-		virtual void close() = 0;
+    /**
+     * Close the log
+     */
+    virtual void close() = 0;
 
-		/**
-		 * Insert log
-		 */
-		virtual void insert ( const DString & text, Level loglevel = DLogShared::INFO ) = 0;
+    /**
+     * Insert log
+     */
+    virtual void insert ( const DString & text, Level loglevel = DLogShared::INFO ) = 0;
 
-	protected:
-		/// The date format
-		DString m_dateFormat;
+protected:
+    /// The date format
+    DString m_dateFormat;
 
-		/// The minimum log level
-		Level m_minLevel;
+    /// The minimum log level
+    Level m_minLevel;
 
-		/// The write mode
-		Mode m_mode;
+    /// The write mode
+    Mode m_mode;
 
-		/// Type of log
-		Type m_type;
+    /// Type of log
+    Type m_type;
 
-		/// valid flag.\n TRUE if log is initialized and valid, FALSE otherwise.
-		bool m_valid;
+    /// valid flag.\n TRUE if log is initialized and valid, FALSE otherwise.
+    bool m_valid;
 
-		/// The message pattern
-		DString m_pattern;
+    /// The message pattern
+    DString m_pattern;
 };
 
 
@@ -309,64 +309,64 @@ class DLogEngine : public DLogShared, public DSkeleton, public DPrototype<DLogEn
 class DLogEngineFile : public DLogEngine
 {
 
-	public:
-		/**
-		 * Empty Constructor
-		 */
-		DLogEngineFile ( void );
-		/**
-		 * Constructor all in one.\n
-		 * Usefull for the DLog factory
-		 */
-		DLogEngineFile ( const DString & fileName, Mode mode = OPENCLOSE );
+public:
+    /**
+     * Empty Constructor
+     */
+    DLogEngineFile ( void );
+    /**
+     * Constructor all in one.\n
+     * Usefull for the DLog factory
+     */
+    DLogEngineFile ( const DString & fileName, Mode mode = OPENCLOSE );
 
-		/**
-		 * Default destructor
-		 */
-		~DLogEngineFile ( void );
+    /**
+     * Default destructor
+     */
+    ~DLogEngineFile ( void );
 
-		/**
-		 * Set the log file name
-		 */
-		void setFileName ( const DString & fileName, Mode mode = OPENCLOSE );
+    /**
+     * Set the log file name
+     */
+    void setFileName ( const DString & fileName, Mode mode = OPENCLOSE );
 
-		/**
-		 * Get the log file name
-		 */
-		DString getFileName ( void ) const;
+    /**
+     * Get the log file name
+     */
+    DString getFileName ( void ) const;
 
-		/**
-		 * Open the log file
-		 */
-		bool open();
-		/**
-		 * Close the log file
-		 */
-		void close();
-		/**
-		 * Insert log ( write into file )
-		 */
-		void insert ( const DString & text, Level loglevel = DLogShared::INFO );
+    /**
+     * Open the log file
+     */
+    bool open();
+    /**
+     * Close the log file
+     */
+    void close();
+    /**
+     * Insert log ( write into file )
+     */
+    void insert ( const DString & text, Level loglevel = DLogShared::INFO );
 
-		/**
-		 * Set Log engine parameters
-		 */
-		void setParam ( DLogParams & params );
+    /**
+     * Set Log engine parameters
+     */
+    void setParam ( DLogParams & params );
 
-		/**
-		 * Clone method for factory
-		 * @internal
-		 */
-		DLogEngine * Clone() const
-		{
-			return new DLogEngineFile ( *this );
-		}
+    /**
+     * Clone method for factory
+     * @internal
+     */
+    DLogEngine * Clone() const
+    {
+        return new DLogEngineFile ( *this );
+    }
 
-	private :
-		/// The file name
-		DString m_fileName;
-		/// The file stream
-		std::ofstream * m_file;
+private :
+    /// The file name
+    DString m_fileName;
+    /// The file stream
+    std::ofstream * m_file;
 };
 
 /**
@@ -376,43 +376,43 @@ class DLogEngineFile : public DLogEngine
  */
 class DLogEngineStdout : public DLogEngine
 {
-	public:
+public:
 
-		/**
-		 * Empty Constructor
-		 */
-		DLogEngineStdout ( void );
+    /**
+     * Empty Constructor
+     */
+    DLogEngineStdout ( void );
 
-		/**
-		 * Default destructor
-		 */
-		~DLogEngineStdout ( void );
+    /**
+     * Default destructor
+     */
+    ~DLogEngineStdout ( void );
 
-		/**
-		 * Clone method for factory
-		 * @internal
-		 */
-		DLogEngine * Clone() const
-		{
-			return new DLogEngineStdout ( *this );
-		}
-		/**
-		 * Open the log file
-		 */
-		bool open();
-		/**
-		 * Close the log file
-		 */
-		void close();
-		/**
-		 * Insert log ( write into file )
-		 */
-		void insert ( const DString & text, Level loglevel = DLogShared::INFO );
+    /**
+     * Clone method for factory
+     * @internal
+     */
+    DLogEngine * Clone() const
+    {
+        return new DLogEngineStdout ( *this );
+    }
+    /**
+     * Open the log file
+     */
+    bool open();
+    /**
+     * Close the log file
+     */
+    void close();
+    /**
+     * Insert log ( write into file )
+     */
+    void insert ( const DString & text, Level loglevel = DLogShared::INFO );
 
-		/**
-		 * Set Log engine parameters
-		 */
-		void setParam ( DLogParams & params );
+    /**
+     * Set Log engine parameters
+     */
+    void setParam ( DLogParams & params );
 };
 
 /**
@@ -423,56 +423,56 @@ class DLogEngineStdout : public DLogEngine
 class DLogEngineSyslog : public DLogEngine
 {
 
-	public:
-		/**
-		 * Empty Constructor
-		 */
-		DLogEngineSyslog ( void );
-		
-		/**
-		 * Default Constructor
-		 */
-		DLogEngineSyslog ( const DString & app_name );
+public:
+    /**
+     * Empty Constructor
+     */
+    DLogEngineSyslog ( void );
 
-		/**
-		 * Default destructor
-		 */
-		~DLogEngineSyslog ( void );
+    /**
+     * Default Constructor
+     */
+    DLogEngineSyslog ( const DString & app_name );
 
-		/**
-		 * Set the application name
-		 */
-		void setAppName( const DString & app_name );
+    /**
+     * Default destructor
+     */
+    ~DLogEngineSyslog ( void );
 
-		/**
-		 * Open the log file
-		 */
-		bool open();
-		/**
-		 * Close the log file
-		 */
-		void close();
-		/**
-		 * Insert log ( write into file )
-		 */
-		void insert ( const DString & text, Level loglevel = DLogShared::INFO );
+    /**
+     * Set the application name
+     */
+    void setAppName( const DString & app_name );
 
-		/**
-		 * Set Log engine parameters
-		 */
-		void setParam ( DLogParams & params );
+    /**
+     * Open the log file
+     */
+    bool open();
+    /**
+     * Close the log file
+     */
+    void close();
+    /**
+     * Insert log ( write into file )
+     */
+    void insert ( const DString & text, Level loglevel = DLogShared::INFO );
 
-		/**
-		 * Clone method for factory
-		 * @internal
-		 */
-		DLogEngine * Clone() const
-		{
-			return new DLogEngineSyslog ( *this );
-		}
-		
-	private:
-		DString m_app_name;
+    /**
+     * Set Log engine parameters
+     */
+    void setParam ( DLogParams & params );
+
+    /**
+     * Clone method for factory
+     * @internal
+     */
+    DLogEngine * Clone() const
+    {
+        return new DLogEngineSyslog ( *this );
+    }
+
+private:
+    DString m_app_name;
 };
 
 /**
@@ -484,50 +484,50 @@ class DLogEngineSyslog : public DLogEngine
 class DLogEngineDatabase : public DLogEngine
 {
 
-	public:
-		/**
-		 * Empty Constructor
-		 */
-		DLogEngineDatabase ( void );
+public:
+    /**
+     * Empty Constructor.
+     */
+    DLogEngineDatabase ( void );
 
-		/**
-		 * Default destructor
-		 */
-		~DLogEngineDatabase ( void );
+    /**
+     * Default destructor
+     */
+    ~DLogEngineDatabase ( void );
 
-		/**
-		 * Open the log file
-		 */
-		bool open();
-		/**
-		 * Close the log file
-		 */
-		void close();
-		/**
-		 * Insert log ( write into file )
-		 */
-		void insert ( const DString & text, Level loglevel = DLogShared::INFO );
+    /**
+     * Open the log file
+     */
+    bool open();
+    /**
+     * Close the log file
+     */
+    void close();
+    /**
+     * Insert log ( write into file )
+     */
+    void insert ( const DString & text, Level loglevel = DLogShared::INFO );
 
-		/**
-		 * Set Log engine parameters
-		 */
-		void setParam ( DLogParams & params );
+    /**
+     * Set Log engine parameters
+     */
+    void setParam ( DLogParams & params );
 
-		/**
-		 * Clone method for factory
-		 * @internal
-		 */
-		DLogEngine * Clone() const
-		{
-			return new DLogEngineDatabase ( *this );
-		}
+    /**
+     * Clone method for factory
+     * @internal
+     */
+    DLogEngine * Clone() const
+    {
+        return new DLogEngineDatabase ( *this );
+    }
 
-	private:
-		DString m_dbtype;
-		DString m_create_query;
-		DDatabaseParams m_dbparams;
-		DDatabase * m_database;
-		DFactory<DDatabase> m_factory;
+private:
+    DString m_dbtype;
+    DString m_create_query;
+    DDatabaseParams m_dbparams;
+    DDatabase * m_database;
+    DFactory<DDatabase> m_factory;
 };
 
 /**
@@ -538,61 +538,61 @@ class DLogEngineDatabase : public DLogEngine
 class DLogEngineSocket : public DLogEngine
 {
 
-	public:
+public:
 
-		/**
-		 * Empty Constructor
-		 */
-		DLogEngineSocket ( void );
+    /**
+     * Empty Constructor
+     */
+    DLogEngineSocket ( void );
 
-		/**
-		 * All in one Constructor
-		 */
-		DLogEngineSocket ( const DURL & host, int port );
+    /**
+     * All in one Constructor
+     */
+    DLogEngineSocket ( const DURL & host, int port );
 
-		/**
-		 * Default destructor
-		 */
-		~DLogEngineSocket ( void );
+    /**
+     * Default destructor
+     */
+    ~DLogEngineSocket ( void );
 
-		void setSocket ( const DURL & host );
+    void setSocket ( const DURL & host );
 
-		/**
-		 * Open the log file
-		 */
-		bool open();
-		/**
-		 * Close the log file
-		 */
-		void close();
-		/**
-		 * Insert log ( send it through the socket )
-		 */
-		void insert ( const DString & text, Level loglevel = DLogShared::INFO );
+    /**
+     * Open the log file
+     */
+    bool open();
+    /**
+     * Close the log file
+     */
+    void close();
+    /**
+     * Insert log ( send it through the socket )
+     */
+    void insert ( const DString & text, Level loglevel = DLogShared::INFO );
 
-		/**
-		 * Set Log engine parameters
-		 */
-		void setParam ( DLogParams & params );
+    /**
+     * Set Log engine parameters
+     */
+    void setParam ( DLogParams & params );
 
-		/**
-		 * Clone method for factory
-		 * @internal
-		 */
-		DLogEngine * Clone() const
-		{
-			return new DLogEngineSocket ( *this );
-		}
+    /**
+     * Clone method for factory
+     * @internal
+     */
+    DLogEngine * Clone() const
+    {
+        return new DLogEngineSocket ( *this );
+    }
 
-	private:
-		/// Socket handle
-		DClientSock m_client;
-		/// The log server host
-		DURL m_host;
-		/// The log server port
-		int m_port;
-		/// The socket buffer size
-		size_t m_bufsize;
+private:
+    /// Socket handle
+    DClientSock m_client;
+    /// The log server host
+    DURL m_host;
+    /// The log server port
+    int m_port;
+    /// The socket buffer size
+    size_t m_bufsize;
 };
 
 /**
@@ -679,177 +679,178 @@ class DLogEngineSocket : public DLogEngine
  *
  * @include testdlog.cpp
  */
-		 
+
 class DLogger : public DLogShared, public DSingleton<DLogger>
 {
+    friend class DSingleton<DLogger>;
 
-		friend class DSingleton<DLogger>;
+public:
 
-	public:
+    /**
+     * Insert a log message to all log element : date-time loglevel message
+     * @param message The log message
+     * @param loglevel The log level
+     * @see #Level for details about log levels.
+     */
+    void insertMessage ( const DString & message, Level loglevel = DLogShared::INFO );
 
-		/**
-		 * Insert a log message to all log element : date-time loglevel message
-		 * @param message The log message
-		 * @param loglevel The log level
-		 * @see #Level for details about log levels.
-		 */
-		void insertMessage ( const DString & message, Level loglevel = DLogShared::INFO );
+    /**
+     * Insert a debug message to all log element
+     * This is an overloaded member function, provided for convenience.
+     * It behaves essentially like the above function with Level already set.
+     * @param message The log message
+     */
+    void debug ( const DString & message );
 
-		/**
-		 * Insert a debug message to all log element
-		 * This is an overloaded member function, provided for convenience.
-		 * It behaves essentially like the above function with Level already set.
-		 * @param message The log message
-		 */
-		void debug ( const DString & message );
-		
-		/**
-		 * Insert a verbose message to all log element
-		 * This is an overloaded member function, provided for convenience.
-		 * It behaves essentially like the above function with Level already set.
-		 * @param message The log message
-		 */
-		void verbose ( const DString & message );
-		
-		/**
-		 * Insert a information message to all log element
-		 * This is an overloaded member function, provided for convenience.
-		 * It behaves essentially like the above function with Level already set.
-		 * @param message The log message
-		 */
-		void info ( const DString & message );
-		
-		/**
-		 * Insert a message about signal to all log element
-		 * This is an overloaded member function, provided for convenience.
-		 * It behaves essentially like the above function with Level already set.
-		 * @param message The log message
-		 */
-		void signal ( const DString & message );
-		
-		/**
-		 * Insert a warning message to all log element
-		 * This is an overloaded member function, provided for convenience.
-		 * It behaves essentially like the above function with Level already set.
-		 * @param message The log message
-		 */
-		void warning ( const DString & message );
-		
-		/**
-		 * Insert a error message to all log element
-		 * This is an overloaded member function, provided for convenience.
-		 * It behaves essentially like the above function with Level already set.
-		 * @param message The log message
-		 */
-		void error ( const DString & message );
-		
-		/**
-		 * Insert a critical message to all log element
-		 * This is an overloaded member function, provided for convenience.
-		 * It behaves essentially like the above function with Level already set.
-		 * @param message The log message
-		 */
-		void critical ( const DString & message );
-		
-		/**
-		 * Add a log engine to logger
-		 * @param type The log type to add.
-		 * @param params The parameters for this log engine.
-		 * @see #Type for details about all supported types
-		 * @see DLogParams for details about parameters
-		 * @return A unique log engine identifiant
-		 */
-		DLogEngine * addLogEngine ( Type type, DLogParams & params );
+    /**
+     * Insert a verbose message to all log element
+     * This is an overloaded member function, provided for convenience.
+     * It behaves essentially like the above function with Level already set.
+     * @param message The log message
+     */
+    void verbose ( const DString & message );
 
-		/**
-		 * Add an already defined log engine to logger
-		 * @param engine The log engine to add.
-		 * @return A unique log engine identifiant
-		 */
-		void addLogEngine ( DLogEngine * engine );
+    /**
+     * Insert a information message to all log element
+     * This is an overloaded member function, provided for convenience.
+     * It behaves essentially like the above function with Level already set.
+     * @param message The log message
+     */
+    void info ( const DString & message );
 
-		/**
-		 * Remove a log engine from logger
-		 * @param engine A pointer to the log engine which must be removed.
-		 */
-		void removeLogEngine ( DLogEngine * engine );
+    /**
+     * Insert a message about signal to all log element
+     * This is an overloaded member function, provided for convenience.
+     * It behaves essentially like the above function with Level already set.
+     * @param message The log message
+     */
+    void signal ( const DString & message );
 
-		/**
-		 * Close all log engines
-		 */
-		void close();
-		
-		/**
-		 * Add a new user defined variable
-		 * @param varname The name of user defined variable.
-		 * @return TRUE if the variable was inserted, FALSE otherwise.
-		 */
-		bool addUserVar( const DString & varname );
-		
-		/**
-		 * Add and set up a new user defined variable.
-		 * @param varname The name of user defined variable.
-		 * @param value The value of user defined variable.
-		 * @return TRUE if the variable was inserted, FALSE otherwise.
-		 */
-		bool addAndSetupUserVar( const DString & varname, const DString & value );
-		
-		/**
-		 * Remove user defined variable
-		 * @param varname The name of user defined variable.
-		 */
-		void removeUserVar( const DString & varname );
-		
-		/**
-		 * Set up a new user defined variable.\n
-		 * @attention User variable will not be inserted if not exists.
-		 * @param varname The name of user defined variable.
-		 * @param value The value of user defined variable.
-		 */
-		void setupUserVar( const DString & varname, const DString & value );
-		
+    /**
+     * Insert a warning message to all log element
+     * This is an overloaded member function, provided for convenience.
+     * It behaves essentially like the above function with Level already set.
+     * @param message The log message
+     */
+    void warning ( const DString & message );
 
-		/**
-		 * Prepare the log message switchin the message pattern, the current
-		 * date-time and user variables.
-		 * @param text The log message text
-		 * @param dateformat The format for the date-time
-		 * @param pattern The log message pattern
-		 * @param loglevel The log level
-		 */
-		static const DString & prepare ( const DString & text,
-		                                 const DString & dateformat,
-		                                 const DString & pattern,
-		                                 Level loglevel );
+    /**
+     * Insert a error message to all log element
+     * This is an overloaded member function, provided for convenience.
+     * It behaves essentially like the above function with Level already set.
+     * @param message The log message
+     */
+    void error ( const DString & message );
 
-	protected :
-		/**
-		 * Empty Constructor
-		 */
-		DLogger ( void );
+    /**
+     * Insert a critical message to all log element
+     * This is an overloaded member function, provided for convenience.
+     * It behaves essentially like the above function with Level already set.
+     * @param message The log message
+     */
+    void critical ( const DString & message );
 
-		/**
-		 * Default Destructor
-		 */
-		~DLogger ( void );
+    /**
+     * Add a log engine to logger
+     * @param type The log type to add.
+     * @param params The parameters for this log engine.
+     * @see #Type for details about all supported types
+     * @see DLogParams for details about parameters
+     * @return A unique log engine identifiant
+     */
+    DLogEngine * addLogEngine ( Type type, DLogParams & params );
 
-		/// Internal collection of Log element
-		DLogCollection m_logs;
+    /**
+     * Add an already defined log engine to logger
+     * @param engine The log engine to add.
+     * @return A unique log engine identifiant
+     */
+    void addLogEngine ( DLogEngine * engine );
 
-		/// Initialisation flag
-		bool m_initialized;
+    /**
+     * Remove a log engine from logger
+     * @param engine A pointer to the log engine which must be removed.
+     */
+    void removeLogEngine ( DLogEngine * engine );
 
-		/** stdout engine pointer.\n
-		 * It's impossible to have more than one stdout in same time.
-		 */
-		DLogEngine * m_stdout;
-		
-		/// user variables
-		static std::map<DString, DString> m_userVar;
-		
-	private:
-		DFactory<DLogEngine> m_factory;
+    /**
+     * Close all log engines
+     */
+    void close();
+
+    /**
+     * Add a new user defined variable
+     * @param varname The name of user defined variable.
+     * @return TRUE if the variable was inserted, FALSE otherwise.
+     */
+    bool addUserVar( const DString & varname );
+
+    /**
+     * Add and set up a new user defined variable.
+     * @param varname The name of user defined variable.
+     * @param value The value of user defined variable.
+     * @return TRUE if the variable was inserted, FALSE otherwise.
+     */
+    bool addAndSetupUserVar( const DString & varname, const DString & value );
+
+    /**
+     * Remove user defined variable
+     * @param varname The name of user defined variable.
+     */
+    void removeUserVar( const DString & varname );
+
+    /**
+     * Set up a new user defined variable.\n
+     * @attention User variable will not be inserted if not exists.
+     * @param varname The name of user defined variable.
+     * @param value The value of user defined variable.
+     */
+    void setupUserVar( const DString & varname, const DString & value );
+
+
+    /**
+     * Prepare the log message switchin the message pattern, the current
+     * date-time and user variables.
+     * @param text The log message text
+     * @param dateformat The format for the date-time
+     * @param pattern The log message pattern
+     * @param loglevel The log level
+     */
+    const DString & prepare ( const DString & text,
+                              const DString & dateformat,
+                              const DString & pattern,
+                              Level loglevel );
+
+protected :
+    /**
+     * Empty Constructor
+     */
+    DLogger ( void );
+
+    /**
+     * Default Destructor
+     */
+    ~DLogger ( void );
+
+    /// Internal collection of Log element
+    DLogCollection m_logs;
+
+    /// Initialisation flag
+    bool m_initialized;
+
+    /** stdout engine pointer.\n
+     * It's impossible to have more than one stdout in same time.
+     */
+    DLogEngine * m_stdout;
+
+    /// user variables
+    static std::map<DString, DString> m_userVar;
+
+private:
+    DFactory<DLogEngine> m_factory;
+	DString m_prepare;
 
 };
 
 #endif // _DLOG_H_
+

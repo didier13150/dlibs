@@ -233,6 +233,41 @@ void DLogger::removeLogEngine ( DLogEngine * engine )
 	}
 }
 
+void DLogger::debug ( const DString & message )
+{
+	insertMessage( message, DLogger::DEBUG );
+}
+
+void DLogger::verbose ( const DString & message )
+{
+	insertMessage( message, DLogger::VERBOSE );
+}
+
+void DLogger::info ( const DString & message )
+{
+	insertMessage( message, DLogger::INFO );
+}
+
+void DLogger::signal ( const DString & message )
+{
+	insertMessage( message, DLogger::SIGNALS );
+}
+
+void DLogger::warning ( const DString & message )
+{
+	insertMessage( message, DLogger::WARNING );
+}
+
+void DLogger::error ( const DString & message )
+{
+	insertMessage( message, DLogger::ERROR );
+}
+
+void DLogger::critical ( const DString & message )
+{
+	insertMessage( message, DLogger::CRITICAL );
+}
+
 void DLogger::insertMessage ( const DString & message, Level loglevel )
 {
 	DLogCollection::iterator it;
@@ -301,7 +336,6 @@ const DString & DLogger::prepare ( const DString & message,
                                    const DString & pattern,
                                    Level loglevel )
 {
-	static DString buffer;
 	DString date, type;
 	std::map<DString, DString>::iterator it;
 
@@ -366,18 +400,18 @@ const DString & DLogger::prepare ( const DString & message,
 
 	if ( !type.isEmpty() )
 	{
-		buffer = pattern;
-		buffer.replace ( "%DATE", date );
-		buffer.replace ( "%TYPE", type );
-		buffer.replace ( "%MESSAGE", message );
+		m_prepare = pattern;
+		m_prepare.replace ( "%DATE", date );
+		m_prepare.replace ( "%TYPE", type );
+		m_prepare.replace ( "%MESSAGE", message );
 		
 		for ( it = m_userVar.begin() ; it != m_userVar .end() ; ++it )
 		{
-			buffer.replace( it->first, it->second );
+			m_prepare.replace( it->first, it->second );
 		}
 	}
 
-	return ( buffer );
+	return m_prepare;
 }
 
 /******************************    DLogEngine    ******************************/
@@ -554,7 +588,7 @@ void DLogEngineFile::insert ( const DString & text, Level loglevel )
 {
 	//ofstream file;
 	DString message;
-
+	
 	// write message only if loglevel is highter or equal to minimum log level
 	// or not equal to NONE
 	if ( ( loglevel < m_minLevel ) && ( loglevel != DLogShared::NONE ) )
@@ -573,7 +607,7 @@ void DLogEngineFile::insert ( const DString & text, Level loglevel )
 	}
 	else
 	{
-		message = DLogger::prepare ( text, m_dateFormat, m_pattern, loglevel );
+		message = DLogger::getInstance()->prepare ( text, m_dateFormat, m_pattern, loglevel );
 	}
 	
 	*m_file << message << endl;
@@ -753,7 +787,7 @@ void DLogEngineSyslog::setParam ( DLogParams & params )
 /******************************************************************************
  *                          DLogEngineDatabase                                *
  ******************************************************************************/
-DLogEngineDatabase::DLogEngineDatabase ( void )
+DLogEngineDatabase::DLogEngineDatabase ()
 		: DLogEngine()
 {
 	m_type = DATABASE;
@@ -761,23 +795,26 @@ DLogEngineDatabase::DLogEngineDatabase ( void )
 	m_dateFormat = DString::getFormat( DString::ISO_DATETIME_T );
 #ifdef DLIBS_HAVE_MYSQL
 #if COMPILE_WITH_EXCEPTIONS
-	DFactory<DDatabase>::Register ( "dmysql", new DMySQL( true ) );
+		DFactory<DDatabase>::Register ( "dmysql", new DMySQL( true ) );
 #else
-	DFactory<DDatabase>::Register ( "dmysql", new DMySQL() );
+		DFactory<DDatabase>::Register ( "dmysql", new DMySQL() );
 #endif
 #endif
+
 #ifdef DLIBS_HAVE_PGSQL
 #if COMPILE_WITH_EXCEPTIONS
-	DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL( true ) );
+		DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL( true ) );
 #else
-	DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL() );
+		DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL() );
 #endif
 #endif
+
 #if COMPILE_WITH_EXCEPTIONS
-	DFactory<DDatabase>::Register ( "dsqlite", new DSQLite( true ) );
+		DFactory<DDatabase>::Register ( "dsqlite", new DSQLite( true ) );
 #else
-	DFactory<DDatabase>::Register ( "dsqlite", new DSQLite() );
+		DFactory<DDatabase>::Register ( "dsqlite", new DSQLite() );
 #endif
+	
 	m_database = 0;
 	m_valid = true;
 }
@@ -785,14 +822,16 @@ DLogEngineDatabase::DLogEngineDatabase ( void )
 DLogEngineDatabase::~DLogEngineDatabase ( void )
 {
 	close();
+	delete m_database;
 }
 
 bool DLogEngineDatabase::open()
 {
+#if COMPILE_WITH_EXCEPTIONS
 	try
 	{
 		m_database->open();
-		if ( !m_create_query.isEmpty() )
+		if ( ! m_create_query.isEmpty() )
 		{
 			m_database->exec( m_create_query );
 			m_create_query.clear();
@@ -803,11 +842,36 @@ bool DLogEngineDatabase::open()
 	{
 		m_valid = false;
 	}
-	return true;
+#else
+	DDatabaseResult results;
+	results = m_database->open();
+	if ( results.errnb != 0 )
+	{
+		m_valid = false;
+		return false;
+	}
+	if ( ! m_create_query.isEmpty() )
+	{
+		results = m_database->exec( m_create_query );
+		if ( results.errnb != 0 )
+		{
+			m_valid = false;
+			return false;
+		}
+		m_create_query.clear();
+		m_valid = true;
+	}
+#endif
+	return m_valid;
 }
 
 void DLogEngineDatabase::close()
 {
+	if ( ! m_database )
+	{
+		return;
+	}
+#if COMPILE_WITH_EXCEPTIONS
 	try
 	{
 		m_database->close();
@@ -815,33 +879,46 @@ void DLogEngineDatabase::close()
 	catch ( ... )
 	{
 	}
+#else
+	m_database->close();
+#endif
 }
 
 void DLogEngineDatabase::insert ( const DString & text, Level loglevel )
 {
+	DString buffer;
+	
 	// write message only if loglevel is highter or equal to minimum log level
 	// or not equal to NONE
 	if ( ( loglevel < m_minLevel ) && ( loglevel != DLogShared::NONE ) )
 	{
 		return;
 	}
+	if ( ! m_database )
+	{
+		return;
+	}
+	buffer = DLogger::getInstance()->prepare ( text, m_dateFormat, m_pattern, loglevel );
 	
+#if COMPILE_WITH_EXCEPTIONS
 	try
 	{
-		if ( m_mode == DLogShared::OPENCLOSE )
-		{
-			open();
-		}
-		m_database->exec( DLogger::prepare ( text, m_dateFormat, m_pattern, loglevel ) );
-		if ( m_mode == DLogShared::OPENCLOSE )
-		{
-			close();
-		}
+		m_database->exec( buffer );
 	}
 	catch ( ... )
 	{
-		std::cout << DLogger::prepare ( text, m_dateFormat, m_pattern, loglevel ) << std::endl;
+		std::cout << buffer << std::endl;
 	}
+#else
+	DDatabaseResult results;
+	
+	results = m_database->exec( buffer );
+	if ( results.errnb != 0 )
+	{
+		std::cout << "DDatabase query failed: " << buffer << std::endl;
+	}
+	
+#endif
 }
 
 void DLogEngineDatabase::setParam ( DLogParams & params )
@@ -881,6 +958,7 @@ void DLogEngineDatabase::setParam ( DLogParams & params )
 	{
 		m_dbparams.port = params.specific["dbport"];
 	}
+	
 	m_database->setParams ( m_dbparams );
 	
 	if ( !params.specific["dbcreate"].isEmpty() )
@@ -888,10 +966,7 @@ void DLogEngineDatabase::setParam ( DLogParams & params )
 		m_create_query = params.specific["dbcreate"];
 	}
 	
-	if ( m_mode == DLogShared::PERSISTANT )
-	{
-		open();
-	}
+	open();
 }
 
 /******************************************************************************
@@ -955,7 +1030,7 @@ void DLogEngineSocket::insert ( const DString & text, Level loglevel )
 	{
 		open();
 	}
-	m_client.writeMessage ( DLogger::prepare ( text, m_dateFormat, m_pattern, loglevel ) );
+	m_client.writeMessage ( DLogger::getInstance()->prepare ( text, m_dateFormat, m_pattern, loglevel ) );
 	if ( m_mode == DLogShared::OPENCLOSE )
 	{
 		close();
