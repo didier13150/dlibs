@@ -45,12 +45,12 @@ template <class T> class DSingleton
 
 public:
 	/**
-	 * Get instance of object().\n
-	 * @note It's the only one public function.
+	 * Get single instance of object().\n
+	 * @warning Not thread safe
 	 */
     static T * getInstance()
 	{
-		static T * t = 0;
+		//static T * t = 0;
 		
 		if ( ! t )
 		{
@@ -58,6 +58,43 @@ public:
 		}
 		return t;
 	}
+	
+	/**
+	 * Delete the instancied object if any.
+	 */
+	static void deleteInstance()
+	{
+		if ( t )
+		{
+			delete t;
+			t = 0;
+		}
+	}
+	
+	/**
+	 * Return true if object was instancied. False otherwise.
+	 */
+	static bool isInstancied()
+	{
+		if ( ! t )
+		{
+			return false;
+		}
+		return true;
+	}
+
+protected:
+	/// The single object
+	static T * t;
+
+private:
+	/**
+	 * Private copying function
+	 */
+	T & operator= ( const T & ) {}
 };
+
+/// Initialize object to zero
+template <class T> T* DSingleton<T>::t = 0;
 
 #endif // _DSINGLETON_H_
