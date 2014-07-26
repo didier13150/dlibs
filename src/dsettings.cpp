@@ -60,7 +60,7 @@ void DSettings::init()
 	m_doc = 0;
 	m_context = 0;
 	m_error = SUCCESS;
-	DomOK = false;
+	m_isValid = false;
 }
 
 int DSettings::setFileName ( const DString & fileName )
@@ -69,141 +69,19 @@ int DSettings::setFileName ( const DString & fileName )
 	return ( makeDOM() );
 }
 
-const DString DSettings::getFileName ( void ) const
+const DString & DSettings::getFileName ( void ) const
 {
 	return m_fileName;
-}
-
-int DSettings::setGroup ( const DString & group, bool create )
-{
-	DString buffer;
-	xmlNodePtr n = NULL;
-
-	m_group = group;
-	
-	if ( m_fileName.isEmpty() )
-	{
-		m_error = NO_FILE;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
-		{
-			throw DEXCEPTION_XML ( getLastError(), NO_FILE );
-		}
-#endif
-		return m_error;
-	}
-	
-	if ( ! DomOK )
-	{
-		m_error = NO_DOM;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
-		{
-			throw DEXCEPTION_XML ( getLastError(), NO_DOM );
-		}
-#endif
-		return m_error;
-	}
-
-	// Evaluate XPath expression
-	buffer = "/";
-	buffer += m_rootNodeName;
-	buffer += "/";
-	buffer += m_group;
-	n = getNodeByXPath ( buffer.c_str() );
-
-	if ( n == NULL )
-	{
-		m_error = GROUP_NOT_EXISTS;
-		if ( create )
-		{
-			xmlNodePtr newNode = xmlNewTextChild ( m_rootNode,
-			                                       NULL,
-			                                       xmlCharStrdup ( m_group.c_str() ),
-			                                       0 );
-			if ( newNode == NULL )
-			{
-				m_error =  ENTRY_NOT_CREATED;
-#if COMPILE_WITH_EXCEPTIONS
-				if ( _use_dexceptions )
-				{
-					throw DEXCEPTION_XML ( getLastError(), ENTRY_NOT_CREATED );
-				}
-#endif
-			}
-			else
-			{
-				m_error = SUCCESS;
-			}
-		}
-		else
-		{
-#if COMPILE_WITH_EXCEPTIONS
-			if ( _use_dexceptions )
-			{
-				throw DEXCEPTION_XML ( getLastError(), GROUP_NOT_EXISTS );
-			}
-#endif
-		}
-	}
-	else
-	{
-		m_error = SUCCESS;
-	}
-	return m_error;
-}
-
-const DString & DSettings::getGroup ( void ) const
-{
-	return this->m_group;
-}
-
-bool DSettings::hasGroup ( const DString & group )
-{
-	DString buffer;
-	xmlNodePtr n = NULL;
-
-	if ( m_fileName.isEmpty() )
-	{
-		m_error = NO_FILE;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
-		{
-			throw DEXCEPTION_XML ( getLastError(), NO_FILE );
-		}
-#endif
-		return m_error;
-	}
-	
-	if ( ! DomOK )
-	{
-		m_error = NO_DOM;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
-		{
-			throw DEXCEPTION_XML ( getLastError(), NO_DOM );
-		}
-#endif
-		return false;
-	}
-
-	// Evaluate XPath expression
-	buffer = "/";
-	buffer += m_rootNodeName;
-	buffer += "/";
-	buffer += group;
-	n = getNodeByXPath ( buffer.c_str() );
-
-	if ( n != NULL )
-	{
-		return true;
-	}
-	return false;
 }
 
 int DSettings::getLastErrno ( void ) const
 {
 	return this->m_error;
+}
+
+const DString & DSettings::getRootNode( void ) const
+{
+	return this->m_rootNode;
 }
 
 const DString & DSettings::getLastError ( void ) const
@@ -243,41 +121,22 @@ const DString & DSettings::getLastError ( void ) const
 		}
 		case DSettings::ENTRY_NOT_SAVED:
 		{
-			err += "Cannot setup entry (";
-			err += m_group;
-			err += "/";
-			err += m_key;
-			err += ")";
+			err += "Cannot save entry";
 			break;
 		}
 		case DSettings::ENTRY_NOT_CREATED:
 		{
-			err += "Cannot create new entry (";
-			err += m_group;
-			err += "/";
-			err += m_key;
-			err += ")";
+			err += "Cannot create new entry";
 			break;
 		}
 		case DSettings::NO_ENTRY:
 		{
-			err += "Entry doesn't exists (";
-			err += m_group;
-			err += "/";
-			err += m_key;
-			err += ")";
+			err += "Entry doesn't exists";
 			break;
 		}
 		case DSettings::FILE_NOT_SAVED:
 		{
 			err += "Cannot save the XML file";
-			break;
-		}
-		case DSettings::GROUP_NOT_EXISTS:
-		{
-			err += "Cannot found selected group (";
-			err += m_group;
-			err += ")";
 			break;
 		}
 		default:
@@ -289,37 +148,39 @@ const DString & DSettings::getLastError ( void ) const
 	return err;
 }
 
-const DString & DSettings::getEntry ( const DString & key )
+const DStringList & DSettings::getEntries ( const DString & xpath )
 {
-	DString xpath = "/" + m_rootNodeName + "/" + m_group + "/" + key;
-	m_key = key;
 	read( xpath );
-	return m_val;
-}
-
-const DStringList & DSettings::getEntries ( const DString & key )
-{
-	DString xpath = "/" + m_rootNodeName + "/" + m_group + "/" + key;
-	m_key = key;
-	read( xpath, false );
 	return m_values;
 }
 
-int DSettings::readEntry ( const DString & key, DString & value )
+DString DSettings::getEntry ( const DString & xpath )
 {
-	DString xpath = "/" + m_rootNodeName + "/" + m_group + "/" + key;
-	m_key = key;
+	DString buffer;
+	readEntry( xpath, buffer );
+	if ( m_error == DSettings::SUCCESS )
+	{
+		return buffer;
+	}
+	return DString::empty();
+}
+
+int DSettings::readEntry ( const DString & xpath, DString & value )
+{
+	DStringList::const_iterator it;
+	
+	value.clear();
 	read( xpath );
-	value = m_val;
+	it = m_values.begin();
+	if ( it != m_values.end() )
+	{
+		value = *it;
+	}
 	return m_error;
 }
 
 void DSettings::read ( const DString & xpath, bool onlyone )
 {
-	xmlNodePtrList nodes;
-	xmlNodePtrList::iterator it;
-
-	m_val.clear();
 	m_values.clear();
 	
 	if ( m_fileName.isEmpty() )
@@ -334,7 +195,7 @@ void DSettings::read ( const DString & xpath, bool onlyone )
 		return;
 	}
 	
-	if ( ! DomOK )
+	if ( ! m_isValid )
 	{
 		m_error = NO_DOM;
 #if COMPILE_WITH_EXCEPTIONS
@@ -347,10 +208,9 @@ void DSettings::read ( const DString & xpath, bool onlyone )
 	}
 
 	// Evaluate XPath expression
-	nodes = getNodesByXPath ( xpath );
+	getNodeValuesByXPath ( xpath );
 	
-	it = nodes.begin();
-	if ( it == nodes.end() )
+	if ( ! m_values.size() )
 	{
 		m_error = NO_ENTRY;
 #if COMPILE_WITH_EXCEPTIONS
@@ -362,25 +222,11 @@ void DSettings::read ( const DString & xpath, bool onlyone )
 		return;
 	}
 	m_error = SUCCESS;
-	if ( onlyone )
-	{
-		m_val = reinterpret_cast<char*> ( xmlNodeGetContent ( *it ) );
-		return;
-	}
-	while ( it != nodes.end() )
-	{
-		m_values.push_back( reinterpret_cast<char*> ( xmlNodeGetContent ( *it ) ) );
-		it++;
-	}
 }
 
-int DSettings::writeEntry ( const DString & key, const DString & value )
+int DSettings::writeEntry ( const DString & xpath, const DString & value, bool replace )
 {
-	DString bufVal ( value );
-	DString buffer;
-	DString node;
-	xmlNodePtr xpathnode;
-
+	
 	if ( m_fileName.isEmpty() )
 	{
 		m_error = NO_FILE;
@@ -393,7 +239,7 @@ int DSettings::writeEntry ( const DString & key, const DString & value )
 		return m_error;
 	}
 	
-	if ( ! DomOK )
+	if ( ! m_isValid )
 	{
 		m_error = NO_DOM;
 #if COMPILE_WITH_EXCEPTIONS
@@ -404,82 +250,21 @@ int DSettings::writeEntry ( const DString & key, const DString & value )
 #endif
 		return m_error;
 	}
-
-	m_key = key;
-	// Evaluate XPath expression
-	buffer = "/";
-	buffer += m_rootNodeName;
-	buffer += "/";
-	buffer += m_group;
-	buffer += "/";
-	buffer += key;
-	xpathnode = getNodeByXPath ( buffer );
-
-	// no node yet, create it
-	if ( xpathnode == NULL )
+	if ( replace )
 	{
-		m_error = NO_ENTRY;
-		//return m_error;
-		node = "/";
-		node += m_rootNodeName;
-		node += "/";
-		node += m_group;
-		xpathnode = getNodeByXPath ( node );
-		if ( xpathnode != NULL )
-		{
-			xmlNodePtr newNode = xmlNewTextChild ( xpathnode,
-			                                       NULL,
-			                                       xmlCharStrdup ( key.c_str() ),
-			                                       xmlCharStrdup ( value.c_str() ) );
-			if ( newNode == NULL )
-			{
-				m_error = ENTRY_NOT_SAVED;
-#if COMPILE_WITH_EXCEPTIONS
-				if ( _use_dexceptions )
-				{
-					throw DEXCEPTION_XML ( getLastError(), ENTRY_NOT_SAVED );
-				}
-#endif
-				return m_error;
-			}
-		}
-		else
-		{
-			m_error = ENTRY_NOT_CREATED;
-#if COMPILE_WITH_EXCEPTIONS
-			if ( _use_dexceptions )
-			{
-				throw DEXCEPTION_XML ( getLastError(), ENTRY_NOT_CREATED );
-			}
-#endif
-			return m_error;
-		}
-	}
-	// node exists, modify it
-	else
-	{
-		xmlNodeSetContent ( xpathnode, xmlCharStrdup ( bufVal.c_str() ) );
-	}
-
-	if ( xmlSaveFormatFile ( m_fileName.c_str(), m_doc, 1 ) > 0 )
-	{
-		m_error = SUCCESS;
+		updateNodeValueByXPath( xpath, value );
 	}
 	else
 	{
-		m_error = FILE_NOT_SAVED;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
-		{
-			throw DEXCEPTION_XML ( getLastError(), FILE_NOT_SAVED );
-		}
-#endif
+		insertNodeValueByXPath( xpath, value );
 	}
 	return m_error;
 }
 
 int DSettings::makeDOM ( void )
 {
+	xmlNodePtr rootNode;
+
 	// Create DOM tree from XML file
 	xmlKeepBlanksDefault ( 0 );
 	if ( ( m_doc = xmlParseFile ( m_fileName.c_str() ) ) == NULL )
@@ -495,8 +280,9 @@ int DSettings::makeDOM ( void )
 		return m_error;
 	}
 	// Get root nood
-	m_rootNode = xmlDocGetRootElement ( m_doc );
-	if ( m_rootNode == NULL )
+	rootNode = xmlDocGetRootElement ( m_doc );
+	
+	if ( rootNode == NULL )
 	{
 		deleteDOM();
 		m_error = NO_ROOT_NODE;
@@ -509,6 +295,8 @@ int DSettings::makeDOM ( void )
 		return m_error;
 	}
 	
+	m_rootNode = reinterpret_cast<const char*> ( rootNode->name );
+		
 	// Init XPath environnement
 	xmlXPathInit();
 	// Create context for XPath queries
@@ -526,9 +314,8 @@ int DSettings::makeDOM ( void )
 		return m_error;
 	}
 	
-	m_rootNodeName = reinterpret_cast<const char*> ( m_rootNode->name );
 	m_error = SUCCESS;
-	DomOK = true;
+	m_isValid = true;
 	return m_error;
 }
 
@@ -544,111 +331,160 @@ void DSettings::deleteDOM ( void )
 		xmlFreeDoc ( m_doc );
 		m_doc = 0;
 	}
-	DomOK = false;
+	xmlCleanupParser();
+	m_isValid = false;
 }
 
-xmlNodePtr DSettings::getNodeByXPath ( const DString & key )
+void DSettings::insertNodeValueByXPath ( const DString & xpath,
+										 const DString & value )
 {
-	xmlNodePtr n = NULL;
+	DString key, path;
+	xmlChar * buffer = 0;
+	xmlChar * val = 0;
+	xmlNodePtr node = 0;
 	xmlXPathObjectPtr xpathRes = 0;
-
-	xpathRes = xmlXPathEvalExpression ( xmlCharStrdup ( key.c_str() ), m_context );
-	if ( ( xpathRes ) &&
+	
+	key = xpath.section( '/', -1, -1 );
+	path = "/" + xpath.section( '/', -2, -50 );
+	
+	buffer = xmlCharStrdup ( path.c_str() );
+	xpathRes = xmlXPathEvalExpression ( buffer, m_context );
+	xmlFree( buffer );
+	buffer = 0;
+	if ( ( xpathRes != NULL ) &&
 	     ( xpathRes->type == XPATH_NODESET ) &&
-	     ( xpathRes->nodesetval->nodeNr == 1 ) )
+	     ( xpathRes->nodesetval->nodeNr > 0 ) )
 	{
-		n = xpathRes->nodesetval->nodeTab[0];
+		node = xpathRes->nodesetval->nodeTab[0];
+		if ( node != NULL )
+		{
+			val = xmlCharStrdup ( value.c_str() );
+			buffer = xmlCharStrdup ( key.c_str() );
+			xmlNodePtr newNode = xmlNewTextChild ( node, NULL, buffer, val );
+			xmlFree( val );
+			xmlFree( buffer );
+			val = 0;
+			buffer = 0;
+			xmlXPathFreeObject ( xpathRes );
+			if ( newNode == NULL )
+			{
+				m_error = ENTRY_NOT_SAVED;
+#if COMPILE_WITH_EXCEPTIONS
+				if ( _use_dexceptions )
+				{
+					throw DEXCEPTION_XML ( getLastError(), ENTRY_NOT_SAVED );
+				}
+#endif
+				return;
+			}
+		}
+		if ( xmlSaveFormatFile ( m_fileName.c_str(), m_doc, 1 ) > 0 )
+		{
+			m_error = SUCCESS;
+		}
+		else
+		{
+			m_error = ENTRY_NOT_CREATED;
+#if COMPILE_WITH_EXCEPTIONS
+			if ( _use_dexceptions )
+			{
+				throw DEXCEPTION_XML ( getLastError(), ENTRY_NOT_CREATED );
+			}
+#endif
+		}
 	}
-	xmlXPathFreeObject ( xpathRes );
-
-	return n;
+	else
+	{
+		m_error = ENTRY_NOT_CREATED;
+#if COMPILE_WITH_EXCEPTIONS
+		if ( _use_dexceptions )
+		{
+			throw DEXCEPTION_XML ( getLastError(), ENTRY_NOT_CREATED );
+		}
+#endif
+	}
 }
 
-xmlNodePtrList DSettings::getNodesByXPath ( const DString & key )
+void DSettings::updateNodeValueByXPath ( const DString & xpath,
+										 const DString & value )
 {
-	xmlNodePtrList list;
-	xmlNodePtr n = 0;
+	DString buffer;
+	xmlNodePtr node = 0;
 	xmlXPathObjectPtr xpathRes = 0;
+	xmlChar * val = 0;
 
-	xpathRes = xmlXPathEvalExpression ( xmlCharStrdup ( key.c_str() ), m_context );
-	if ( ( xpathRes ) &&
+	m_values.clear();
+	val = xmlCharStrdup ( xpath.c_str() );
+	xpathRes = xmlXPathEvalExpression ( val, m_context );
+	xmlFree( val );
+	val = 0;
+	if ( ( xpathRes != NULL ) &&
+	     ( xpathRes->type == XPATH_NODESET ) &&
+	     ( xpathRes->nodesetval->nodeNr > 0 ) )
+	{
+		node = xpathRes->nodesetval->nodeTab[0];
+		if ( node != NULL )
+		{
+			val = xmlCharStrdup ( value.c_str() );
+			xmlNodeSetContent ( node, val );
+			xmlFree( val );
+			val = 0;
+		}
+		xmlXPathFreeObject ( xpathRes );
+		if ( xmlSaveFormatFile ( m_fileName.c_str(), m_doc, 1 ) > 0 )
+		{
+			m_error = SUCCESS;
+		}
+		else
+		{
+			m_error = FILE_NOT_SAVED;
+#if COMPILE_WITH_EXCEPTIONS
+			if ( _use_dexceptions )
+			{
+				throw DEXCEPTION_XML ( getLastError(), FILE_NOT_SAVED );
+			}
+#endif
+		}
+	}
+	else
+	{
+		xmlXPathFreeObject ( xpathRes );
+		m_error = NO_ENTRY;
+		insertNodeValueByXPath( xpath, value );
+	}
+}
+
+void DSettings::getNodeValuesByXPath ( const DString & key )
+{
+	DString buffer;
+	xmlNodePtr node = 0;
+	xmlXPathObjectPtr xpathRes = 0;
+	xmlChar * val = 0;
+
+	m_values.clear();
+	val = xmlCharStrdup ( key.c_str() );
+	xpathRes = xmlXPathEvalExpression ( val, m_context );
+	xmlFree( val );
+	val = 0;
+	if ( ( xpathRes != NULL ) &&
 	     ( xpathRes->type == XPATH_NODESET ) &&
 	     ( xpathRes->nodesetval->nodeNr > 0 ) )
 	{
 		for ( int i = 0 ; i < xpathRes->nodesetval->nodeNr ; ++i )
 		{
-			n = xpathRes->nodesetval->nodeTab[i];
-			if ( n )
-				list.push_back( n );
-		};
+			node = xpathRes->nodesetval->nodeTab[i];
+			if ( node != NULL )
+			{
+				val = xmlNodeGetContent( node );
+				if ( val != NULL )
+				{
+					buffer = reinterpret_cast<char*> ( val );
+					m_values.push_back( buffer );
+					xmlFree( val );
+					val = 0;
+				}
+			}
+		}
 	}
 	xmlXPathFreeObject ( xpathRes );
-
-	return list;
-}
-
-const DString & DSettings::getSettings ( DSettings & sets,
-                                         const DString & group,
-                                         const DString & key,
-                                         DString * err = 0 )
-{
-	static DString entry;
-
-	if ( sets.setGroup ( group, false ) != DSettings::SUCCESS )
-	{
-		if ( sets.getLastErrno() == DSettings::GROUP_NOT_EXISTS )
-		{
-			if ( err )
-			{
-				*err = sets.getLastError();
-			}
-		}
-		else
-		{
-			if ( err )
-			{
-				*err = sets.getLastError();
-			}
-		}
-		entry.clear();
-		return entry;
-	}
-	if ( sets.readEntry ( key, entry ) != DSettings::SUCCESS )
-	{
-		if ( sets.getLastErrno() == DSettings::NO_ENTRY )
-		{
-			if ( err )
-			{
-				*err = sets.getLastError();
-			}
-		}
-		else
-		{
-			if ( err )
-			{
-				*err = sets.getLastError();
-			}
-		}
-		entry.clear();
-		return entry;
-	}
-	if ( err )
-	{
-		err->clear();
-	}
-	return entry;
-}
-
-bool getSettings ( DSettings & sets,
-                   const DString & group,
-                   const DString & key,
-                   DString & buffer,
-                   DString & err )
-{
-	buffer = DSettings::getSettings ( sets, group, key, &err );
-	if ( buffer.isEmpty() )
-	{
-		return false;
-	}
-	return true;
 }

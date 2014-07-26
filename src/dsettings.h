@@ -42,9 +42,9 @@
 #include "dskeleton.h"
 
 #ifndef WITH_EXCEPTIONS
-  #define COMPILE_WITH_EXCEPTIONS 0
+#define COMPILE_WITH_EXCEPTIONS 0
 #else
-  #define COMPILE_WITH_EXCEPTIONS 1
+#define COMPILE_WITH_EXCEPTIONS 1
 #endif
 
 /**
@@ -77,213 +77,150 @@ typedef std::list<xmlNodePtr> xmlNodePtrList;
 class DSettings : public DSkeleton
 {
 
-	public:
-		/**
-		 * Empty constructor
-		 */
-		DSettings ( void );
+public:
+    /**
+     * Empty constructor
+     */
+    DSettings ( void );
 #ifdef COMPILE_WITH_EXCEPTIONS
-		/**
-		 * Default constructor
-		 */
-		DSettings ( bool );
+    /**
+     * Default constructor
+     */
+    DSettings ( bool );
 #endif
-		/**
-		 * Default destructor
-		 */
-		~DSettings ( void );
+    /**
+     * Default destructor
+     */
+    ~DSettings ( void );
 
-		/**
-		 * Read the entry
-		 * @attention the group must be set before calling this function.
-		 * @see #setGroup
-		 * @see #sets_errors enum for returned values
-		 */
-		int readEntry ( const DString & key, DString & value );
+    /**
+     * Read the entry
+     * @see #sets_errors enum for returned values
+     */
+    int readEntry ( const DString & xpath, DString & value );
 
-		/**
-		 * Read the entry
-		 * @attention the group must be set before calling this function.
-		 * @see #setGroup
-		 * @see #sets_errors enum for returned values
-		 */
-		const DString & getEntry ( const DString & key );
+    /**
+     * Get the entry
+     */
+    DString getEntry ( const DString & xpath );
 
-		/**
-		 * Read all entries
-		 * @attention the group must be set before calling this function.
-		 * @see #setGroup
-		 * @see #sets_errors enum for returned values
-		 */
-		const DStringList & getEntries ( const DString & key );
-		
-		/**
-		 * Write the entry
-		 * For now, Only a content of an existing node is possible.
-		 * @attention the group must be set before calling this function.
-		 * @see #setGroup
-		 * @see #sets_errors enum for returned values
-		 */
-		int writeEntry ( const DString & key, const DString & value );
+    /**
+     * Get all entries
+     */
+    const DStringList & getEntries ( const DString & xpath );
 
-		/**
-		 * Set the XML file name
-		 * @attention the root node name must be set before calling this function.
-		 * @see #sets_errors enum for returned values
-		 */
-		int setFileName ( const DString & fileName );
+    /**
+     * Write the entry
+     * @see #sets_errors enum for returned values
+     */
+    int writeEntry ( const DString & xpath, const DString & value, bool replace = true );
 
-		/**
-		 * Get the XML file name
-		 */
-		const DString getFileName ( void ) const;
+    /**
+     * Set the XML file name
+     * @attention the root node name must be set before calling this function.
+     * @see #sets_errors enum for returned values
+     */
+    int setFileName ( const DString & fileName );
 
-		/**
-		 * Get the root node name
-		 */
-		const DString getRootNodeName ( void ) const;
+    /**
+     * Get the XML file name
+     */
+    const DString & getFileName ( void ) const;
+	
+	/**
+	 * Get the root node
+	 */
+	const DString & getRootNode( void ) const;
 
-		/**
-		 * Set the settings group.\n
-		 * If create is TRUE (the default), the node is created if not exists;
-		 * otherwise an error number is returned.\n
-		 * @see #sets_errors enum for returned values
-		 */
-		int setGroup ( const DString & group, bool create = true );
+    /**
+     * Get the last error code
+     * @see sets_errors enum for returned values
+     */
+    int getLastErrno() const;
 
-		/**
-		 * Get the current settings group
-		 */
-		const DString & getGroup ( void ) const;
+    /**
+     * Get the last error string
+     */
+    const DString & getLastError() const;
 
-		/**
-		 * Return true if DOM have group \em group entry, false otherwise.
-		 */
-		bool hasGroup ( const DString & group );
+    enum sets_errors
+    {
+        /// No error
+        SUCCESS,
+        /// File not found
+        NO_FILE,
+        /// Root node not found
+        NO_ROOT_NODE,
+        /// Cannot create context
+        NO_CONTEXT,
+        /// No entry found
+        NO_ENTRY,
+        /// Entry was not saved
+        ENTRY_NOT_SAVED,
+        /// Entry was not created because create flag is not set.\n
+        /// By default the create flag is set.
+        ENTRY_NOT_CREATED,
+        /// The DOM is not created
+        NO_DOM,
+        /// Cannot save the XML file
+        FILE_NOT_SAVED,
+        /// Group was not exists and create flag is not set.\n
+        /// By default the create flag is set.
+        GROUP_NOT_EXISTS,
+    };
 
-		/**
-		 * Get the last error code
-		 * @see sets_errors enum for returned values
-		 */
-		int getLastErrno() const;
+private:
+    /// The file name
+    DString m_fileName;
+    /// The root node name
+    DString m_rootNode;
+    /// The last entries value
+    DStringList m_values;
+    /// The XML document
+    xmlDocPtr m_doc;
+    /// The XML context
+    xmlXPathContextPtr m_context;
+    /// The last error code
+    int m_error;
+    /// DOM created flag
+    bool m_isValid;
 
-		/**
-		 * Get the last error string
-		 */
-		const DString & getLastError() const;
+    /**
+     * Construct the DOM XML tree in memory
+     */
+    int  makeDOM ( void );
 
-		enum sets_errors
-		{
-			/// No error
-			SUCCESS,
-			/// File not found
-			NO_FILE,
-			/// Root node not found
-			NO_ROOT_NODE,
-			/// Cannot create context
-			NO_CONTEXT,
-			/// No entry found
-			NO_ENTRY,
-			/// Entry was not saved
-			ENTRY_NOT_SAVED,
-			/// Entry was not created because create flag is not set.\n
-			/// By default the create flag is set.
-			ENTRY_NOT_CREATED,
-			/// The DOM is not created
-			NO_DOM,
-			/// Cannot save the XML file
-			FILE_NOT_SAVED,
-			/// Group was not exists and create flag is not set.\n
-			/// By default the create flag is set.
-			GROUP_NOT_EXISTS,
-		};
-		
-		
-		/**
-		* Get quickly a parameter from an already DSetting class ( must be setup ).
-		* This is a function, provided for convenience.
-		* @param sets A reference to an existing settings class
-		* @param group The group where the key must be found
-		* @param key The key to found
-		* @param err An error string, empty if no error was encoured.
-		* @return The value of the specified key.
-		*/
-		static const DString & getSettings ( DSettings & sets,
-		                                     const DString & group,
-		                                     const DString & key,
-		                                     DString * err );
+    /**
+     * Delete the DOM XML tree from memory
+     */
+    void deleteDOM ( void );
 
-	private:
-		/// The file name
-		DString m_fileName;
-		/// The root node name
-		DString m_rootNodeName;
-		/// The last group name
-		DString m_group;
-		/// The last entry name
-		DString m_key;
-		/// The last entry value
-		DString m_val;
-		/// The last entries value
-		DStringList m_values;
-		/// The XML document
-		xmlDocPtr m_doc;
-		/// The XML root node
-		xmlNodePtr m_rootNode;
-		/// The XML context
-		xmlXPathContextPtr m_context;
-		/// The last error code
-		int m_error;
-		/// DOM created flag
-		bool DomOK;
+    /**
+     * Get all nodes values by XPath
+     */
+    void getNodeValuesByXPath ( const DString & path );
+	
+	/**
+	 * Update node value by XPath
+	 */
+	void updateNodeValueByXPath ( const DString & path, 
+								  const DString & value );
+	
+	/**
+	 * Create node value by XPath
+	 */
+	void insertNodeValueByXPath ( const DString & path, 
+								  const DString & value );
 
-		/**
-		 * Construct the DOM XML tree in memory
-		 */
-		int  makeDOM ( void );
+    /**
+     * Init the class
+     */
+    void init ( void );
 
-		/**
-		 * Delete the DOM XML tree from memory
-		 */
-		void deleteDOM ( void );
-
-		/**
-		 * Get a node by its XPath
-		 */
-		xmlNodePtr getNodeByXPath ( const DString & path );
-
-		/**
-		 * Get all nodes by its XPath
-		 */
-		xmlNodePtrList getNodesByXPath ( const DString & path );
-
-		/**
-		 * Init the class
-		 */
-		void init ( void );
-		
-		/**
-		 * Read the entry matching xpath
-		 */
-		void read ( const DString & xpath, bool onlyone = true );
+    /**
+     * Read the entry matching xpath
+     */
+    void read ( const DString & xpath, bool onlyone = true );
 };
-
-/**
- * Get quickly a parameter.
- * This is a function, provided for convenience.
- * @relates DSettings
- * @deprecated Do not use it, it will be remove on next version.
- * @param sets [in] A reference to an existing settings class
- * @param group [in] The group where the key must be found
- * @param key [in] The key to found
- * @param buffer [out] the value of the specified key
- * @param err [out] An error string, empty if no error was encoured.
- * @return TRUE if value for key was found, FALSE otherwise.
- */
-bool getSettings ( DSettings & sets,
-                   const DString & group,
-                   const DString & key,
-                   DString & buffer,
-                   DString & err );
 
 #endif // DSETTINGS_H
