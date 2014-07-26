@@ -47,16 +47,20 @@ public:
 	TestDSettings()
 	{
 		TEST_ADD( TestDSettings::write_config )
+		TEST_ADD( TestDSettings::open_test )
 		TEST_ADD( TestDSettings::get_test )
 		TEST_ADD( TestDSettings::set_test )
+		TEST_ADD( TestDSettings::afterset_test )
 		TEST_ADD( TestDSettings::delete_config )
 	}
 
 private:
 	void write_config();
 	void delete_config();
+	void open_test();
 	void get_test();
 	void set_test();
+	void afterset_test();
 };
 
 #endif // _TESTDSETTINGS_H
