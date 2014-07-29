@@ -222,7 +222,9 @@ class DDatabase : public DSkeleton, public DPrototype<DDatabase>
 			/// Connection to database is lose
 			CONNECTION_LOSE,
 			/// Database is not opened
-			NO_CONNECTED,
+			NOT_CONNECTED,
+			/// Database is not initalized succefully
+			NOT_INIT,
 			/// Parameters are empty or partially filled
 			WRONG_PARAM,
 			/// Unknow error encoured

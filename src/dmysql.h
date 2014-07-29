@@ -193,7 +193,7 @@ private:
 	DDatabaseOptions m_opt;
 
 	/// The MySQL object.
-	st_mysql * mysql;
+	st_mysql * m_mysql;
 
 	/**
 	 * Initialize the class

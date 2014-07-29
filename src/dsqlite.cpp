@@ -95,8 +95,8 @@ DDatabaseResult & DSQLite::open()
 	// Try to open the connection
 	if ( sqlite3_open ( m_params.base.c_str(), &m_sqlite ) != SQLITE_OK )
 	{
-		m_result.errnb = NO_CONNECTED;
-		m_result.error = _errors[NO_CONNECTED];
+		m_result.errnb = NOT_CONNECTED;
+		m_result.error = _errors[NOT_CONNECTED];
 		m_result.error += ". ";
 		m_result.error += sqlite3_errmsg ( m_sqlite );
 		m_opened = false;
@@ -123,7 +123,7 @@ void DSQLite::close()
 		sqlite3_close ( m_sqlite );
 		m_sqlite = 0;
 		m_opened = false;
-		m_result.errnb = NO_CONNECTED;
+		m_result.errnb = NOT_CONNECTED;
 	}
 }
 
@@ -148,8 +148,8 @@ DDatabaseResult & DSQLite::exec ( const DString & query )
 		// If connection was not initialized, quit
 		if ( !m_opened || m_sqlite == 0 )
 		{
-			m_result.errnb = NO_CONNECTED;
-			m_result.error = _errors[NO_CONNECTED];
+			m_result.errnb = NOT_CONNECTED;
+			m_result.error = _errors[NOT_CONNECTED];
 #if COMPILE_WITH_EXCEPTIONS
 			if ( _use_dexceptions )
 			{

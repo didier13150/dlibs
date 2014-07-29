@@ -53,7 +53,8 @@ void DDatabase::internal_init()
 {
 	_errors[SUCCESS] = "";
 	_errors[CONNECTION_LOSE] = "Connection to database was lost and cannot be re-open";
-	_errors[NO_CONNECTED] = "Connection to database cannot be initialized";
+	_errors[NOT_CONNECTED] = "Connection to database failed";
+	_errors[NOT_INIT] = "Connection to database cannot be initialized";
 	_errors[SET_OPT_CONNECT_FAILED] = "Failed to set connection timeout option";
 	_errors[SET_OPT_READ_FAILED] = "Failed to set read timeout option";
 	_errors[SET_OPT_WRITE_FAILED] = "Failed to set write timeout option";

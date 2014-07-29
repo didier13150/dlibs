@@ -49,7 +49,7 @@ DMySQL::DMySQL ( bool use_dexceptions ) : DDatabase ( use_dexceptions )
 
 DMySQL::~DMySQL()
 {
-	if ( m_opened ) close();
+	close();
 }
 
 void DMySQL::init()
@@ -58,7 +58,7 @@ void DMySQL::init()
 	m_opened = false;
 	m_params.clear();
 	m_opt.initialized = false;
-	mysql = 0;
+	m_mysql = 0;
 }
 
 void DMySQL::setParams ( const DDatabaseParams & params )
@@ -80,14 +80,28 @@ DDatabaseResult & DMySQL::open()
 	m_result.clear();
 
 	// if connection is already opened, exit
-	if ( m_opened ) { return this->m_result; }
+	if ( m_mysql ) { return this->m_result; }
+	
+	if ( mysql_library_init( 0, NULL, NULL ) )
+	{
+		m_result.errnb = NOT_INIT;
+		m_result.error = _errors[NOT_INIT];
+		m_opened = false;
+#if COMPILE_WITH_EXCEPTIONS
+		if ( _use_dexceptions )
+		{
+			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
+		}
+#endif
+		return this->m_result;
+	}
 
 	// Try to open the connection
-	mysql = mysql_init ( NULL );
-	if ( !mysql )
+	m_mysql = mysql_init ( NULL );
+	if ( ! m_mysql )
 	{
-		m_result.errnb = NO_CONNECTED;
-		m_result.error = _errors[NO_CONNECTED];
+		m_result.errnb = NOT_CONNECTED;
+		m_result.error = _errors[NOT_CONNECTED];
 		m_opened = false;
 #if COMPILE_WITH_EXCEPTIONS
 		if ( _use_dexceptions )
@@ -100,7 +114,7 @@ DDatabaseResult & DMySQL::open()
 
 	if ( m_opt.initialized )
 	{
-		rtn = mysql_options ( mysql,
+		rtn = mysql_options ( m_mysql,
 		                      MYSQL_OPT_CONNECT_TIMEOUT,
 		                      m_opt.connect_timeout.c_str() );
 		if ( rtn )
@@ -116,7 +130,7 @@ DDatabaseResult & DMySQL::open()
 			return this->m_result;
 		}
 
-		rtn = mysql_options ( mysql,
+		rtn = mysql_options ( m_mysql,
 		                      MYSQL_OPT_READ_TIMEOUT,
 		                      m_opt.read_timeout.c_str() );
 		if ( rtn )
@@ -132,7 +146,7 @@ DDatabaseResult & DMySQL::open()
 			return this->m_result;
 		}
 
-		rtn = mysql_options ( mysql,
+		rtn = mysql_options ( m_mysql,
 		                      MYSQL_OPT_WRITE_TIMEOUT,
 		                      m_opt.write_timeout.c_str() );
 		if ( rtn )
@@ -163,18 +177,19 @@ DDatabaseResult & DMySQL::open()
 #endif
 		return this->m_result;
 	}
-
-	if ( !mysql_real_connect ( mysql,
-	                           m_params.host.c_str(),
-	                           m_params.user.c_str(),
-	                           m_params.password.c_str(),
-	                           m_params.base.c_str(),
-	                           m_params.port.toUInt(),
-	                           NULL,
-	                           0 ) )
+	
+	if ( ! mysql_real_connect ( m_mysql,
+								m_params.host.c_str(),
+								m_params.user.c_str(),
+								m_params.password.c_str(),
+								m_params.base.c_str(),
+								m_params.port.toUInt(),
+								NULL,
+								0
+							   ) )
 	{
-		m_result.errnb = NO_CONNECTED;
-		m_result.error = mysql_error ( mysql );
+		m_result.errnb = NOT_CONNECTED;
+		m_result.error = mysql_error ( m_mysql );
 		if ( m_result.error.isEmpty() )
 		{
 			m_result.error = "Cannot connect to MySQL, check parameters (";
@@ -200,13 +215,14 @@ DDatabaseResult & DMySQL::open()
 
 void DMySQL::close()
 {
-	if ( mysql )
+	if ( m_mysql )
 	{
-		mysql_close ( mysql );
-		mysql = 0;
+		mysql_close ( m_mysql );
+		m_mysql = 0;
 		m_opened = false;
-		m_result.errnb = NO_CONNECTED;
+		m_result.errnb = NOT_CONNECTED;
 	}
+	mysql_library_end();
 }
 
 DDatabaseResult & DMySQL::exec ( const DString & query )
@@ -227,15 +243,15 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 	m_result.clear();
 
 	// If connection was not initialized, try to open it
-	if ( !m_opened || mysql == 0 )
+	if ( !m_opened || m_mysql == 0 )
 	{
 		closeConnection = true;
 		open();
 		// If connection was not initialized, quit
-		if ( !m_opened || mysql == 0 )
+		if ( !m_opened || m_mysql == 0 )
 		{
-			m_result.errnb = NO_CONNECTED;
-			m_result.error = _errors[NO_CONNECTED];
+			m_result.errnb = NOT_CONNECTED;
+			m_result.error = _errors[NOT_CONNECTED];
 #if COMPILE_WITH_EXCEPTIONS
 			if ( _use_dexceptions )
 			{
@@ -248,7 +264,7 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 	m_result.last_query = query;
 
 	// If connection was lose, exit
-	errnb = mysql_ping ( mysql );
+	errnb = mysql_ping ( m_mysql );
 	if ( errnb )
 	{
 		m_result.errnb = CONNECTION_LOSE;
@@ -263,12 +279,12 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 	}
 
 	// execute query
-	errnb = mysql_real_query ( mysql, query.c_str(), query.length() );
+	errnb = mysql_real_query ( m_mysql, query.c_str(), query.length() );
 
 	if ( errnb ) // if query was not executed
 	{
 		m_result.errnb = QUERY_ERROR;
-		m_result.error = mysql_error ( mysql );
+		m_result.error = mysql_error ( m_mysql );
 #if COMPILE_WITH_EXCEPTIONS
 		if ( _use_dexceptions )
 		{
@@ -278,11 +294,11 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 		return this->m_result;
 	}
 	// Get the last AUTO_INCREMENT
-	llu = mysql_insert_id ( mysql );
+	llu = mysql_insert_id ( m_mysql );
 	m_result.last_auto_increment = ( long long unsigned int ) llu;
 
 	// Get the number of affected rows
-	llu = mysql_affected_rows ( mysql );
+	llu = mysql_affected_rows ( m_mysql );
 	if ( llu != static_cast<my_ulonglong>(-1) )
 	{
 		m_result.affected_row = ( long long unsigned int ) llu;
@@ -291,7 +307,7 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 	// Get info
 	// We must pass via a const char * because the pointer can be null
 	// (in case of not infos are available).
-	const char* str = mysql_info ( mysql );
+	const char* str = mysql_info ( m_mysql );
 	if ( str )
 	{
 		m_result.info = str;
@@ -302,10 +318,10 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 	}
 
 	// Get the number of fields
-	num_fields = mysql_field_count ( mysql );
+	num_fields = mysql_field_count ( m_mysql );
 
 	// Get results of query if any
-	results = mysql_store_result ( mysql );
+	results = mysql_store_result ( m_mysql );
 	if ( results )
 	{
 		// Get field names
@@ -338,7 +354,7 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 		if ( num_fields > 0 )
 		{
 			m_result.errnb = UNKNOW_ERROR;
-			m_result.error = mysql_error ( mysql );
+			m_result.error = mysql_error ( m_mysql );
 		}
 		else
 		{

@@ -46,11 +46,15 @@ class TestDMySQL : public Test::Suite
 public:
 	TestDMySQL()
 	{
-		TEST_ADD( TestDMySQL::constructor_test )
+		TEST_ADD( TestDMySQL::socket_connect_test )
+		TEST_ADD( TestDMySQL::network_connect_test )
+		TEST_ADD( TestDMySQL::insert_test )
 	}
 
 private:
-	void constructor_test();
+	void socket_connect_test();
+	void network_connect_test();
+	void insert_test();
 };
 
 #endif // _TESTDMYSQL_H
