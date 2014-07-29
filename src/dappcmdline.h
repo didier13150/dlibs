@@ -202,7 +202,7 @@ class DAppHelp
  * @short Manage command line options and arguments.
  * @author Didier FABERT <didier.fabert@gmail.com>
  * Get and check the option and argument passed by the command line
- * \include testdappcmdline.cpp
+ * \include dappcmdline.dox
  */
 
 class DAppCmdLine
