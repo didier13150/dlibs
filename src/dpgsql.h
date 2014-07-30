@@ -50,7 +50,7 @@ class PGconnect;
 /**
  * @short PostgreSQL database operation.
  * @author Didier FABERT <didier.fabert@gmail.com>
- * \include testdpgsql.cpp
+ * \include dpgsql.dox
  */
 class DPgSQL : public DDatabase
 {

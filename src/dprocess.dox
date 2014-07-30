@@ -5,20 +5,16 @@
 #include <iostream>
 #include <cstdlib>
 
-#include "dlibs.h" // replace it by #include <dlibs/dlibs.h>
+#include "dlibs.h"
 
 using namespace std;
 
-int testdprocess( bool fileauto )
+int main( int argc, char ** argv )
 {
 	DProcess process;
-	DStringList args, rargs;
 
 	process.setExecutable( "ls" );
 	process << "-la" << "/tmp";
-	//args.push_back( "-l" );
-	//args.push_back( "/tmp" );
-	//process.setArgs( args );
 	process.setComMode( DProcess::READ_ONLY );
 	process.setExeMode( DProcess::NOBLOCK );
 

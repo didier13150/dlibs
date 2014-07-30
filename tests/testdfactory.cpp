@@ -37,6 +37,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include "config.h"
 #include "testdfactory.h"
 
 #ifdef DLIBS_HAVE_MYSQL
@@ -47,12 +48,6 @@
 #endif
 #include "dsqlite.h"
 
-#ifndef WITH_EXCEPTIONS
-  #define COMPILE_WITH_EXCEPTIONS 0
-#else
-  #define COMPILE_WITH_EXCEPTIONS 1
-  #include "dexception.h"
-#endif
 
 void TestDFactory::basic_test()
 {
@@ -74,20 +69,20 @@ void TestDFactory::ddatabase_test()
 {
 	DFactory<DDatabase> factory;
 #ifdef DLIBS_HAVE_MYSQL
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 	DFactory<DDatabase>::Register ( "dmysql", new DMySQL( true ) );
 #else
 	DFactory<DDatabase>::Register ( "dmysql", new DMySQL() );
 #endif
 #endif
 #ifdef DLIBS_HAVE_PGSQL
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 	DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL( true ) );
 #else
 	DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL() );
 #endif
 #endif
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 	DFactory<DDatabase>::Register ( "dsqlite", new DSQLite( true ) );
 #else
 	DFactory<DDatabase>::Register ( "dsqlite", new DSQLite() );

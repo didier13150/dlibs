@@ -45,7 +45,7 @@
  * Create easily a threaded job.
  * @author Didier FABERT <didier.fabert@gmail.com>
  * @brief Thread class.
- * @include testdthread.cpp
+ * @include dthread.dox
  */
 class DThread
 {

@@ -58,6 +58,9 @@ endforeach(HFILE)
 configure_file(dlibs.h.cmake
                ${Dlibs_BINARY_DIR}/dlibs.h
               )
+configure_file(config.h.cmake
+               ${Dlibs_BINARY_DIR}/config.h
+              )
               
 include_directories (${Dlibs_BINARY_DIR}
                      ${CMAKE_SOURCE_DIR}/src

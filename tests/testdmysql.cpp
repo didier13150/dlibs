@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdmysql.h"
+#include "config.h"
 
 #ifndef WITH_EXCEPTIONS
   #define COMPILE_WITH_EXCEPTIONS 0
@@ -54,6 +55,14 @@
 #ifndef DBBASE
 #define DBBASE "test"
 #endif
+void TestDMySQL::exception_enabled()
+{
+#if COMPILE_WITH_EXCEPTIONS
+    std::cout << std::endl << "Exception enabled" << std::endl;
+#else
+    std::cout << std::endl << "Exception disabled" << std::endl;
+#endif
+}
 
 void TestDMySQL::socket_connect_test()
 {

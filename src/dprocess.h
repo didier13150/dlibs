@@ -43,7 +43,7 @@
  * Launch another program.
  * @brief External process.
  * @author Didier FABERT <didier.fabert@gmail.com>
- * @include testdenv.cpp
+ * @include dprocess.dox
 */
 class DProcess : public DThread
 {
@@ -84,10 +84,10 @@ public:
 
 	/**
 	 * Set the process execution mode
-	 * @param type The execution mode
+	 * @param mode The execution mode
 	 * @see #ExeMode
 	 */
-	void setExeMode( ExeMode exe_mode );
+	void setExeMode( ExeMode mode );
 	
 	/**
 	 * Get the current execution mode
@@ -100,7 +100,7 @@ public:
 	 * @param mode The communication mode for the process
 	 * @see #ComMode
 	 */
-	void setComMode( ComMode com_mode );
+	void setComMode( ComMode mode );
 	
 	/**
 	 * Get the current communication mode

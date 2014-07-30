@@ -44,9 +44,9 @@ DProcess::~DProcess()
 {
 }
 
-void DProcess::setExeMode( ExeMode exe_mode )
+void DProcess::setExeMode( ExeMode mode )
 {
-	m_exe_mode = exe_mode;
+	m_exe_mode = mode;
 }
 
 DProcess::ExeMode DProcess::getExeMode()
@@ -54,9 +54,9 @@ DProcess::ExeMode DProcess::getExeMode()
 	return m_exe_mode;
 }
 
-void DProcess::setComMode( ComMode com_mode )
+void DProcess::setComMode( ComMode mode )
 {
-	m_com_mode = com_mode;
+	m_com_mode = mode;
 }
 
 DProcess::ComMode DProcess::getComMode()

@@ -48,7 +48,7 @@ class DObserver;
 /**
  * A abstract implementation about observer - observable class.\n
  * This is the observer part
- * @include testdobs.cpp
+ * @include dobs.dox
  * @brief Observer pattern.
  * @author Didier FABERT <didier.fabert@gmail.com>
  * @see DObservable
@@ -112,7 +112,7 @@ private:
 /**
  * A abstract implementation about [ observer - observable ] class.\n
  * This is the observable part
- * @include testdobs.cpp
+ * @include dobs.dox
  * @brief Observable pattern.
  * @author Didier FABERT <didier.fabert@gmail.com>
 */

@@ -44,13 +44,8 @@
 #include "dstring.h"
 #include "dskeleton.h"
 #include "dprototype.h"
+#include "config.h"
 
-
-#ifndef WITH_EXCEPTIONS
-  #define COMPILE_WITH_EXCEPTIONS 0
-#else
-  #define COMPILE_WITH_EXCEPTIONS 1
-#endif
 /**
  * @relates DMyDatabase
  */
@@ -195,7 +190,7 @@ class DDatabase : public DSkeleton, public DPrototype<DDatabase>
 		 */
 		DDatabase();
 
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 		/**
 		 * Default constructor for managing exceptions
 		 */

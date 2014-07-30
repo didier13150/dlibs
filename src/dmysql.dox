@@ -4,11 +4,11 @@
 
 #include <iostream>
 #include <cstdlib>
-#include "dlibs.h" // replace it by #include <dlibs/dlibs.h>
+#include "dlibs.h"
 
 using namespace std;
 
-int testdmysql( bool fileauto )
+int main( int argc, char ** argv )
 {
 	DMySQL sql;
 	DDatabaseParams params;
@@ -17,25 +17,10 @@ int testdmysql( bool fileauto )
 	DDatabaseRow::iterator it;
 	DString table;
 
-	if ( fileauto )
-	{
-		params.host = "localhost";
-		params.user = "root";
-		params.password = "obione";
-		params.base = "mysql";
-	}
-	else
-	{
-		cout << "Enter the database address : ";
-		cin >> params.host;
-		cout << "Enter the database name : ";
-		cin >> params.base;
-		cout << "Enter the database user : ";
-		cin >> params.user;
-		cout << "Enter the database password : ";
-		cin >> params.password;
-	}
-	params.port = "0";
+	params.host = "localhost";
+	params.user = "root";
+	params.password = "obione";
+	params.base = "mysql";
 
 	sql.setParams ( params );
 

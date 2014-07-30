@@ -34,20 +34,6 @@
 
 #ifndef _DLIBS_H_
 #define _DLIBS_H_
-
-#define DLIBS_MAJOR @Dlibs_MAJOR_VERSION@
-#define DLIBS_MINOR @Dlibs_MINOR_VERSION@
-#define DLIBS_PATCH @Dlibs_PATCH_LEVEL@
-#define DLIBS_SOVERSION @Dlibs_SOVERSION@
-#define DLIBS_VERSION "@Dlibs_VERSION@"
-#cmakedefine WITH_EXCEPTIONS
-#cmakedefine DLIBS_HAVE_MYSQL
-#cmakedefine DLIBS_HAVE_PGSQL
-
-#define DLIBS_PREFIX_PATH "@CMAKE_INSTALL_PREFIX@"
-#define DLIBS_PACKAGE_NAME "@PROJECT_NAME@"
-#define DLIBS_BUG_REPORT "@Dlibs_BUGREPORT@"
-
+#include "config.h"
 @Dlibs_all_include@
-
 #endif // _DLIBS_H_

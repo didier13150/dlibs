@@ -5,11 +5,11 @@
 #include <iostream>
 #include <cstdlib>
 
-#include "dlibs.h" // replace it by #include <dlibs/dlibs.h>
+#include "dlibs.h"
 
 using namespace std;
 
-int testdlog ( bool fileauto )
+int main( int argc, char ** argv )
 {
     DString message1, message2;
     DLogger * log = DLogger::getInstance();

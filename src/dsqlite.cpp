@@ -33,6 +33,9 @@
 
 #include "dsqlite.h"
 #include "sqlite3.h"
+#ifdef WITH_EXCEPTIONS
+  #include "dexception.h"
+#endif
 
 DSQLite::DSQLite()
 		: DDatabase()
@@ -40,7 +43,7 @@ DSQLite::DSQLite()
 	init();
 }
 
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 DSQLite::DSQLite ( bool use_dexceptions )
 		: DDatabase( use_dexceptions )
 {
@@ -83,8 +86,8 @@ DDatabaseResult & DSQLite::open()
 		m_result.errnb = WRONG_PARAM;
 		m_result.error = _errors[WRONG_PARAM];
 		m_opened = false;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 		}
@@ -100,8 +103,8 @@ DDatabaseResult & DSQLite::open()
 		m_result.error += ". ";
 		m_result.error += sqlite3_errmsg ( m_sqlite );
 		m_opened = false;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 		}
@@ -150,8 +153,8 @@ DDatabaseResult & DSQLite::exec ( const DString & query )
 		{
 			m_result.errnb = NOT_CONNECTED;
 			m_result.error = _errors[NOT_CONNECTED];
-#if COMPILE_WITH_EXCEPTIONS
-			if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+			if ( m_use_dexceptions )
 			{
 				throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 			}

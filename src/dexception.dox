@@ -5,14 +5,14 @@
 #include <iostream>
 #include <cstdlib>
 
-#include "dlibs.h" // replace it by #include <dlibs/dlibs.h>
+#include "dlibs.h"
 
 using namespace std;
 
 void make_exception();
 void make_exception_db();
 
-int testdexceptions()
+int main( int argc, char ** argv )
 {
 	try
 	{

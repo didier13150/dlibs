@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <cstdlib>
-#include "dlibs.h" // replace it by #include <dlibs/dlibs.h>
+#include "dlibs.h"
 
 #ifndef WITH_EXCEPTIONS
 #define WITH_EXCEPTIONS 0
@@ -12,7 +12,7 @@
 
 using namespace std;
 
-int testdsqlite()
+int main( int argc, char ** argv )
 {
 	DSQLite sql;
 	DDatabaseParams params;

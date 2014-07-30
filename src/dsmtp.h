@@ -43,6 +43,7 @@
  * @author Didier FABERT <didier.fabert@gmail.com>
  * Send easily an email. Define a sender, one or more receiver, set a subject
  * and a message. Send it.
+ * @include dsmtp.dox
  */
 class DSMTP
 {

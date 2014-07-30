@@ -40,12 +40,7 @@
 #include <libxml/xpath.h>
 #include "dstring.h"
 #include "dskeleton.h"
-
-#ifndef WITH_EXCEPTIONS
-#define COMPILE_WITH_EXCEPTIONS 0
-#else
-#define COMPILE_WITH_EXCEPTIONS 1
-#endif
+#include "config.h"
 
 /**
  * @typedef xmlNodePtrList
@@ -82,7 +77,7 @@ public:
      * Empty constructor
      */
     DSettings ( void );
-#ifdef COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
     /**
      * Default constructor
      */

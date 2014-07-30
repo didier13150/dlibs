@@ -41,6 +41,7 @@
  * @brief Template factory class.
  * @author Didier FABERT <didier.fabert@gmail.com>
  * Abstract template class for create object factory.
+ * @include dfactory.dox
  */
 template <class Object, class Key=DString>
 class DFactory

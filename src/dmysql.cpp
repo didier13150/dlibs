@@ -33,14 +33,16 @@
 
 #include "dmysql.h"
 #include <mysql.h>
-
+#ifdef WITH_EXCEPTIONS
+  #include "dexception.h"
+#endif
 
 DMySQL::DMySQL() : DDatabase()
 {
 	init();
 }
 
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 DMySQL::DMySQL ( bool use_dexceptions ) : DDatabase ( use_dexceptions )
 {
 	init();
@@ -87,8 +89,8 @@ DDatabaseResult & DMySQL::open()
 		m_result.errnb = NOT_INIT;
 		m_result.error = _errors[NOT_INIT];
 		m_opened = false;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 		}
@@ -103,8 +105,8 @@ DDatabaseResult & DMySQL::open()
 		m_result.errnb = NOT_CONNECTED;
 		m_result.error = _errors[NOT_CONNECTED];
 		m_opened = false;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 		}
@@ -121,8 +123,8 @@ DDatabaseResult & DMySQL::open()
 		{
 			m_result.errnb = SET_OPT_CONNECT_FAILED;
 			m_result.error = _errors[SET_OPT_CONNECT_FAILED];
-#if COMPILE_WITH_EXCEPTIONS
-			if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+			if ( m_use_dexceptions )
 			{
 				throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 			}
@@ -137,8 +139,8 @@ DDatabaseResult & DMySQL::open()
 		{
 			m_result.errnb = SET_OPT_READ_FAILED;
 			m_result.error = _errors[SET_OPT_READ_FAILED];
-#if COMPILE_WITH_EXCEPTIONS
-			if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+			if ( m_use_dexceptions )
 			{
 				throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 			}
@@ -153,8 +155,8 @@ DDatabaseResult & DMySQL::open()
 		{
 			m_result.errnb = SET_OPT_WRITE_FAILED;
 			m_result.error = _errors[SET_OPT_WRITE_FAILED];
-#if COMPILE_WITH_EXCEPTIONS
-			if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+			if ( m_use_dexceptions )
 			{
 				throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 			}
@@ -169,8 +171,8 @@ DDatabaseResult & DMySQL::open()
 		m_result.errnb = WRONG_PARAM;
 		m_result.error = _errors[WRONG_PARAM];
 		m_opened = false;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 		}
@@ -200,8 +202,8 @@ DDatabaseResult & DMySQL::open()
 			m_result.error += ", port=" + m_params.port + ")";
 		}
 		m_opened = false;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 		}
@@ -252,8 +254,8 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 		{
 			m_result.errnb = NOT_CONNECTED;
 			m_result.error = _errors[NOT_CONNECTED];
-#if COMPILE_WITH_EXCEPTIONS
-			if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+			if ( m_use_dexceptions )
 			{
 				throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 			}
@@ -269,8 +271,8 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 	{
 		m_result.errnb = CONNECTION_LOSE;
 		m_result.error = _errors[CONNECTION_LOSE];
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 		}
@@ -285,8 +287,8 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 	{
 		m_result.errnb = QUERY_ERROR;
 		m_result.error = mysql_error ( m_mysql );
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_DB ( m_result.error, m_result.errnb );
 		}

@@ -35,6 +35,7 @@
 #include <syslog.h>
 #include "dlog.h"
 #include "dsqlite.h"
+#include "config.h"
 
 #ifdef DLIBS_HAVE_MYSQL
   #include "dmysql.h"
@@ -794,7 +795,7 @@ DLogEngineDatabase::DLogEngineDatabase ()
 	m_pattern = "\"%DATE\", \"%TYPE\", \"%MESSAGE\"";
 	m_dateFormat = DString::getFormat( DString::ISO_DATETIME_T );
 #ifdef DLIBS_HAVE_MYSQL
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 		DFactory<DDatabase>::Register ( "dmysql", new DMySQL( true ) );
 #else
 		DFactory<DDatabase>::Register ( "dmysql", new DMySQL() );
@@ -802,14 +803,14 @@ DLogEngineDatabase::DLogEngineDatabase ()
 #endif
 
 #ifdef DLIBS_HAVE_PGSQL
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 		DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL( true ) );
 #else
 		DFactory<DDatabase>::Register ( "dpgsql", new DPgSQL() );
 #endif
 #endif
 
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 		DFactory<DDatabase>::Register ( "dsqlite", new DSQLite( true ) );
 #else
 		DFactory<DDatabase>::Register ( "dsqlite", new DSQLite() );
@@ -827,7 +828,7 @@ DLogEngineDatabase::~DLogEngineDatabase ( void )
 
 bool DLogEngineDatabase::open()
 {
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 	try
 	{
 		m_database->open();
@@ -871,7 +872,7 @@ void DLogEngineDatabase::close()
 	{
 		return;
 	}
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 	try
 	{
 		m_database->close();
@@ -900,7 +901,7 @@ void DLogEngineDatabase::insert ( const DString & text, Level loglevel )
 	}
 	buffer = DLogger::getInstance()->prepare ( text, m_dateFormat, m_pattern, loglevel );
 	
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 	try
 	{
 		m_database->exec( buffer );

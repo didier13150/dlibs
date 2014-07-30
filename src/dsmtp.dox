@@ -4,11 +4,11 @@
 
 #include <iostream>
 #include <cstdlib>
-#include "dlibs.h" // replace it by #include <dlibs/dlibs.h>
+#include "dlibs.h"
 
 using namespace std;
 
-int testdsmtp(  bool fileauto  = false )
+int main( int argc, char ** argv )
 {
 	DSMTP mail;
 	DSMTP::ERRNO code;
@@ -17,22 +17,9 @@ int testdsmtp(  bool fileauto  = false )
 	DStringList::const_iterator it;
 	DString sender, host, subject, text, receiver;
 
-	if (  fileauto  )
-	{
-		host = "smtp://smtp.free.fr:25";
-		host = "smtp://localhost:25";
-		sender = "didier.fabert@free.fr";
-		receiver = "didier30300@free.fr";
-	}
-	else
-	{
-		cout << "Enter the smtp server address : ";
-		cin >> host;
-		cout << "Enter the sender email address : ";
-		cin >> sender;
-		cout << "Enter the receiver email address : ";
-		cin >> receiver;
-	}
+	host = "smtp://localhost:25";
+	sender = "root@localhost.localdomain";
+	receiver = "root@localhost.localdomain";
 	
 	receiverlist.push_back ( receiver );
 

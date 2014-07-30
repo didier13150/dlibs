@@ -33,8 +33,8 @@
 
 #include "dsettings.h"
 
-#if COMPILE_WITH_EXCEPTIONS
-#include "dexception.h"
+#ifdef WITH_EXCEPTIONS
+  #include "dexception.h"
 #endif
 using namespace std;
 
@@ -43,7 +43,7 @@ DSettings::DSettings () : DSkeleton ()
 	init();
 }
 
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 DSettings::DSettings ( bool use_dexceptions ) : DSkeleton ( use_dexceptions )
 {
 	init();
@@ -186,8 +186,8 @@ void DSettings::read ( const DString & xpath, bool onlyone )
 	if ( m_fileName.isEmpty() )
 	{
 		m_error = NO_FILE;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_FILE );
 		}
@@ -198,8 +198,8 @@ void DSettings::read ( const DString & xpath, bool onlyone )
 	if ( ! m_isValid )
 	{
 		m_error = NO_DOM;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_DOM );
 		}
@@ -213,8 +213,8 @@ void DSettings::read ( const DString & xpath, bool onlyone )
 	if ( ! m_values.size() )
 	{
 		m_error = NO_ENTRY;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_ENTRY );
 		}
@@ -230,8 +230,8 @@ int DSettings::writeEntry ( const DString & xpath, const DString & value, bool r
 	if ( m_fileName.isEmpty() )
 	{
 		m_error = NO_FILE;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_FILE );
 		}
@@ -242,8 +242,8 @@ int DSettings::writeEntry ( const DString & xpath, const DString & value, bool r
 	if ( ! m_isValid )
 	{
 		m_error = NO_DOM;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_DOM );
 		}
@@ -271,8 +271,8 @@ int DSettings::makeDOM ( void )
 	{
 		deleteDOM();
 		m_error = NO_FILE;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_FILE );
 		}
@@ -286,8 +286,8 @@ int DSettings::makeDOM ( void )
 	{
 		deleteDOM();
 		m_error = NO_ROOT_NODE;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_ROOT_NODE );
 		}
@@ -305,8 +305,8 @@ int DSettings::makeDOM ( void )
 	{
 		deleteDOM();
 		m_error = NO_CONTEXT;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), NO_CONTEXT );
 		}
@@ -369,8 +369,8 @@ void DSettings::insertNodeValueByXPath ( const DString & xpath,
 			if ( newNode == NULL )
 			{
 				m_error = ENTRY_NOT_SAVED;
-#if COMPILE_WITH_EXCEPTIONS
-				if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+				if ( m_use_dexceptions )
 				{
 					throw DEXCEPTION_XML ( getLastError(), ENTRY_NOT_SAVED );
 				}
@@ -385,8 +385,8 @@ void DSettings::insertNodeValueByXPath ( const DString & xpath,
 		else
 		{
 			m_error = ENTRY_NOT_CREATED;
-#if COMPILE_WITH_EXCEPTIONS
-			if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+			if ( m_use_dexceptions )
 			{
 				throw DEXCEPTION_XML ( getLastError(), ENTRY_NOT_CREATED );
 			}
@@ -396,8 +396,8 @@ void DSettings::insertNodeValueByXPath ( const DString & xpath,
 	else
 	{
 		m_error = ENTRY_NOT_CREATED;
-#if COMPILE_WITH_EXCEPTIONS
-		if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+		if ( m_use_dexceptions )
 		{
 			throw DEXCEPTION_XML ( getLastError(), ENTRY_NOT_CREATED );
 		}
@@ -438,8 +438,8 @@ void DSettings::updateNodeValueByXPath ( const DString & xpath,
 		else
 		{
 			m_error = FILE_NOT_SAVED;
-#if COMPILE_WITH_EXCEPTIONS
-			if ( _use_dexceptions )
+#ifdef WITH_EXCEPTIONS
+			if ( m_use_dexceptions )
 			{
 				throw DEXCEPTION_XML ( getLastError(), FILE_NOT_SAVED );
 			}

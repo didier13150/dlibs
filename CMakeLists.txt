@@ -1,8 +1,5 @@
 project(Dlibs)
 
-cmake_minimum_required(VERSION 2.4)
-#if you don't want the full compiler output, remove the following line
-
 # project version
 set( Dlibs_MAJOR_VERSION 1 )
 set( Dlibs_MINOR_VERSION 2 )
@@ -11,6 +8,8 @@ set( Dlibs_SOVERSION 0 )
 set( Dlibs_VERSION ${Dlibs_MAJOR_VERSION}.${Dlibs_MINOR_VERSION}.${Dlibs_PATCH_LEVEL} )
 set( Dlibs_BUGREPORT "didier.fabert@gmail.com" )
 
+cmake_minimum_required(VERSION 2.4)
+#if you don't want the full compiler output, remove the following line
 mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 # allow more human readable "if then else" constructs
 set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE )

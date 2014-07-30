@@ -36,13 +36,8 @@
 
 #include <map>
 #include "dstring.h"
+#include "config.h"
 
-#ifndef WITH_EXCEPTIONS
-  #define COMPILE_WITH_EXCEPTIONS 0
-#else
-  #define COMPILE_WITH_EXCEPTIONS 1
-  #include "dexception.h"
-#endif
 /**
  * This is the mother class for all high-level DLibs tools
  * @short DLibs Mother class
@@ -57,15 +52,15 @@ protected:
 	 */
 	DSkeleton( void )
 	{
-#if COMPILE_WITH_EXCEPTIONS
-		_use_dexceptions = false;
+#ifdef WITH_EXCEPTIONS
+		m_use_dexceptions = false;
 #endif
 	}
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 	/**
 	 * Default constructor for using exception in program
 	 */
-	DSkeleton( bool use_dexceptions ) : _use_dexceptions( use_dexceptions )
+	DSkeleton( bool use_dexceptions ) : m_use_dexceptions( use_dexceptions )
 	{
 	}
 #endif
@@ -75,20 +70,20 @@ protected:
 	 */
 	virtual ~DSkeleton() {}
 
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 	/// Internal flag for exception using
-	bool _use_dexceptions;
+	bool m_use_dexceptions;
 #endif
 
 public:
 
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 	/**
 	 * To tell that we want use DExceptions
 	 */
 	void useDExceptions( bool use_dexceptions = false )
 	{
-		_use_dexceptions = use_dexceptions;
+		m_use_dexceptions = use_dexceptions;
 	}
 #endif
 

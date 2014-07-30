@@ -111,6 +111,7 @@
  * @endcode
  * @brief Manage exception
  * @author Didier Fabert <didier.fabert@gmail.com>
+ * @include dexception.dox
  */
 
 class DException : public std::exception

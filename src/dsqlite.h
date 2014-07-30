@@ -37,6 +37,7 @@
 #include "dskeleton.h"
 #include "ddatabase.h"
 #include "dstring.h"
+#include "config.h"
 
 #include <vector>
 #include <map>
@@ -45,19 +46,13 @@
 #include <errno.h>
 #include <unistd.h>
 
-#ifndef WITH_EXCEPTIONS
-  #define COMPILE_WITH_EXCEPTIONS 0
-#else
-  #define COMPILE_WITH_EXCEPTIONS 1
-  #include "dexception.h"
-#endif
 
 struct sqlite3;
 
 /**
  * @short SQLite abstraction class.
  * @author Didier FABERT <didier.fabert@gmail.com>
- * \include testdsqlite.cpp
+ * \include dsqlite.dox
  */
 
 class DSQLite : public DDatabase
@@ -69,7 +64,7 @@ class DSQLite : public DDatabase
 		 */
 		DSQLite();
 
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 		/**
 		 * Default Constructor
 		 */

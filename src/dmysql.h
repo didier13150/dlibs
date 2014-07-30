@@ -37,6 +37,7 @@
 #include "ddatabase.h"
 #include "dstring.h"
 #include "dskeleton.h"
+#include "config.h"
 
 #include <vector>
 #include <map>
@@ -44,13 +45,6 @@
 #include <netdb.h>
 #include <errno.h>
 #include <unistd.h>
-
-#ifndef WITH_EXCEPTIONS
-  #define COMPILE_WITH_EXCEPTIONS 0
-#else
-  #define COMPILE_WITH_EXCEPTIONS 1
-  #include "dexception.h"
-#endif
 
 struct st_mysql;
 
@@ -128,7 +122,7 @@ typedef DDatabaseOptions DSQLOptions;
 /**
  * @short MySQL database operation.
  * @author Didier FABERT <didier.fabert@gmail.com>
- * \include testdmysql.cpp
+ * \include dmysql.dox
  */
 class DMySQL : public DDatabase
 {
@@ -138,7 +132,7 @@ public:
 	 */
 	DMySQL();
 
-#if COMPILE_WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
 	/**
 	 * Default Constructor
 	 */

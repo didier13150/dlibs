@@ -46,6 +46,7 @@
 #include "dsingleton.h"
 #include "dfactory.h"
 #include "ddatabase.h"
+#include "config.h"
 
 class DLogEngine;
 
@@ -677,7 +678,7 @@ private:
  * @section Message
  * The message is written as defined in the pattern var.
  *
- * @include testdlog.cpp
+ * @include dlog.dox
  */
 
 class DLogger : public DLogShared, public DSingleton<DLogger>

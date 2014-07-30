@@ -37,6 +37,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include "config.h"
 #include "testdlog.h"
 #include "dsqlite.h"
 #ifdef DLIBS_HAVE_MYSQL
@@ -257,7 +258,7 @@ void TestDLog::sqlite_test()
     DDatabaseResult results;
 	DDatabaseRows::const_iterator it;
 	
-#if WITH_EXCEPTIONS
+#ifdef WITH_EXCEPTIONS
     DFactory<DDatabase>::Register ( "dsqlite", new DSQLite ( true ) );
 #else
 	DFactory<DDatabase>::Register ( "dsqlite", new DSQLite () );
@@ -287,6 +288,8 @@ void TestDLog::sqlite_test()
 #ifdef DLIBS_HAVE_MYSQL
 void TestDLog::mysql_test()
 {
+	DLogParams params;
+	
 	// specific to dmysql
 	params.specific["dbtype"] = "dmysql";
 	params.specific["dbuser"] = "dlibs";

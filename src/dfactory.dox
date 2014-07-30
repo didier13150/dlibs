@@ -2,9 +2,9 @@
  * Unit Test for DFactory                                                     *
  ******************************************************************************/
 
-#include "dlibs.h" // replace it by #include <dlibs/dlibs.h>
+#include "dlibs.h"
 
-int testdfactory()
+int main( int argc, char ** argv )
 {
 	DFactory<DDatabase> factory;
 	DDatabaseResult result;
