@@ -22,7 +22,7 @@ int main( int argc, char ** argv )
 	// Catch DExceptions
 	catch ( const DException& e )
 	{
-		cout << e.what() << endl;
+		cout << e.dWhat() << endl;
 	}
 	// Catch all others exceptions
 	catch ( ... )
