@@ -31,13 +31,13 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.             *
  ******************************************************************************/
 #include "dthread.h"
-#include <iostream>
 
 DThread::DThread()
 {
 	m_sleeptime = 100000;
 	m_attr = 0;
 	m_continue = false;
+	//m_running = false;
 	m_mode = DThread::MULTI_LOOP;
 	m_status = DThread::STOPPED;
 	m_return = -1;
@@ -81,7 +81,7 @@ void DThread::setSleep ( unsigned int sleeptime )
 unsigned int DThread::getSleep()
 {
 	return m_sleeptime;
-}
+} 
 
 int DThread::getReturn() const
 {
@@ -99,32 +99,46 @@ void DThread::start()
 		return;
 	}
 	m_continue = true;
-	if ( m_mode == DThread::SINGLE_LOOP )
+	if ( m_mode == SINGLE_LOOP )
 	{
 		m_continue = false;
 	}
+	m_status = DThread::RUNNING;
 	pthread_create ( &m_handle, m_attr, &DThread::entryPoint, this );
 }
 
 void DThread::stop()
 {
 	m_continue = false;
-	usleep( 100000 ); // Let thread a chance to finish himself before cancel it.
+	if ( m_handle )
+	{
+		m_return = pthread_join ( m_handle, NULL );
+		m_handle = 0;
+		m_status = DThread::STOPPED;
+	}
+}
+
+void DThread::forcestop()
+{
+	m_continue = false;
+	usleep( m_sleeptime ); // Let thread a chance to finish himself before cancel it.
 	if ( m_handle )
 	{
 		pthread_cancel( m_handle );
 		m_return = pthread_join ( m_handle, NULL );
 		m_handle = 0;
+		m_status = DThread::STOPPED;
 	}
 }
 
 void * DThread::entryPoint( void * pthis )
 {
-	DThread * th = ( DThread * ) pthis;
+	DThread * th = reinterpret_cast<DThread *> ( pthis );
 	
 	if ( pthread_setcancelstate( PTHREAD_CANCEL_ENABLE, NULL ) != 0 )
 	{
 		th->m_status = DThread::STOPPED;
+		th->m_return = 127;
 		pthread_exit( NULL );
 	}
 	

@@ -72,7 +72,7 @@ public:
 		/// Thread must make infinite number of loop until stop method is called.
 		MULTI_LOOP,
 	} RunMode;
-
+	
 	/**
 	 * @typedef Status
 	 * Define all thread status.
@@ -86,16 +86,22 @@ public:
 	} Status;
 
 	/**
-	 * Start the thread
-	 * @brief start the thread
+	 * Start thread
+	 * @brief start thread
 	 */
 	virtual void start();
 
 	/**
-	 * Stop the thread
-	 * @brief stop the thread
+	 * Stop thread
+	 * @brief stop thread
 	 */
 	virtual void stop();
+
+	/**
+	 * Force thread to stop by cancel it before join.
+	 * @brief Force thread to stop
+	 */
+	virtual void forcestop();
 
 	/**
 	 * Threaded process
@@ -163,6 +169,9 @@ private:
 	/// Continue thread process flag
 	bool m_continue;
 
+	/// The thread status flag
+	bool m_running;
+
 	/// Return value about thread
 	int m_return;
 
@@ -171,7 +180,7 @@ private:
 	 * @see Mode
 	 */
 	RunMode m_mode;
-
+	
 	/**
 	 * Thread Status
 	 * @see Status
