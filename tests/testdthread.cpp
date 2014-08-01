@@ -13,7 +13,7 @@
  *   \_|  o|                                             ,__,                 *
  *    \___/      Copyright (C) 2009 by didier fabert     (oo)____             *
  *     ||||__                                            (__)    )\           *
- *     (___)_)   File : testdmysql.h                        ||--|| *          *
+ *     (___)_)   File : testdthread.cpp                     ||--|| *          *
  *                                                                            *
  *   This program is free software; you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published by     *
@@ -28,37 +28,83 @@
  *   You should have received a copy of the GNU General Public License        *
  *   along with this program; if not, write to the                            *
  *   Free Software Foundation, Inc.,                                          *
- *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.             *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                *
  *                                                                            *
- *   Unit Test for DMySQL                                                     *
+ *   Unit Test for DThread                                                    *
  *                                                                            *
  ******************************************************************************/
 
-#ifndef _TESTDMYSQL_H
-#define _TESTDMYSQL_H
+#include <cstdlib>
+#include <iostream>
+#include <fstream>
+#include "testdthread.h"
 
-#include <cpptest.h>
-
-#include "dmysql.h"
-
-class TestDMySQL : public Test::Suite
+void TestDThread::single_loop_test()
 {
-public:
-	TestDMySQL()
-	{
-		TEST_ADD( TestDMySQL::exception_enabled )
-		TEST_ADD( TestDMySQL::socket_connect_test )
-		TEST_ADD( TestDMySQL::network_connect_test )
-		TEST_ADD( TestDMySQL::insert_test )
-		TEST_ADD( TestDMySQL::insert_exception_test )
-	}
+	Foo foo;
 
-private:
-	void exception_enabled();
-	void socket_connect_test();
-	void network_connect_test();
-	void insert_test();
-	void insert_exception_test();
-};
+	foo.setRunMode( DThread::SINGLE_LOOP );
+	foo.setSleep( 100000 );
+	foo.start();
+	sleep( 1 );
+	TEST_ASSERT_MSG( foo.isRunning() == false, "Single loop thread still running" )
+	TEST_ASSERT_MSG( foo.getNb() == 1, "Single loop thread make more than one loop" )
+	TEST_ASSERT_MSG( foo.getReturn() == 0, "Single loop thread return none zero value" )
+}
 
-#endif // _TESTDMYSQL_H
+void TestDThread::multi_loop_test()
+{
+	Foo foo;
+
+	foo.setRunMode( DThread::MULTI_LOOP );
+	foo.setSleep( 100000 );
+	foo.start();
+	sleep( 1 );
+	TEST_ASSERT_MSG( foo.isRunning() == true, "Multi loop thread not running" )
+	TEST_ASSERT_MSG( foo.getNb() >= 1, "Multi loop thread make more than one loop" )
+	foo.stop();
+	TEST_ASSERT_MSG( foo.isRunning() == false, "Multi loop thread still running after stop" )
+	TEST_ASSERT_MSG( foo.getReturn() == 0, "Multi loop thread return none zero value" )
+}
+
+void TestDThread::multi_stop_test()
+{
+	Foo foo;
+
+	foo.setRunMode( DThread::MULTI_LOOP );
+	foo.setSleep( 100000 );
+	foo.start();
+	sleep( 1 );
+	TEST_ASSERT_MSG( foo.isRunning() == true, "Multi loop thread not running" )
+	TEST_ASSERT_MSG( foo.getNb() >= 1, "Multi loop thread make more than one loop" )
+	foo.stop();
+	TEST_ASSERT_MSG( foo.isRunning() == false, "Multi loop thread still running after stop" )
+	TEST_ASSERT_MSG( foo.getReturn() == 0, "Multi loop thread return none zero value" )
+	foo.stop();
+	foo.stop();
+	TEST_ASSERT_MSG( foo.isRunning() == false, "Multi loop thread still running after stop" )
+	TEST_ASSERT_MSG( foo.getReturn() == 0, "Multi loop thread return none zero value" )
+}
+
+void TestDThread::just_stop_test()
+{
+	Foo foo;
+	foo.stop();
+	foo.stop();
+}
+
+int main( int argc, char** argv )
+{
+	std::ofstream file;
+	TestDThread ets;
+	
+	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
+	Test::HtmlOutput html;
+	
+	file.open( "testdthread.html" );
+	ets.run( html );
+	html.generate( file, true, "DThread" );
+	file.close();
+	
+	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
+}

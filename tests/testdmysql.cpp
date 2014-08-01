@@ -77,7 +77,7 @@ void TestDMySQL::socket_connect_test()
 	params.base = DBBASE;
 	
 #if COMPILE_WITH_EXCEPTIONS
-    db = new DMySQL ( true );
+    db = new DMySQL ( false );
 #else
 	db = new DMySQL ();
 #endif
@@ -109,7 +109,7 @@ void TestDMySQL::network_connect_test()
 	params.base = DBBASE;
 	
 #if COMPILE_WITH_EXCEPTIONS
-    db = new DMySQL ( true );
+    db = new DMySQL ( false );
 #else
 	db = new DMySQL ();
 #endif
@@ -142,7 +142,7 @@ void TestDMySQL::insert_test()
 	params.base = DBBASE;
 	
 #if COMPILE_WITH_EXCEPTIONS
-    db = new DMySQL ( true );
+    db = new DMySQL ( false );
 #else
 	db = new DMySQL ();
 #endif
@@ -225,6 +225,50 @@ void TestDMySQL::insert_test()
 	
 	// Clean up
 	db->close();
+    delete db;
+}
+
+void TestDMySQL::insert_exception_test()
+{
+	DMySQL * db = 0;
+	DDatabaseParams params;
+	DDatabaseResult results;
+	DDatabaseRows::const_iterator it;
+
+	params.host = "localhost";
+	params.user = DBUSER;
+	params.password = DBPASSWD;
+	params.base = DBBASE;
+
+#if COMPILE_WITH_EXCEPTIONS
+    db = new DMySQL ( true );
+#else
+	TEST_ASSERT_MSG( db != 0, "Exceptions not enabled" )
+#endif
+	db->setParams ( params );
+	try
+	{
+		db->open();
+		results = db->exec ( "SHOW TABLES" );
+		std::cout << results << std::endl;
+		results = db->exec ( "SELECT * FROM TABLES" );
+		std::cout << results << std::endl;
+		db->close();
+	}
+	catch (const DException_database & e)
+	{
+		std::cout << "DException_database exception encoured" << std::endl;
+		std::cout << e.dWhat() << std::endl;
+	}
+	catch (const DException & e)
+	{
+		std::cout << "DException exception encoured" << std::endl;
+		std::cout << e.dWhat() << std::endl;
+	}
+	catch ( ... )
+	{
+		std::cout << "Another unknow exception encoured" << std::endl;
+	}
     delete db;
 }
 

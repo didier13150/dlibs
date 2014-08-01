@@ -13,7 +13,7 @@
  *   \_|  o|                                             ,__,                 *
  *    \___/      Copyright (C) 2009 by didier fabert     (oo)____             *
  *     ||||__                                            (__)    )\           *
- *     (___)_)   File : testdmysql.h                        ||--|| *          *
+ *     (___)_)   File : testdexception.h                    ||--|| *          *
  *                                                                            *
  *   This program is free software; you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published by     *
@@ -30,35 +30,38 @@
  *   Free Software Foundation, Inc.,                                          *
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.             *
  *                                                                            *
- *   Unit Test for DMySQL                                                     *
+ *   Unit Test for DException                                                 *
  *                                                                            *
  ******************************************************************************/
 
-#ifndef _TESTDMYSQL_H
-#define _TESTDMYSQL_H
+#ifndef _TESTDEXCEPTION_H
+#define _TESTDEXCEPTION_H
 
 #include <cpptest.h>
 
-#include "dmysql.h"
+#include "dexception.h"
 
-class TestDMySQL : public Test::Suite
+class TestDException : public Test::Suite
 {
 public:
-	TestDMySQL()
+	TestDException()
 	{
-		TEST_ADD( TestDMySQL::exception_enabled )
-		TEST_ADD( TestDMySQL::socket_connect_test )
-		TEST_ADD( TestDMySQL::network_connect_test )
-		TEST_ADD( TestDMySQL::insert_test )
-		TEST_ADD( TestDMySQL::insert_exception_test )
+		TEST_ADD( TestDException::constructor_test )
+		TEST_ADD( TestDException::database_test )
+		TEST_ADD( TestDException::connection_test )
+		TEST_ADD( TestDException::xml_test )
 	}
 
 private:
-	void exception_enabled();
-	void socket_connect_test();
-	void network_connect_test();
-	void insert_test();
-	void insert_exception_test();
+	void simul_exception();
+	void simul_exception_db();
+	void simul_exception_connection();
+	void simul_exception_xml();
+	void constructor_test();
+	void database_test();
+	void connection_test();
+	void xml_test();
+	
 };
 
-#endif // _TESTDMYSQL_H
+#endif // _TESTDEXCEPTION_H

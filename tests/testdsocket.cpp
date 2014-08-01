@@ -74,6 +74,7 @@ void TestDSocket::basic_com_test()
 	TEST_ASSERT_MSG( err == DSock::SUCCESS, "Client can not write message" )
 	
 	err = server.readMessage ( h, buffer );
+	std::cout << std::endl << "\"" << buffer << "\"" << std::endl;
 	TEST_ASSERT_MSG( err == DSock::SUCCESS, "Server can not read message" )
 	TEST_ASSERT_MSG( buffer.simplifyWhiteSpace() == "Hello Server !", "Server receive wrong message" )
 	

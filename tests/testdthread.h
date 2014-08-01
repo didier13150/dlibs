@@ -13,7 +13,7 @@
  *   \_|  o|                                             ,__,                 *
  *    \___/      Copyright (C) 2009 by didier fabert     (oo)____             *
  *     ||||__                                            (__)    )\           *
- *     (___)_)   File : testdmysql.h                        ||--|| *          *
+ *     (___)_)   File : testdthread.cpp                     ||--|| *          *
  *                                                                            *
  *   This program is free software; you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published by     *
@@ -28,37 +28,50 @@
  *   You should have received a copy of the GNU General Public License        *
  *   along with this program; if not, write to the                            *
  *   Free Software Foundation, Inc.,                                          *
- *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.             *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                *
  *                                                                            *
- *   Unit Test for DMySQL                                                     *
+ *   Unit Test for DThread                                                    *
  *                                                                            *
  ******************************************************************************/
 
-#ifndef _TESTDMYSQL_H
-#define _TESTDMYSQL_H
+#ifndef _TESTDTHREAD_H
+#define _TESTDTHREAD_H
 
 #include <cpptest.h>
 
-#include "dmysql.h"
+#include "dthread.h"
 
-class TestDMySQL : public Test::Suite
+class TestDThread : public Test::Suite
 {
 public:
-	TestDMySQL()
+	TestDThread()
 	{
-		TEST_ADD( TestDMySQL::exception_enabled )
-		TEST_ADD( TestDMySQL::socket_connect_test )
-		TEST_ADD( TestDMySQL::network_connect_test )
-		TEST_ADD( TestDMySQL::insert_test )
-		TEST_ADD( TestDMySQL::insert_exception_test )
+		TEST_ADD( TestDThread::single_loop_test )
+		TEST_ADD( TestDThread::multi_loop_test )
+		TEST_ADD( TestDThread::just_stop_test )
+		TEST_ADD( TestDThread::multi_stop_test )
 	}
 
 private:
-	void exception_enabled();
-	void socket_connect_test();
-	void network_connect_test();
-	void insert_test();
-	void insert_exception_test();
+	void single_loop_test();
+	void multi_loop_test();
+	void just_stop_test();
+	void multi_stop_test();
 };
 
-#endif // _TESTDMYSQL_H
+class Foo : public DThread
+{
+public:
+	Foo() : DThread(), nb( 0 ) {}
+
+	void run()
+	{
+		nb++;
+	}
+	void clear() { nb = 0; }
+	int getNb() { return nb; }
+private:
+	int nb;
+};
+
+#endif // _TESTDTHREAD_H
