@@ -154,7 +154,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~DException() throw() {}
+	virtual ~DException() throw() {}
 
 	/**
 	 * Object assignation
@@ -172,24 +172,25 @@ public:
 	/**
 	 * Return explanation of why exception was thrown.
 	 */
-	virtual const char* what( void ) const throw()
+	virtual const DString dWhat( void ) const throw()
 	{
-		DString buffer, buf;
+		DString buffer, message;
 
-		buffer = "Error (";
-		buf.setNum( _errno );
-		buffer += buf;
-		buffer += ") from file ";
-		buf = _file;
-		buffer += buf.section( "/", -1, -1 );
-		buffer += " in function ";
-		buffer += _function;
-		buffer += " at line ";
-		buf.setNum( _line );
-		buffer += buf;
-		buffer += " : ";
-		buffer += _description;
-		return buffer.c_str();
+		message.clear();
+		message = "Error (";
+		buffer.setNum( _errno );
+		message += buffer;
+		message += ") from file ";
+		buffer = _file;
+		message += buffer.section( "/", -1, -1 );
+		message += " in function ";
+		message += _function;
+		message += " at line ";
+		buffer.setNum( _line );
+		message += buffer;
+		message += " : ";
+		message += _description;
+		return message;
 	}
 
 protected:
@@ -262,48 +263,6 @@ public:
 
 	~DException_xml() throw() {};
 }; // class DException_xml
-
-
-/**
- * @brief Manage xml parsing exception
- * @author Didier Fabert <didier.fabert@gmail.com>
- */
-class DWarningException : public DException
-{
-
-public:
-	explicit DWarningException( const DString & desc,
-	                            const int errnb,
-	                            const DString & file,
-	                            const int line,
-	                            const DString & function )
-			: DException( desc, errnb, file, line, function ) {};
-
-	~DWarningException() throw() {};
-	
-	/**
-	 * Return explanation of why exception was thrown.
-	 */
-	virtual const char* what( void ) const throw()
-	{
-		DString buffer, buf;
-
-		buffer = "Warning (";
-		buf.setNum( _errno );
-		buffer += buf;
-		buffer += ") from file ";
-		buf = _file;
-		buffer += buf.section( "/", -1, -1 );
-		buffer += " in function ";
-		buffer += _function;
-		buffer += " at line ";
-		buf.setNum( _line );
-		buffer += buf;
-		buffer += " : ";
-		buffer += _description;
-		return buffer.c_str();
-	}
-}; // class DWarningException
 
 #endif // DEXCEPTION_H
 
