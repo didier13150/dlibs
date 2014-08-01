@@ -74,6 +74,18 @@ public:
 	} RunMode;
 
 	/**
+	 * @typedef Status
+	 * Define all thread status.
+	 */
+	typedef enum status
+	{
+		/// Thread is running
+		RUNNING,
+		/// Thread is stopped.
+		STOPPED,
+	} Status;
+
+	/**
 	 * Start the thread
 	 * @brief start the thread
 	 */
@@ -151,9 +163,6 @@ private:
 	/// Continue thread process flag
 	bool m_continue;
 
-	/// The thread status flag
-	bool m_running;
-
 	/// Return value about thread
 	int m_return;
 
@@ -162,6 +171,12 @@ private:
 	 * @see Mode
 	 */
 	RunMode m_mode;
+
+	/**
+	 * Thread Status
+	 * @see Status
+	 */
+	Status m_status;
 
 	/**
 	 * If thread must make another loop.\n

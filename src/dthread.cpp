@@ -31,15 +31,17 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.             *
  ******************************************************************************/
 #include "dthread.h"
+#include <iostream>
 
 DThread::DThread()
 {
 	m_sleeptime = 100000;
 	m_attr = 0;
 	m_continue = false;
-	m_running = false;
 	m_mode = DThread::MULTI_LOOP;
+	m_status = DThread::STOPPED;
 	m_return = -1;
+	m_handle = 0;
 }
 
 DThread::~DThread()
@@ -49,7 +51,11 @@ DThread::~DThread()
 
 bool DThread::isRunning()
 {
-	return m_running;
+	if( m_status == DThread::RUNNING )
+	{
+		return true;
+	}
+	return false;
 }
 
 bool DThread::again()
@@ -77,31 +83,52 @@ unsigned int DThread::getSleep()
 	return m_sleeptime;
 }
 
+int DThread::getReturn() const
+{
+	if( m_status == DThread::RUNNING )
+	{
+		return 255;
+	}
+	return m_return;
+}
+
 void DThread::start()
 {
-	if( m_running )
+	if( m_status == DThread::RUNNING )
 	{
 		return;
 	}
 	m_continue = true;
-	pthread_create ( &m_handle, m_attr, &DThread::entryPoint, this );
-	m_running = true;
-	if ( m_mode == SINGLE_LOOP )
+	if ( m_mode == DThread::SINGLE_LOOP )
 	{
 		m_continue = false;
 	}
+	pthread_create ( &m_handle, m_attr, &DThread::entryPoint, this );
 }
 
 void DThread::stop()
 {
 	m_continue = false;
-	m_return = pthread_join ( m_handle, NULL );
+	usleep( 100000 ); // Let thread a chance to finish himself before cancel it.
+	if ( m_handle )
+	{
+		pthread_cancel( m_handle );
+		m_return = pthread_join ( m_handle, NULL );
+		m_handle = 0;
+	}
 }
 
 void * DThread::entryPoint( void * pthis )
 {
 	DThread * th = ( DThread * ) pthis;
 	
+	if ( pthread_setcancelstate( PTHREAD_CANCEL_ENABLE, NULL ) != 0 )
+	{
+		th->m_status = DThread::STOPPED;
+		pthread_exit( NULL );
+	}
+	
+	th->m_status = DThread::RUNNING;
 	do
 	{
 		th->run();
@@ -112,6 +139,7 @@ void * DThread::entryPoint( void * pthis )
 		
 	} while( th->again() );
 	
-	th->m_running = false;
+	th->m_status = DThread::STOPPED;
+	th->m_return = 0;
 	pthread_exit( NULL );
 }
