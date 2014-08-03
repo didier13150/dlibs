@@ -205,7 +205,7 @@ private:
 	 * Create node value by XPath
 	 */
 	void insertNodeValueByXPath ( const DString & path, 
-								  const DString & value );
+								  const DString & value = DString::empty() );
 
     /**
      * Init the class

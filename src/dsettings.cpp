@@ -210,9 +210,8 @@ void DSettings::read ( const DString & xpath, bool onlyone )
 	// Evaluate XPath expression
 	getNodeValuesByXPath ( xpath );
 	
-	if ( ! m_values.size() )
+	if ( m_error == DSettings::NO_ENTRY )
 	{
-		m_error = NO_ENTRY;
 #ifdef WITH_EXCEPTIONS
 		if ( m_use_dexceptions )
 		{
@@ -221,7 +220,6 @@ void DSettings::read ( const DString & xpath, bool onlyone )
 #endif
 		return;
 	}
-	m_error = SUCCESS;
 }
 
 int DSettings::writeEntry ( const DString & xpath, const DString & value, bool replace )
@@ -250,6 +248,22 @@ int DSettings::writeEntry ( const DString & xpath, const DString & value, bool r
 #endif
 		return m_error;
 	}
+	//Create full path if not exists (except root node)
+	int id = 1;
+	int max = xpath.contains( "/" );
+	do
+	{
+		if ( id == max ) break;
+		DString key = xpath.section( '/', id, id );
+		DString path = "/" + xpath.section( '/', 0, id-1 );
+		read( path + "/" + key );
+		if ( m_error == DSettings::NO_ENTRY )
+		{
+			insertNodeValueByXPath( path + "/" + key );
+		}
+		id++;
+	} while ( m_error == DSettings::SUCCESS );
+	
 	if ( replace )
 	{
 		updateNodeValueByXPath( xpath, value );
@@ -345,7 +359,7 @@ void DSettings::insertNodeValueByXPath ( const DString & xpath,
 	xmlXPathObjectPtr xpathRes = 0;
 	
 	key = xpath.section( '/', -1, -1 );
-	path = "/" + xpath.section( '/', -2, -50 );
+	path = "/" + xpath.section( '/', -2 );
 	
 	buffer = xmlCharStrdup ( path.c_str() );
 	xpathRes = xmlXPathEvalExpression ( buffer, m_context );
@@ -358,7 +372,14 @@ void DSettings::insertNodeValueByXPath ( const DString & xpath,
 		node = xpathRes->nodesetval->nodeTab[0];
 		if ( node != NULL )
 		{
-			val = xmlCharStrdup ( value.c_str() );
+			if ( ! value.isEmpty() )
+			{
+				val = xmlCharStrdup ( value.c_str() );
+			}
+			else
+			{
+				val = NULL;
+			}
 			buffer = xmlCharStrdup ( key.c_str() );
 			xmlNodePtr newNode = xmlNewTextChild ( node, NULL, buffer, val );
 			xmlFree( val );
@@ -454,7 +475,7 @@ void DSettings::updateNodeValueByXPath ( const DString & xpath,
 	}
 }
 
-void DSettings::getNodeValuesByXPath ( const DString & key )
+void DSettings::getNodeValuesByXPath ( const DString & xpath )
 {
 	DString buffer;
 	xmlNodePtr node = 0;
@@ -462,7 +483,7 @@ void DSettings::getNodeValuesByXPath ( const DString & key )
 	xmlChar * val = 0;
 
 	m_values.clear();
-	val = xmlCharStrdup ( key.c_str() );
+	val = xmlCharStrdup ( xpath.c_str() );
 	xpathRes = xmlXPathEvalExpression ( val, m_context );
 	xmlFree( val );
 	val = 0;
@@ -470,6 +491,7 @@ void DSettings::getNodeValuesByXPath ( const DString & key )
 	     ( xpathRes->type == XPATH_NODESET ) &&
 	     ( xpathRes->nodesetval->nodeNr > 0 ) )
 	{
+		m_error = SUCCESS;
 		for ( int i = 0 ; i < xpathRes->nodesetval->nodeNr ; ++i )
 		{
 			node = xpathRes->nodesetval->nodeTab[i];
@@ -485,6 +507,10 @@ void DSettings::getNodeValuesByXPath ( const DString & key )
 				}
 			}
 		}
+	}
+	else
+	{
+		m_error = NO_ENTRY;
 	}
 	xmlXPathFreeObject ( xpathRes );
 }

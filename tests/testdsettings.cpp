@@ -87,7 +87,7 @@ void TestDSettings::set_test()
 	err = sets.setFileName ( CONF_FILE );
 	err = sets.writeEntry ( "/settings/user2/name", "Bud" );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not update entry." )
-
+	
 	err = sets.writeEntry ( "/settings/user3", "" );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not write new empty entry." )
 
@@ -102,6 +102,9 @@ void TestDSettings::set_test()
 
 	err = sets.writeEntry ( "/settings/user3/surname", "Quand il pète, il troue son slip" );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not write new entry." )
+
+	err = sets.writeEntry ( "/settings/family/A/AAA/AAAAA", "Number Four" );
+	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not write new empty entry." )
 }
 
 void TestDSettings::afterset_test()
@@ -133,6 +136,10 @@ void TestDSettings::afterset_test()
 	err = sets.readEntry ( "/settings/user3/surname", buffer );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not read entry." )
 	TEST_ASSERT_MSG( buffer == "Quand il pète, il troue son slip", "Entry not updated." )
+
+	err = sets.readEntry ( "/settings/family/A/AAA/AAAAA", buffer );
+	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not read entry." )
+	TEST_ASSERT_MSG( buffer == "Number Four", "Entry not created." )
 }
 
 void TestDSettings::write_config()
@@ -153,8 +160,8 @@ void TestDSettings::write_config()
 
 void TestDSettings::delete_config()
 {
-	int success = remove( CONF_FILE );
-	TEST_ASSERT_MSG( success == 0, "Can not deleting settings file" )
+	//int success = remove( CONF_FILE );
+	//TEST_ASSERT_MSG( success == 0, "Can not deleting settings file" )
 }
 
 int main( int argc, char** argv )
