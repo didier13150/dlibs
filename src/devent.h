@@ -35,6 +35,7 @@
 #define _DEVENT_H_
 
 #include "dstring.h"
+#include <time.h>
 
 /**
  * A basic event class.
@@ -50,24 +51,29 @@ public:
 	virtual ~DBasicEvent();
 
 	/**
-	 * Set the event description
+	 * Set event
 	 */
-	virtual void setEventDescription( const DString & );
+	virtual void setEvent( const DString & );
+
+	/**
+	 * Set event with timestamp
+	 */
+	virtual void setEvent( const DString & desc, const time_t & timestamp );
 
 	/**
 	 * Get the event description
 	 */
-	virtual DString what() const;
+	virtual const DString & what() const;
 
 	/**
 	 * Get the event timestamp
 	 */
-	virtual long int when() const;
+	virtual const time_t & when() const;
 
 
 protected:
-	DString _what;
-	long int _timestamp;
+	DString m_what;
+	time_t m_timestamp;
 };
 
 #endif

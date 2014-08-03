@@ -47,10 +47,12 @@ public:
 	TestDEvent()
 	{
 		TEST_ADD( TestDEvent::constructor_test )
+		TEST_ADD( TestDEvent::set_event_test )
 	}
 
 private:
 	void constructor_test();
+	void set_event_test();
 };
 
 #endif // _TESTDEVENT_H

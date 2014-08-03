@@ -41,6 +41,19 @@
 
 void TestDEvent::constructor_test()
 {
+	DBasicEvent event;
+	time_t now = time( NULL );
+	event.setEvent( "Beginning" );
+	TEST_ASSERT_DELTA_MSG( event.when(), now, 1, "Wrong timestamp on event" )
+	TEST_ASSERT_MSG( event.what() == "Beginning", "Wrong description on event" )
+}
+
+void TestDEvent::set_event_test()
+{
+	DBasicEvent event;
+	event.setEvent( "Second event", 1407055795 );
+	TEST_ASSERT_MSG( event.when() == 1407055795, "Wrong timestamp on event" )
+	TEST_ASSERT_MSG( event.what() == "Second event", "Wrong description on event" )
 }
 
 int main( int argc, char** argv )

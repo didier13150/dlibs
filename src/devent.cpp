@@ -37,24 +37,29 @@ DBasicEvent::DBasicEvent()
 {
 }
 
-
 DBasicEvent::~DBasicEvent()
 {
 }
 
-void DBasicEvent::setEventDescription( const DString & desc )
+void DBasicEvent::setEvent( const DString & desc )
 {
-	_what = desc;
-	_timestamp = time( NULL );
+	m_what = desc;
+	m_timestamp = time( NULL );
 }
 
-DString DBasicEvent::what() const
+void DBasicEvent::setEvent( const DString & desc, const time_t & timestamp )
 {
-	return _what;
+	m_what = desc;
+	m_timestamp = timestamp;
 }
 
-long int DBasicEvent::when() const
+const DString & DBasicEvent::what() const
 {
-	return _timestamp;
+	return m_what;
+}
+
+const time_t & DBasicEvent::when() const
+{
+	return m_timestamp;
 }
 
