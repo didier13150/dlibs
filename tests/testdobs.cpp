@@ -37,10 +37,28 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <unistd.h>
 #include "testdobs.h"
 
 void TestDObs::constructor_test()
 {
+	Barometer barometer;
+	Thermometer thermometer;
+	std::ostringstream stream;
+
+	{ // To limit WeatherStation range to this block
+		WeatherStation station;
+		
+		thermometer.addObserver( &station );
+		barometer.addObserver( &station );
+
+		thermometer.setValue( 22 );
+		TEST_ASSERT_MSG( station.popFirstEvent() == "Temperature = 22 degrees.", "Wrong event (#1)" )
+		barometer.setValue( 1024 );
+		TEST_ASSERT_MSG( station.popFirstEvent() == "Presure = 1024 mBars.", "Wrong event (#2)" )
+	}
+
+	barometer.setValue( 1020 );
 }
 
 int main( int argc, char** argv )

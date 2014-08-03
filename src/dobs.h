@@ -70,7 +70,7 @@ public:
 	/**
 	 * Get the event
 	 */
-	virtual DBasicEvent & getEvent( void ) = 0;
+	virtual const DBasicEvent & getEvent( void ) = 0;
 	
 protected:
 	/**
