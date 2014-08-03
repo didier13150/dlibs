@@ -56,12 +56,20 @@ void TestDProcess::simple_test()
 void TestDProcess::block_test()
 {
 	DProcess process;
+	unsigned int loop = 0;
 
 	process.setExecutable( "for i in $(seq 1 2) ; do sleep 1 ; done ; echo \"Done\"" );
 	process.setComMode( DProcess::READ_ONLY );
 	process.setExeMode( DProcess::BLOCK );
 	process.start();
+
+	while ( process.isRunning() )
+	{
+		loop++;
+		usleep( 100000 );
+	}
 	
+	TEST_ASSERT_MSG( loop == 0, "Wrong loop number for DProcess" )
 	TEST_ASSERT_MSG( process.getOutput().stripWhiteSpace() == "Done", "Wrong output for DProcess" )
 	process.stop();
 }
