@@ -46,11 +46,15 @@ class TestDProcess : public Test::Suite
 public:
 	TestDProcess()
 	{
-		TEST_ADD( TestDProcess::constructor_test )
+		TEST_ADD( TestDProcess::simple_test )
+		TEST_ADD( TestDProcess::block_test )
+		TEST_ADD( TestDProcess::nonblock_test )
 	}
 
 private:
-	void constructor_test();
+	void simple_test();
+	void block_test();
+	void nonblock_test();
 };
 
 #endif // _TESTDPROCESS_H
