@@ -209,9 +209,13 @@ class DString
 		 */
 		typedef enum
 		{
+			/// Binary base
 			BINARY  = 0x2,
+			/// Octal base
 			OCTAL   = 0x8,
+			/// Decimal base
 			DECIMAL = 0xA,
+			/// Hexadecimal base
 			HEXA    = 0xF,
 		}BaseFlag;
 
@@ -221,8 +225,11 @@ class DString
 		 */
 		typedef enum
 		{
+			/// Lower case
 			LOWERCASE  = 0x01,
+			/// Upper case
 			UPPERCASE  = 0x02,
+			/// Lower and/or upper case
 			BOTHCASE   = LOWERCASE | UPPERCASE,
 		}CaseFlag;
 
@@ -232,9 +239,13 @@ class DString
 		 */
 		typedef enum
 		{
+			/// %Y-%m-%d %H:%M:%S
 			ISO_DATETIME   = 0x00,
+			/// %Y-%m-%dT%H:%M:%S
 			ISO_DATETIME_T = 0x01,
+			/// %Y-%m-%d
 			ISO_DATE       = 0x02,
+			/// %H:%M:%S
 			ISO_TIME       = 0x03,
 		}DateFormat;
 
