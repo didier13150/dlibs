@@ -364,11 +364,11 @@ void DAppCmdLine::showHelp() const
 
 	std::cout << std::endl << m_appname;
 	
-	if ( getNumberOfOptions() ) std::cout << " [args] ";
+	if ( getNumberOfOptions() ) std::cout << " [opts]";
 
 	for ( it = m_help_arguments.begin() ; it != m_help_arguments.end() ; ++it )
 	{
-		std::cout << "[" << ( *it ) << "]";
+		std::cout << " [" << ( *it ) << "]";
 	}
 
 	std::cout << std::endl << std::endl;
@@ -376,7 +376,7 @@ void DAppCmdLine::showHelp() const
 	for ( it2 = m_help_options.begin() ; it2 != m_help_options.end() ; ++it2 )
 	{
 		helpstr = "  " + it2->getName();
-		// Add 3 chars: 2 for beginnig space and one between name and summary
+		// Add 3 chars: 2 for beginning spaces and one between name and summary
 		for ( unsigned int i = helpstr.length() ; i < ( m_maxSummarySize +3 ) ; ++i )
 		{
 			helpstr.append ( " " );

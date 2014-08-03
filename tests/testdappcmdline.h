@@ -47,10 +47,14 @@ public:
 	TestDAppCmdLine()
 	{
 		TEST_ADD( TestDAppCmdLine::constructor_test )
+		TEST_ADD( TestDAppCmdLine::arg_and_opt_test )
+		TEST_ADD( TestDAppCmdLine::show_help_test )
 	}
 
 private:
 	void constructor_test();
+	void show_help_test();
+	void arg_and_opt_test();
 };
 
 #endif // _TESTDAPPCMDLINE_H
