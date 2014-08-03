@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdsingleton.h"
+#include "test.h"
 
 void TestDSingleton::singleton_test()
 {
@@ -65,16 +66,21 @@ void TestDSingleton::killonly_test()
 
 int main( int argc, char** argv )
 {
-	std::ofstream file;
 	TestDSingleton ets;
-
-	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	/*Test::HtmlOutput html;
+#ifdef TEST_HTML
+	std::ofstream file;
+	Test::HtmlOutput html;
 
 	file.open( "dsingleton.html" );
 	ets.run( html );
 	html.generate( file, true, "DSingleton" );
-	file.close();*/
+	file.close();
+#endif
+
+#ifdef TEST_STDOUT
+	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
 
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
+#endif
+	return EXIT_SUCCESS;
 }

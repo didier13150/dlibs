@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdprocess.h"
+#include "test.h"
 
 void TestDProcess::simple_test()
 {
@@ -68,7 +69,7 @@ void TestDProcess::block_test()
 		loop++;
 		usleep( 100000 );
 	}
-	
+
 	TEST_ASSERT_MSG( loop == 0, "Wrong loop number for DProcess" )
 	TEST_ASSERT_MSG( process.getOutput().stripWhiteSpace() == "Done", "Wrong output for DProcess" )
 	process.stop();
@@ -89,7 +90,7 @@ void TestDProcess::nonblock_test()
 		loop++;
 		usleep( 100000 );
 	}
-	
+
 	TEST_ASSERT_MSG( loop >= 4, "Wrong loop number for DProcess" )
 	TEST_ASSERT_MSG( process.getOutput().stripWhiteSpace() == "Done", "Wrong output for DProcess" )
 	process.stop();
@@ -97,16 +98,21 @@ void TestDProcess::nonblock_test()
 
 int main( int argc, char** argv )
 {
-	std::ofstream file;
 	TestDProcess ets;
-
-	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	/*Test::HtmlOutput html;
+#ifdef TEST_HTML
+	std::ofstream file;
+	Test::HtmlOutput html;
 
 	file.open( "dprocess.html" );
 	ets.run( html );
 	html.generate( file, true, "DProcess" );
-	file.close();*/
+	file.close();
+#endif
+
+#ifdef TEST_STDOUT
+	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
 
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
+#endif
+	return EXIT_SUCCESS;
 }

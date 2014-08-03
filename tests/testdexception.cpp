@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdexception.h"
+#include "test.h"
 
 void TestDException::simul_exception()
 {
@@ -166,16 +167,21 @@ void TestDException::xml_test()
 
 int main( int argc, char** argv )
 {
-	std::ofstream file;
 	TestDException ets;
+#ifdef TEST_HTML
+	std::ofstream file;
+	Test::HtmlOutput html;
 
-	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	/*Test::HtmlOutput html;
-
-	file.open( "devent.html" );
+	file.open( "dexception.html" );
 	ets.run( html );
-	html.generate( file, true, "DEvent" );
-	file.close();*/
+	html.generate( file, true, "DException" );
+	file.close();
+#endif
+
+#ifdef TEST_STDOUT
+	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
 
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
+#endif
+	return EXIT_SUCCESS;
 }

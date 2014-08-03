@@ -39,6 +39,7 @@
 #include <fstream>
 #include "config.h"
 #include "testdlog.h"
+#include "test.h"
 #include "dsqlite.h"
 #ifdef DLIBS_HAVE_MYSQL
   #include "dmysql.h"
@@ -308,16 +309,22 @@ void TestDLog::pgsql_test()
 
 int main( int argc, char** argv )
 {
-	std::ofstream file;
 	TestDLog ets;
-
-	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	/*Test::HtmlOutput html;
+#ifdef TEST_HTML
+	std::ofstream file;
+	Test::HtmlOutput html;
 
 	file.open( "dlog.html" );
 	ets.run( html );
 	html.generate( file, true, "DLog" );
-	file.close();*/
+	file.close();
+#endif
+
+#ifdef TEST_STDOUT
+	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
 
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
+#endif
+	return EXIT_SUCCESS;
 }
+

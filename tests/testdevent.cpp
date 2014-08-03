@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdevent.h"
+#include "test.h"
 
 void TestDEvent::constructor_test()
 {
@@ -58,16 +59,21 @@ void TestDEvent::set_event_test()
 
 int main( int argc, char** argv )
 {
-	std::ofstream file;
 	TestDEvent ets;
-
-	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	/*Test::HtmlOutput html;
+#ifdef TEST_HTML
+	std::ofstream file;
+	Test::HtmlOutput html;
 
 	file.open( "devent.html" );
 	ets.run( html );
 	html.generate( file, true, "DEvent" );
-	file.close();*/
+	file.close();
+#endif
+
+#ifdef TEST_STDOUT
+	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
 
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
+#endif
+	return EXIT_SUCCESS;
 }

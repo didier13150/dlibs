@@ -39,6 +39,7 @@
 #include <fstream>
 #include "config.h"
 #include "testdfactory.h"
+#include "test.h"
 
 #ifdef DLIBS_HAVE_MYSQL
   #include "dmysql.h"
@@ -104,16 +105,21 @@ void TestDFactory::ddatabase_test()
 
 int main( int argc, char** argv )
 {
-	std::ofstream file;
 	TestDFactory ets;
-
-	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	/*Test::HtmlOutput html;
+#ifdef TEST_HTML
+	std::ofstream file;
+	Test::HtmlOutput html;
 
 	file.open( "dfactory.html" );
 	ets.run( html );
 	html.generate( file, true, "DFactory" );
-	file.close();*/
+	file.close();
+#endif
+
+#ifdef TEST_STDOUT
+	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
 
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
+#endif
+	return EXIT_SUCCESS;
 }

@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdsmtp.h"
+#include "test.h"
 
 void TestDSMTP::constructor_test()
 {
@@ -45,16 +46,21 @@ void TestDSMTP::constructor_test()
 
 int main( int argc, char** argv )
 {
-	std::ofstream file;
 	TestDSMTP ets;
-
-	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	/*Test::HtmlOutput html;
+#ifdef TEST_HTML
+	std::ofstream file;
+	Test::HtmlOutput html;
 
 	file.open( "dsmtp.html" );
 	ets.run( html );
 	html.generate( file, true, "DSMTP" );
-	file.close();*/
+	file.close();
+#endif
+
+#ifdef TEST_STDOUT
+	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
 
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
+#endif
+	return EXIT_SUCCESS;
 }

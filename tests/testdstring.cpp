@@ -37,6 +37,7 @@
 #include <iostream>
 #include <map>
 #include "testdstring.h"
+#include "test.h"
 
 void TestDString::constructor_test()
 {
@@ -543,17 +544,21 @@ void TestDString::stream_test()
 
 int main( int argc, char** argv )
 {
-	std::ofstream file;
 	TestDString ets;
-
-	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	/*Test::HtmlOutput html;
+#ifdef TEST_HTML
+	std::ofstream file;
+	Test::HtmlOutput html;
 
 	file.open( "dstring.html" );
 	ets.run( html );
 	html.generate( file, true, "DString" );
-	file.close();*/
+	file.close();
+#endif
+
+#ifdef TEST_STDOUT
+	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
 
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
+#endif
+	return EXIT_SUCCESS;
 }
-

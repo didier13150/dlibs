@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdsettings.h"
+#include "test.h"
 
 #define CONF_FILE "dsettings.xml"
 
@@ -87,7 +88,7 @@ void TestDSettings::set_test()
 	err = sets.setFileName ( CONF_FILE );
 	err = sets.writeEntry ( "/settings/user2/name", "Bud" );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not update entry." )
-	
+
 	err = sets.writeEntry ( "/settings/user3", "" );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not write new empty entry." )
 
@@ -160,22 +161,27 @@ void TestDSettings::write_config()
 
 void TestDSettings::delete_config()
 {
-	//int success = remove( CONF_FILE );
-	//TEST_ASSERT_MSG( success == 0, "Can not deleting settings file" )
+	int success = remove( CONF_FILE );
+	TEST_ASSERT_MSG( success == 0, "Can not deleting settings file" )
 }
 
 int main( int argc, char** argv )
 {
-	std::ofstream file;
 	TestDSettings ets;
-
-	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	/*Test::HtmlOutput html;
+#ifdef TEST_HTML
+	std::ofstream file;
+	Test::HtmlOutput html;
 
 	file.open( "dsettings.html" );
 	ets.run( html );
 	html.generate( file, true, "DSettings" );
-	file.close();*/
+	file.close();
+#endif
+
+#ifdef TEST_STDOUT
+	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
 
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
+#endif
+	return EXIT_SUCCESS;
 }

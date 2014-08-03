@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdappcmdline.h"
+#include "test.h"
 
 void TestDAppCmdLine::constructor_test()
 {
@@ -131,16 +132,21 @@ void TestDAppCmdLine::show_help_test()
 
 int main( int argc, char** argv )
 {
-	std::ofstream file;
 	TestDAppCmdLine ets;
-
-	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	/*Test::HtmlOutput html;
+#ifdef TEST_HTML
+	std::ofstream file;
+	Test::HtmlOutput html;
 
 	file.open( "dappcmdline.html" );
 	ets.run( html );
 	html.generate( file, true, "DAppCmdLine" );
-	file.close();*/
+	file.close();
+#endif
+
+#ifdef TEST_STDOUT
+	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
 
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
+#endif
+	return EXIT_SUCCESS;
 }

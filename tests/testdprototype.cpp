@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdprototype.h"
+#include "test.h"
 
 void TestDPrototype::constructor_test()
 {
@@ -45,16 +46,21 @@ void TestDPrototype::constructor_test()
 
 int main( int argc, char** argv )
 {
-	std::ofstream file;
 	TestDPrototype ets;
-
-	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	/*Test::HtmlOutput html;
+#ifdef TEST_HTML
+	std::ofstream file;
+	Test::HtmlOutput html;
 
 	file.open( "dprototype.html" );
 	ets.run( html );
 	html.generate( file, true, "DPrototype" );
-	file.close();*/
+	file.close();
+#endif
+
+#ifdef TEST_STDOUT
+	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
 
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
+#endif
+	return EXIT_SUCCESS;
 }

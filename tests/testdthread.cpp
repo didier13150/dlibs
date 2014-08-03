@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdthread.h"
+#include "test.h"
 
 void TestDThread::single_loop_test()
 {
@@ -95,16 +96,21 @@ void TestDThread::just_stop_test()
 
 int main( int argc, char** argv )
 {
-	std::ofstream file;
 	TestDThread ets;
+#ifdef TEST_HTML
+	std::ofstream file;
+	Test::HtmlOutput html;
 
-	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	/*Test::HtmlOutput html;
-
-	file.open( "testdthread.html" );
+	file.open( "dthread.html" );
 	ets.run( html );
 	html.generate( file, true, "DThread" );
-	file.close();*/
+	file.close();
+#endif
+
+#ifdef TEST_STDOUT
+	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
 
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
+#endif
+	return EXIT_SUCCESS;
 }
