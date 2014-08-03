@@ -18,3 +18,4 @@ dlibs.kdev4
 logo-old.png
 tests/make.sh
 tests/template.*
+*.kate-swp
