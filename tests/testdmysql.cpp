@@ -75,14 +75,14 @@ void TestDMySQL::socket_connect_test()
 	params.user = DBUSER;
 	params.password = DBPASSWD;
 	params.base = DBBASE;
-	
+
 #if COMPILE_WITH_EXCEPTIONS
     db = new DMySQL ( false );
 #else
 	db = new DMySQL ();
 #endif
 	db->setParams ( params );
-	
+
 	results = db->open();
 	if ( results.errnb != 0 )
 	{
@@ -90,7 +90,7 @@ void TestDMySQL::socket_connect_test()
 		delete db;
 		return;
 	}
-	
+
 	TEST_ASSERT_MSG( results.errnb == 0, "Database not opened" )
 	// Clean up
 	db->close();
@@ -107,14 +107,14 @@ void TestDMySQL::network_connect_test()
 	params.user = DBUSER;
 	params.password = DBPASSWD;
 	params.base = DBBASE;
-	
+
 #if COMPILE_WITH_EXCEPTIONS
     db = new DMySQL ( false );
 #else
 	db = new DMySQL ();
 #endif
 	db->setParams ( params );
-	
+
 	results = db->open();
 	if ( results.errnb != 0 )
 	{
@@ -122,7 +122,7 @@ void TestDMySQL::network_connect_test()
 		delete db;
 		return;
 	}
-	
+
 	TEST_ASSERT_MSG( results.errnb == 0, "Database not opened" )
 	// Clean up
 	db->close();
@@ -140,14 +140,14 @@ void TestDMySQL::insert_test()
 	params.user = DBUSER;
 	params.password = DBPASSWD;
 	params.base = DBBASE;
-	
+
 #if COMPILE_WITH_EXCEPTIONS
     db = new DMySQL ( false );
 #else
 	db = new DMySQL ();
 #endif
 	db->setParams ( params );
-	
+
 	results = db->open();
 	if ( results.errnb != 0 )
 	{
@@ -155,7 +155,7 @@ void TestDMySQL::insert_test()
 		delete db;
 		return;
 	}
-	
+
 	results = db->exec ( "CREATE TABLE mytable (field1 INT(8), field2 INT(8) );" );
 	if ( results.errnb != 0 )
 	{
@@ -164,7 +164,7 @@ void TestDMySQL::insert_test()
 		TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully (create table)" )
 		return;
 	}
-	
+
 	results = db->exec ( "INSERT INTO mytable(field1, field2) VALUES(1, 2);" );
 	if ( results.errnb != 0 )
 	{
@@ -173,7 +173,7 @@ void TestDMySQL::insert_test()
 		TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully (insert 1)" )
 		return;
 	}
-	
+
 	results = db->exec ( "INSERT INTO mytable(field1, field2) VALUES(2, NULL);" );
 	if ( results.errnb != 0 )
 	{
@@ -182,7 +182,7 @@ void TestDMySQL::insert_test()
 		TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully (insert 2)" )
 		return;
 	}
-	
+
 	results = db->exec ( "SELECT * FROM mytable WHERE field1 = 1;" );
 	if ( results.errnb != 0 )
 	{
@@ -191,13 +191,13 @@ void TestDMySQL::insert_test()
 		TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully (select 1)" )
 		return;
 	}
-	
+
 	TEST_ASSERT_MSG( results.rows.size() == 1, "Wrong number of row in database" )
 	it = results.rows.begin();
 	TEST_ASSERT_MSG( it != results.rows.end(), "Wrong number of row in database" )
 	TEST_ASSERT_MSG( it->at("field1") == "1", "Wrong first record on database" )
 	TEST_ASSERT_MSG( it->at("field2") == "2", "Wrong second record on database" )
-	
+
 	results = db->exec ( "SELECT * FROM mytable WHERE field1 = 2;" );
 	if ( results.errnb != 0 )
 	{
@@ -206,14 +206,14 @@ void TestDMySQL::insert_test()
 		TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully (select 2)" )
 		return;
 	}
-	
+
 	TEST_ASSERT_MSG( results.rows.size() == 1, "Wrong number of row in database" )
 	it = results.rows.begin();
 	TEST_ASSERT_MSG( it != results.rows.end(), "Wrong number of row in database" )
 	TEST_ASSERT_MSG( it->at("field1") == "2", "Wrong first record on database" )
 	TEST_ASSERT_MSG( it->at("field2") == "NULL", "Wrong second record on database" )
-	
-	
+
+
 	results = db->exec ( "DROP TABLE mytable;" );
 	if ( results.errnb != 0 )
 	{
@@ -222,7 +222,7 @@ void TestDMySQL::insert_test()
 		TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully (create table)" )
 		return;
 	}
-	
+
 	// Clean up
 	db->close();
     delete db;
@@ -276,43 +276,14 @@ int main( int argc, char** argv )
 {
 	std::ofstream file;
 	TestDMySQL ets;
-	
+
 	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	Test::HtmlOutput html;
-	
+	/*Test::HtmlOutput html;
+
 	file.open( "dmysql.html" );
 	ets.run( html );
 	html.generate( file, true, "DMySQL" );
-	file.close();
-	
+	file.close();*/
+
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-/*
-#include <mysql.h>
-int main( int argc, char** argv )
-{
-	MYSQL mysql, *connect;
-	if (mysql_library_init(0, NULL, NULL)) {
-		fprintf(stderr, "could not initialize MySQL library\n");
-		exit(1);
-	}
-	
-	connect = mysql_init( &mysql );
-	if( connect == NULL )
-	{
-		printf("\nFailed to initate MySQL connection");
-		exit(1);
-	}
-	//now you can call any MySQL API function you like
-	if ( ! mysql_real_connect(&mysql,"localhost","root","obione","test",0,NULL,0))
-	{ 
-		printf( "Failed to connect to MySQL: Error: %s\n",
-		mysql_error(&mysql)); 
-		exit(1);
-	}
-	printf("Logged on to database sucessfully\n");
-	printf( "Mysql: %ld, Connect: %ld\n", &mysql, connect );
-	mysql_close(&mysql);
-	
-	mysql_library_end();
-}*/

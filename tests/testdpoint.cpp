@@ -104,7 +104,7 @@ void TestDPoint::operator_test()
 	pt3 = pt2 / pt1;
 	TEST_ASSERT_MSG( pt3.getX() == 2, "Get X var after operator/ failed" )
 	TEST_ASSERT_MSG( pt3.getY() == 2, "Get Y var after operator/ failed" )
-	
+
 	FPoint fpt1(3.0,3.5), fpt2(4.5,5.25), fpt3;
 	fpt3 = fpt1 + fpt2;
 	TEST_ASSERT_MSG( fpt3.getX() == 7.5, "Get X var after operator+ failed (float)" )
@@ -118,7 +118,7 @@ void TestDPoint::operator_test()
 	fpt3 = fpt2 / fpt1;
 	TEST_ASSERT_MSG( fpt3.getX() == 1.5, "Get X var after operator/ failed" )
 	TEST_ASSERT_MSG( fpt3.getY() == 1.5, "Get Y var after operator/ failed" )
-	
+
 }
 
 void TestDPoint::stream_test()
@@ -127,7 +127,7 @@ void TestDPoint::stream_test()
 	TEST_ASSERT_MSG( pt.toString() == "{3.2,5.4}", "Get string dump failed" )
 	std::istringstream iss;
 	std::ostringstream oss;
-	
+
 	iss.str( "{8.6,7.1}" );
 	iss >> pt;
 	TEST_ASSERT_DELTA_MSG( pt.getX(), 8.6, 0.0001, "Get X float var after stream push failed" )
@@ -135,21 +135,21 @@ void TestDPoint::stream_test()
 	TEST_ASSERT_MSG( pt.toString() == "{8.6,7.1}", "Get string dump failed after stream push" )
 	oss << pt;
 	TEST_ASSERT_MSG( oss.str() == "{8.6,7.1}", "Get string dump failed after stream push" )
-	
+
 }
 
 int main( int argc, char** argv )
 {
 	std::ofstream file;
 	TestDPoint ets;
-	
+
 	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	Test::HtmlOutput html;
-	
+	/*Test::HtmlOutput html;
+
 	file.open( "dpoint.html" );
 	ets.run( html );
 	html.generate( file, true, "DPoint" );
-	file.close();
-	
+	file.close();*/
+
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

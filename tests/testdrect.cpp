@@ -47,14 +47,14 @@ int main( int argc, char** argv )
 {
 	std::ofstream file;
 	TestDRect ets;
-	
+
 	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	Test::HtmlOutput html;
-	
+	/*Test::HtmlOutput html;
+
 	file.open( "drect.html" );
 	ets.run( html );
 	html.generate( file, true, "DRect" );
-	file.close();
-	
+	file.close();*/
+
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -66,14 +66,14 @@ int main( int argc, char** argv )
 {
 	std::ofstream file;
 	TestDTimer ets;
-	
+
 	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	Test::HtmlOutput html;
-	
+	/*Test::HtmlOutput html;
+
 	file.open( "dtimer.html" );
 	ets.run( html );
 	html.generate( file, true, "DTimer" );
-	file.close();
-	
+	file.close();*/
+
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

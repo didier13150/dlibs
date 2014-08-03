@@ -47,7 +47,7 @@ void TestDSettings::open_test()
 {
 	DSettings sets;
 	int err;
-	
+
 	err = sets.setFileName ( CONF_FILE );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not specify settings file" )
 	TEST_ASSERT_MSG( sets.getRootNode() == "settings", "Wrong root node name" )
@@ -60,14 +60,14 @@ void TestDSettings::get_test()
 	DStringList list;
 	DStringList::iterator it;
 	int err;
-	
+
 	err = sets.setFileName ( CONF_FILE );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not specify settings file." )
 
 	err = sets.readEntry ( "/settings/user1/name", buffer );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not read entry." )
 	TEST_ASSERT_MSG( buffer == "doe", "Wrong name for user1." )
-	
+
 	list = sets.getEntries( "/settings/user1/firstname" );
 	err = sets.getLastErrno();
 	TEST_ASSERT_MSG( list.size() == 2, "Wrong number of rows. Must be 2." )
@@ -83,23 +83,23 @@ void TestDSettings::set_test()
 	DSettings sets;
 	DString buffer;
 	int err;
-	
+
 	err = sets.setFileName ( CONF_FILE );
 	err = sets.writeEntry ( "/settings/user2/name", "Bud" );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not update entry." )
-		
+
 	err = sets.writeEntry ( "/settings/user3", "" );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not write new empty entry." )
-	
+
 	err = sets.writeEntry ( "/settings/user3/name", "Patoche" );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not write new entry." )
-	
+
 	err = sets.writeEntry ( "/settings/user3/firstname", "Sébastien" );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not write new entry." )
-	
+
 	err = sets.writeEntry ( "/settings/user3/firstname", "Seb", false );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not write duplicate entry." )
-	
+
 	err = sets.writeEntry ( "/settings/user3/surname", "Quand il pète, il troue son slip" );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not write new entry." )
 }
@@ -111,16 +111,16 @@ void TestDSettings::afterset_test()
 	int err;
 	DStringList list;
 	DStringList::iterator it;
-	
+
 	err = sets.setFileName ( CONF_FILE );
 	err = sets.readEntry ( "/settings/user2/name", buffer );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not read entry." )
 	TEST_ASSERT_MSG( buffer == "Bud", "Entry not updated." )
-	
+
 	err = sets.readEntry ( "/settings/user3/name", buffer );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not read entry." )
 	TEST_ASSERT_MSG( buffer == "Patoche", "Entry not updated." )
-	
+
 	list = sets.getEntries( "/settings/user3/firstname" );
 	err = sets.getLastErrno();
 	TEST_ASSERT_MSG( list.size() == 2, "Wrong number of rows. Must be 2." )
@@ -129,7 +129,7 @@ void TestDSettings::afterset_test()
 	{
 		TEST_ASSERT_MSG( ( *it == "Sébastien" || *it == "Seb" ), "Wrong firstname for user3." )
 	}
-	
+
 	err = sets.readEntry ( "/settings/user3/surname", buffer );
 	TEST_ASSERT_MSG( err == DSettings::SUCCESS, "Can not read entry." )
 	TEST_ASSERT_MSG( buffer == "Quand il pète, il troue son slip", "Entry not updated." )
@@ -139,7 +139,7 @@ void TestDSettings::write_config()
 {
 	std::ofstream file;
 	DString buffer;
-	
+
 	buffer = "<settings>\n\t<user1>\n\t\t<name>doe</name>\n\t\t<firstname>john"
 			 "</firstname>\n\t\t<firstname>joe</firstname>\n\t</user1>\n\t<user2>"
 			 "\n\t\t<name>bud</name>\n\t\t<firstname>weiser</firstname>\n\t</user2>"
@@ -161,14 +161,14 @@ int main( int argc, char** argv )
 {
 	std::ofstream file;
 	TestDSettings ets;
-	
+
 	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	Test::HtmlOutput html;
-	
+	/*Test::HtmlOutput html;
+
 	file.open( "dsettings.html" );
 	ets.run( html );
 	html.generate( file, true, "DSettings" );
-	file.close();
-	
+	file.close();*/
+
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -41,17 +41,17 @@
 void TestDString::constructor_test()
 {
 	DString str = "UTF-8 &éèêàâç";
-	
+
 	std::string sstr = "UTF-8 &éèêàâç";
 	const char * cchar = "UTF-8 &éèêàâç";
 	DString strStr ( sstr );
 	DString strConstChar ( cchar );
 	DString strDStr ( str );
-	
+
 	TEST_ASSERT_MSG( str == strStr, "Allocation from standard string failed" )
 	TEST_ASSERT_MSG( str == strConstChar, "Allocation from const char* failed" )
 	TEST_ASSERT_MSG( str == strDStr, "Allocation from DString failed" )
-	
+
 	char c = 'c';
 	DString strChar ( c );
 	str = "c";
@@ -62,7 +62,7 @@ void TestDString::add_test()
 {
 	DString str = "UTF-8 &éèêàâç";
 	std::string str2 = "Add";
-	
+
 	str += str2;
 	TEST_ASSERT_MSG( str == "UTF-8 &éèêàâçAdd", "Add 2 DStrings failed" )
 	char c = 0x41; // A
@@ -94,13 +94,13 @@ void TestDString::others_operators_test()
 	str1 = "aaaaa";
 	str2 = "bb";
 	TEST_ASSERT_MSG( str1 < str2, "Compare DStrings (lesser than) failed" )
-		
+
 	str1 = "bcdef";
 	str1.getReference().insert( 0, "a" );
 	TEST_ASSERT_MSG( str1 == "abcdef", "get reference failed" )
 	TEST_ASSERT_MSG( str1.at(0) == "a", "extracts char (dstring) failed" )
 	TEST_ASSERT_MSG( str1[2] == 'c', "extracts char failed" )
-	
+
 }
 
 void TestDString::number_test()
@@ -205,7 +205,7 @@ void TestDString::binary_test()
 	TEST_ASSERT_MSG( str == "1111111111111111111111111111111", "Convert binary to DString failed" )
 	str.toBase2 ( 0xFFFFFFFF );
 	TEST_ASSERT_MSG( str == "11111111111111111111111111111111", "Convert binary to DString failed (2)" )
-	
+
 	str = "10010100";
 	int i = str.toIntBase10();
 	TEST_ASSERT_MSG( i == 148, "Convert DString binary to int failed" )
@@ -213,7 +213,7 @@ void TestDString::binary_test()
 	TEST_ASSERT_MSG( str == DString::empty(), "clear failed" )
 	str.toBase2 ( i );
 	TEST_ASSERT_MSG( str == "10010100", "Convert int to DString binary failed" )
-	
+
 	str = "10010100";
 	unsigned int ui = str.toUIntBase10();
 	TEST_ASSERT_MSG( ui == 148, "Convert DString binary to int failed" )
@@ -221,7 +221,7 @@ void TestDString::binary_test()
 	TEST_ASSERT_MSG( str == DString::empty(), "clear failed" )
 	str.toBase2 ( ui );
 	TEST_ASSERT_MSG( str == "10010100", "Convert unsigned int to DString binary failed" )
-	
+
 	str = "10010100";
 	short int si = str.toShortBase10();
 	TEST_ASSERT_MSG( si == 148, "Convert DString binary to int failed" )
@@ -229,7 +229,7 @@ void TestDString::binary_test()
 	TEST_ASSERT_MSG( str == DString::empty(), "clear failed" )
 	str.toBase2 ( si );
 	TEST_ASSERT_MSG( str == "10010100", "Convert short int to DString binary failed" )
-	
+
 	str = "10010100";
 	unsigned short int usi = str.toUShortBase10();
 	TEST_ASSERT_MSG( usi == 148, "Convert DString binary to int failed" )
@@ -237,7 +237,7 @@ void TestDString::binary_test()
 	TEST_ASSERT_MSG( str == DString::empty(), "clear failed" )
 	str.toBase2 ( usi );
 	TEST_ASSERT_MSG( str == "10010100", "Convert unsigned short int to DString binary failed" )
-	
+
 	str = "10010100";
 	long int li = str.toLongBase10();
 	TEST_ASSERT_MSG( li == 148, "Convert DString binary to int failed" )
@@ -253,7 +253,7 @@ void TestDString::binary_test()
 	TEST_ASSERT_MSG( str == DString::empty(), "clear failed" )
 	str.toBase2 ( uli );
 	TEST_ASSERT_MSG( str == "10010100", "Convert unsigned long int to DString binary failed" )
-	
+
 	str = "10010100";
 	long long int lli = str.toLongLongBase10();
 	TEST_ASSERT_MSG( lli == 148, "Convert DString binary to int failed" )
@@ -261,7 +261,7 @@ void TestDString::binary_test()
 	TEST_ASSERT_MSG( str == DString::empty(), "clear failed" )
 	str.toBase2 ( lli );
 	TEST_ASSERT_MSG( str == "10010100", "Convert long long int to DString binary failed" )
-	
+
 	str = "10010100";
 	unsigned long long int ulli = str.toULongLongBase10();
 	TEST_ASSERT_MSG( ulli == 148, "Convert DString binary to int failed" )
@@ -274,7 +274,7 @@ void TestDString::binary_test()
 void TestDString::length_test()
 {
 	DString str = "10010100";
-	
+
 	TEST_ASSERT_MSG( str.length() == 8, "Calculate length failed" )
 	TEST_ASSERT_MSG( str.isEmpty() == false, "Check if not empty failed" )
 	str.clear();
@@ -294,7 +294,7 @@ void TestDString::substr_test()
 	TEST_ASSERT_MSG( str.at( 173 ) == DString::empty(), "Extract char from the middle failed" )
 	TEST_ASSERT_MSG( str[3] == 'd', "Extract char from the middle failed" )
 	TEST_ASSERT_MSG( str[173] == 0, "Extract char from the middle failed" )
-	
+
 	str = "ABC;DEF 01234;56789 abc;def";
 	TEST_ASSERT_MSG( str.section( " ", 1, 1 ) == "01234;56789", "Extract section failed" )
 	TEST_ASSERT_MSG( str.section( " ", 1, 2 ) == "01234;56789 abc;def", "Extract section from beginning failed" )
@@ -330,9 +330,9 @@ void TestDString::substr_test()
 void TestDString::legal_char_test()
 {
 	DString str = "abcdefghijklmnopqrstuvwxyz0123456789";
-	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::BOTHCASE ) == false, 
+	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::BOTHCASE ) == false,
 					 "Check legal char failed for not hexa char" )
-	
+
 	str = "abcdef0123456789";
 	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::BOTHCASE ) == true,
 					 "Check legal char failed for both case (string on lower case)" )
@@ -340,7 +340,7 @@ void TestDString::legal_char_test()
 					 "Check legal char failed for lower case (string on lower case)" )
 	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::UPPERCASE ) == false,
 					 "Check legal char failed for upper case (string on lower case)" )
-	
+
 	str = "ABCDEF0123456789";
 	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::BOTHCASE ) == true,
 					 "Check legal char failed for both case (string on upper case)" )
@@ -348,7 +348,7 @@ void TestDString::legal_char_test()
 					 "Check legal char failed for upper case (string on upper case)" )
 	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::LOWERCASE ) == false,
 					 "Check legal char failed for lower case (string on upper case)" )
-	
+
 	str = "ABCdef0123456789";
 	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::BOTHCASE ) == true,
 					 "Check legal char failed for both case (string on both case)" )
@@ -356,7 +356,7 @@ void TestDString::legal_char_test()
 					 "Check legal char failed for upper case (string on both case)" )
 	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::LOWERCASE ) == false,
 					 "Check legal char failed for lower case (string on both case)" )
-	
+
 	str = "0123456789";
 	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::BOTHCASE ) == true,
 					 "Check legal char failed for both case (decimal string)" )
@@ -364,7 +364,7 @@ void TestDString::legal_char_test()
 					 "Check legal char failed for upper case (decimal )" )
 	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA, DString::LOWERCASE ) == true,
 					 "Check legal char failed for lower case (decimal )" )
-					 
+
 	str = "1010101110";
 	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::BINARY ) == true,
 					 "Check legal char failed for binary (binary string)" )
@@ -374,7 +374,7 @@ void TestDString::legal_char_test()
 					 "Check legal char failed for decimal (binary string)" )
 	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA ) == true,
 					 "Check legal char failed for hexa (binary string)" )
-	
+
 	str = "1012501710";
 	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::BINARY ) == false,
 					 "Check legal char failed for binary (octal string)" )
@@ -384,7 +384,7 @@ void TestDString::legal_char_test()
 					 "Check legal char failed for decimal (octal string)" )
 	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA ) == true,
 					 "Check legal char failed for hexa (binary string)" )
-	
+
 	str = "1812591710";
 	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::BINARY ) == false,
 					 "Check legal char failed for binary (decimal string)" )
@@ -394,7 +394,7 @@ void TestDString::legal_char_test()
 					 "Check legal char failed for decimal (decimal string)" )
 	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::HEXA ) == true,
 					 "Check legal char failed for hexa (decimal string)" )
-	
+
 	str = "181A59F7c0";
 	TEST_ASSERT_MSG( str.containsOnlyLegalChar ( DString::BINARY ) == false,
 					 "Check legal char failed for binary (hexa string)" )
@@ -412,7 +412,7 @@ void TestDString::split_test()
 	DString sub;
 	DStringList strl = str.split ( "\n" );
 	TEST_ASSERT_MSG( strl.size() == 4, "Split with wrong number of substr" )
-	
+
 	DStringList::iterator it = strl.begin();
 	TEST_ASSERT_MSG( it != strl.end(), "Split with wrong number of substr" )
 	unsigned short int i = 1;
@@ -429,7 +429,7 @@ void TestDString::split_test()
 	strl.clear();
 	strl = str.splitConstantSize( " ", 6 );
 	TEST_ASSERT_MSG( strl.size() == 4, "Split with wrong number of substr" )
-	
+
 	it = strl.begin();
 	TEST_ASSERT_MSG( it != strl.end(), "Split with wrong number of substr" )
 	i = 1;
@@ -461,7 +461,7 @@ void TestDString::map_key_test()
 {
 	std::map<DString, DString> mp;
 	DString str;
-	
+
 	str = "1";
 	mp[str] = "123456789";
 	str = "2";
@@ -475,11 +475,11 @@ void TestDString::map_key_test()
 void TestDString::space_test()
 {
 	DString str = "\n\t a b    c\n d\te\t ";
-	
+
 	TEST_ASSERT_MSG( str.stripWhiteSpace() == "a b    c\n d\te", "Strip white space failed" )
 	TEST_ASSERT_MSG( str.simplifyWhiteSpace() == "a b c d e", "Simplify white space failed" )
 	TEST_ASSERT_MSG( str.removeWhiteSpace() == "abcde", "Remove white space failed" )
-	
+
 	str = "toto";
 	str += 0x14;
 	str += 0x17;
@@ -496,7 +496,7 @@ void TestDString::case_test()
 	TEST_ASSERT_MSG( str.upper() == "ABCDEF", "Convert to upper case failed" )
 	str.toUpper();
 	TEST_ASSERT_MSG( str == "ABCDEF", "Switch to upper case failed" )
-	
+
 	str = "ABCDEF018";
 	TEST_ASSERT_MSG( str.lower() == "abcdef018", "Convert to lower case failed" )
 	str.toLower();
@@ -506,7 +506,7 @@ void TestDString::case_test()
 void TestDString::justify_test()
 {
 	DString str = "abcdef";
-	
+
 	str.leftJustify( 10, '-');
 	TEST_ASSERT_MSG( str == "abcdef----", "Left justify failed" )
 	str.rightJustify( 14, '-');
@@ -524,7 +524,7 @@ void TestDString::contains_test()
 	TEST_ASSERT_MSG( str.contains( 'a' ) == 13, "Contains char failed" )
 	TEST_ASSERT_MSG( str.contains( "aa" ) == 10, "Contains string failed" )
 	TEST_ASSERT_MSG( str.contains( std::string( "aaa" ) ) == 7, "Contains string failed" )
-	
+
 }
 
 void TestDString::stream_test()
@@ -532,7 +532,7 @@ void TestDString::stream_test()
 	std::istringstream iss;
 	std::ostringstream oss;
 	DString str;
-	
+
 	iss.str( "abcdef" );
 	iss >> str;
 	TEST_ASSERT_MSG( str == "abcdef", "Inputting stream failed" )
@@ -545,15 +545,15 @@ int main( int argc, char** argv )
 {
 	std::ofstream file;
 	TestDString ets;
-	
+
 	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	Test::HtmlOutput html;
-	
+	/*Test::HtmlOutput html;
+
 	file.open( "dstring.html" );
 	ets.run( html );
 	html.generate( file, true, "DString" );
-	file.close();
-	
+	file.close();*/
+
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 

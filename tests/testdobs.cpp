@@ -48,7 +48,7 @@ void TestDObs::constructor_test()
 
 	{ // To limit WeatherStation range to this block
 		WeatherStation station;
-		
+
 		thermometer.addObserver( &station );
 		barometer.addObserver( &station );
 
@@ -65,14 +65,14 @@ int main( int argc, char** argv )
 {
 	std::ofstream file;
 	TestDObs ets;
-	
+
 	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	Test::HtmlOutput html;
-	
+	/*Test::HtmlOutput html;
+
 	file.open( "dobs.html" );
 	ets.run( html );
 	html.generate( file, true, "DObs" );
-	file.close();
-	
+	file.close();*/
+
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -60,14 +60,14 @@ int main( int argc, char** argv )
 {
 	std::ofstream file;
 	TestDEvent ets;
-	
+
 	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	Test::HtmlOutput html;
-	
+	/*Test::HtmlOutput html;
+
 	file.open( "devent.html" );
 	ets.run( html );
 	html.generate( file, true, "DEvent" );
-	file.close();
-	
+	file.close();*/
+
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

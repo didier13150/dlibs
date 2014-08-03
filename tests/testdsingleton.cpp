@@ -42,7 +42,7 @@
 void TestDSingleton::singleton_test()
 {
 	int i;
-	
+
 	Foo::getInstance()->reset();
 	i = Foo::getInstance()->getVal();
 	TEST_ASSERT_MSG( i == 0, "Initialisation failed" )
@@ -67,14 +67,14 @@ int main( int argc, char** argv )
 {
 	std::ofstream file;
 	TestDSingleton ets;
-	
+
 	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	Test::HtmlOutput html;
-	
+	/*Test::HtmlOutput html;
+
 	file.open( "dsingleton.html" );
 	ets.run( html );
 	html.generate( file, true, "DSingleton" );
-	file.close();
-	
+	file.close();*/
+
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

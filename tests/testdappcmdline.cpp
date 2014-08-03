@@ -44,14 +44,14 @@ void TestDAppCmdLine::constructor_test()
 	DAppCmdLine args;
 	int argc = 0;
 	const char * argv[] = { "constructor_test" };
-	
+
 	args.setAppVersion( "1.0.0" );
 	args.addOption( "help", "Print this help", 'h' );
 	args.addOption( "version", "Show version", 'v' );
 	args.addOption( "prefix", "Show the prefix where dlibs are installed" );
 	args.addOption( "tarname", "Show package name" );
 	args.addOption( "bugreport", "Show address where bug report must be sent" );
-	
+
 	if ( ! args.parse( argc, const_cast<char**>(argv) ) )
 	{
 		std::cout << "Error on parsing command line : " << args.getLastError() << std::endl;
@@ -63,25 +63,25 @@ void TestDAppCmdLine::constructor_test()
 		args.showVersion();
 		return;
 	}
-	
+
 	else if ( args.haveOption( "help" ) )
 	{
 		args.showHelp();
 		return;
 	}
-	
+
 	else if ( args.haveOption( "prefix" ) )
 	{
 		std::cout << "Request for prefix" << std::endl;
 		return;
 	}
-	
+
 	else if ( args.haveOption( "tarname" ) )
 	{
 		std::cout << "Request for tarname" << std::endl;
 		return;
 	}
-	
+
 	else if ( args.haveOption( "bugreport" ) )
 	{
 		std::cout << "Request for bugreport" << std::endl;
@@ -95,14 +95,14 @@ void TestDAppCmdLine::arg_and_opt_test()
 	DAppCmdLine args;
 	int argc = 0;
 	const char * argv[] = { "/my/path/constructor_test" };
-	
+
 	args.setAppVersion( "1.0.0" );
 	args.addOption( "help", "Print this help", 'h' );
 	args.addOption( "version", "Show version", 'v' );
 	args.addOption( "verylongversionstring", "Show long version", 'l' );
 	args.addArgument( "First arg" );
 	args.addArgument( "Second arg" );
-	
+
 	if ( ! args.parse( argc, const_cast<char**>(argv) ) )
 	{
 		std::cout << "Error on parsing command line : " << args.getLastError() << std::endl;
@@ -116,11 +116,11 @@ void TestDAppCmdLine::show_help_test()
 	DAppCmdLine args;
 	int argc = 0;
 	const char * argv[] = { "/my/path/constructor_test" };
-	
+
 	//args.setAppVersion( "1.0.0" );
 	//args.addOption( "help", "Print this help", 'h' );
 	//args.addOption( "version", "Show version", 'v' );
-	
+
 	if ( ! args.parse( argc, const_cast<char**>(argv) ) )
 	{
 		std::cout << "Error on parsing command line : " << args.getLastError() << std::endl;
@@ -133,14 +133,14 @@ int main( int argc, char** argv )
 {
 	std::ofstream file;
 	TestDAppCmdLine ets;
-	
+
 	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	Test::HtmlOutput html;
-	
+	/*Test::HtmlOutput html;
+
 	file.open( "dappcmdline.html" );
 	ets.run( html );
 	html.generate( file, true, "DAppCmdLine" );
-	file.close();
-	
+	file.close();*/
+
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

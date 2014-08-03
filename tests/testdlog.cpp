@@ -58,7 +58,7 @@ void TestDLog::logfile_test()
 	DLogEngine * filelog = 0;
 	bool success = false;
 	DString today;
-	
+
 	log = DLogger::getInstance();
 	TEST_ASSERT_MSG( log != 0, "Can not get logger instance" )
 	params.mode = DLogShared::OPENCLOSE;
@@ -66,24 +66,24 @@ void TestDLog::logfile_test()
 	params.optionnal["dateformat"] = "%Y-%m-%d";
 	params.optionnal["pattern"] = "%SYSTEM_ID %DATE - %TYPE - %MESSAGE";
 	params.specific["filename"] = LOGFILE;
-	
+
 	log->addUserVar( "%SYSTEM_ID" );
     log->setupUserVar ( "%SYSTEM_ID", "DLog" );
-	
+
 	filelog = log->addLogEngine ( DLogEngine::FILE, params );
 	TEST_ASSERT_MSG( filelog != 0, "Can not add log file engine" )
-	
+
 	log->insertMessage ( "Debug message", DLogShared::DEBUG );
 	log->insertMessage ( "Info message", DLogShared::INFO );
 	today = DString::Now( "%Y-%m-%d" );
-		
+
 	log->removeLogEngine ( filelog );
 	log->close();
 	DLogger::deleteInstance();
-	
+
 	std::ifstream file;
 	DString buffer, content, awaiting;
-	
+
 	for ( int i = 0 ; i < 80 ; i++ )
 	{
 		awaiting += "-";
@@ -96,9 +96,9 @@ void TestDLog::logfile_test()
 		content += buffer;
 	}
 	file.close();
-		
+
 	TEST_ASSERT_MSG( content.simplifyWhiteSpace() == awaiting, "Log file content is corrupted" )
-	
+
 	int removed = remove( LOGFILE );
 	TEST_ASSERT_MSG( removed == 0, "Can not deleting log file" )
 }
@@ -108,17 +108,17 @@ void TestDLog::stream_test()
 	DLogger * log = 0;
 	DLogParams params;
 	DLogEngine * console = 0;
-	
+
 	log = DLogger::getInstance();
 	TEST_ASSERT_MSG( log != 0, "Can not get logger instance" )
 	params.minlevel = DLogShared::DEBUG;
-	
+
 	console = log->addLogEngine ( DLogEngine::STDOUT, params );
 	TEST_ASSERT_MSG( console != 0, "Can not add stdout engine" )
-	
+
 	log->insertMessage ( "Debug message", DLogShared::DEBUG );
 	log->insertMessage ( "Info message", DLogShared::INFO );
-	
+
 	log->debug( "Debug message" );
 	log->verbose( "Verbose message" );
 	log->info( "Info message" );
@@ -126,7 +126,7 @@ void TestDLog::stream_test()
 	log->warning( "Warning message" );
 	log->error( "Error message" );
 	log->critical( "Critical message" );
-	
+
 	log->removeLogEngine ( console );
 	log->close();
 	DLogger::deleteInstance();
@@ -141,12 +141,12 @@ void TestDLog::socket_test()
 	int h = -1;
 	DString buffer;
 	int err;
-	
+
 	server.setTimeout ( 1500 );
 	err = server.openSock ( PORT );
 	TEST_ASSERT_MSG( err == DSock::SUCCESS, "Can not open socket on server side" )
 	if ( err != DSock::SUCCESS ) return;
-	
+
 	log = DLogger::getInstance();
 	TEST_ASSERT_MSG( log != 0, "Can not get logger instance" )
 	params.mode = DLogShared::PERSISTANT;
@@ -156,7 +156,7 @@ void TestDLog::socket_test()
 	buffer.setNum( PORT );
 	buffer.prepend( "localhost:" );
 	params.specific["sockhost"] = buffer;
-	
+
 	sockclient = log->addLogEngine ( DLogEngine::SOCKET, params );
 	TEST_ASSERT_MSG( sockclient != 0, "Can not add socket engine" )
 	TEST_ASSERT_MSG( sockclient->isValid() == true, "Log socket is not valid" )
@@ -168,7 +168,7 @@ void TestDLog::socket_test()
 		server.closeSock();
 		return;
 	}
-	
+
 	err = server.openConnection ( h );
 	TEST_ASSERT_MSG( err == DSock::SUCCESS, "Can not open new connection on server side" )
 	if ( err != DSock::SUCCESS )
@@ -179,12 +179,12 @@ void TestDLog::socket_test()
 		server.closeSock();
 		return;
 	}
-	
+
 	log->insertMessage ( "Info message", DLogShared::INFO );
 	err = server.readMessage ( h, buffer );
 	TEST_ASSERT_MSG( err == DSock::SUCCESS, "Server can not read message" )
 	TEST_ASSERT_MSG( buffer.simplifyWhiteSpace() == "INFOS - Info message", "Server receive wrong message" )
-	
+
 	sockclient->close();
 	server.closeConnection ( h );
 	server.closeSock();
@@ -198,18 +198,18 @@ void TestDLog::syslog_test()
 	DLogger * log = 0;
 	DLogParams params;
 	DLogEngine * syslog = 0;
-	
+
 	log = DLogger::getInstance();
 	TEST_ASSERT_MSG( log != 0, "Can not get logger instance" )
 	params.specific["appname"] = "DLog Syslog Test";
 	params.minlevel = DLogShared::INFO;
-	
+
 	syslog = log->addLogEngine ( DLogEngine::SYSLOG, params );
 	TEST_ASSERT_MSG( syslog != 0, "Can not add syslog engine" )
-	
+
 	log->insertMessage ( "Debug message", DLogShared::DEBUG );
 	log->insertMessage ( "Info message", DLogShared::INFO );
-		
+
 	log->removeLogEngine ( syslog );
 	log->close();
 	DLogger::deleteInstance();
@@ -248,16 +248,16 @@ void TestDLog::sqlite_test()
 
 	log->insertMessage ( "Debug message", DLogShared::DEBUG );
 	log->insertMessage ( "Info message", DLogShared::INFO );
-	
+
 	log->removeLogEngine ( dblog );
 	log->close();
 	DLogger::deleteInstance();
-	
+
     DFactory<DDatabase> factory;
     DDatabaseParams dbparams;
     DDatabaseResult results;
 	DDatabaseRows::const_iterator it;
-	
+
 #ifdef WITH_EXCEPTIONS
     DFactory<DDatabase>::Register ( "dsqlite", new DSQLite ( true ) );
 #else
@@ -265,7 +265,7 @@ void TestDLog::sqlite_test()
 #endif
     DDatabase * db = factory.create ( "dsqlite" );
     dbparams.base = params.specific["dbbase"];
-	
+
 	db->setParams ( dbparams );
 	results = db->open();
 	TEST_ASSERT_MSG( results.errnb == 0, "Database not opened" )
@@ -273,14 +273,14 @@ void TestDLog::sqlite_test()
 	TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully" )
 	db->close();
     delete db;
-	
+
 	TEST_ASSERT_MSG( results.rows.size() == 1, "Wrong number of row in database sqlite" )
 	it = results.rows.begin();
 	TEST_ASSERT_MSG( it != results.rows.end(), "Wrong number of row in database sqlite" )
 	TEST_ASSERT_MSG( it->at("level") == "INFOS", "Wrong level on database sqlite" )
 	TEST_ASSERT_MSG( it->at("message") == "Info message", "Wrong message on database sqlite" )
-	
-	
+
+
 	int removed = remove( DBLOGFILE );
 	TEST_ASSERT_MSG( removed == 0, "Can not deleting database file" )
 }
@@ -289,7 +289,7 @@ void TestDLog::sqlite_test()
 void TestDLog::mysql_test()
 {
 	DLogParams params;
-	
+
 	// specific to dmysql
 	params.specific["dbtype"] = "dmysql";
 	params.specific["dbuser"] = "dlibs";
@@ -310,14 +310,14 @@ int main( int argc, char** argv )
 {
 	std::ofstream file;
 	TestDLog ets;
-	
+
 	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	Test::HtmlOutput html;
-	
+	/*Test::HtmlOutput html;
+
 	file.open( "dlog.html" );
 	ets.run( html );
 	html.generate( file, true, "DLog" );
-	file.close();
-	
+	file.close();*/
+
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

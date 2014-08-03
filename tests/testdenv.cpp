@@ -42,7 +42,7 @@
 void TestDEnv::constructor_test()
 {
 	DEnv * env = DEnv::getInstance();
-	
+
 	TEST_ASSERT_MSG( env->getVar( "HOME" ).left(5) == "/home", "Get HOME env var failed" )
 	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == DString::empty(), "Get empty toto env var failed" )
 	DEnv::deleteInstance();
@@ -51,7 +51,7 @@ void TestDEnv::constructor_test()
 void TestDEnv::setenv_test()
 {
 	DEnv * env = DEnv::getInstance();
-	
+
 	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == DString::empty(), "Get toto env var failed" )
 	env->setVar( "toto95123", "/tmp" );
 	TEST_ASSERT_MSG( env->getVar( "toto95123" ) == "/tmp", "Get toto env var failed after set" )
@@ -78,14 +78,14 @@ int main( int argc, char** argv )
 {
 	std::ofstream file;
 	TestDEnv ets;
-	
+
 	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	Test::HtmlOutput html;
-	
+	/*Test::HtmlOutput html;
+
 	file.open( "denv.html" );
 	ets.run( html );
 	html.generate( file, true, "DEnv" );
-	file.close();
-	
+	file.close();*/
+
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

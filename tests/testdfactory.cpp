@@ -52,14 +52,14 @@
 void TestDFactory::basic_test()
 {
 	DFactory<Object> factory;
-	
+
 	DFactory<Object>::Register ( "round", new Round () );
 	DFactory<Object>::Register ( "square", new Square () );
-	
+
 	Object * obj = factory.create ( "round" );
 	TEST_ASSERT_MSG( obj->what() == "Round", "Wrong object created" )
 	delete( obj );
-	
+
 	obj = factory.create ( "square" );
 	TEST_ASSERT_MSG( obj->what() == "Square", "Wrong object created" )
 	delete( obj );
@@ -87,15 +87,15 @@ void TestDFactory::ddatabase_test()
 #else
 	DFactory<DDatabase>::Register ( "dsqlite", new DSQLite() );
 #endif
-	
+
 	DDatabase * db = factory.create( "dsqlite" );
 	delete( db );
-	
+
 #ifdef DLIBS_HAVE_MYSQL
 	db = factory.create( "dsqlite" );
 	delete( db );
 #endif
-	
+
 #ifdef DLIBS_HAVE_PGSQL
 	db = factory.create( "dpgsql" );
 	delete( db );
@@ -106,14 +106,14 @@ int main( int argc, char** argv )
 {
 	std::ofstream file;
 	TestDFactory ets;
-	
+
 	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
-	Test::HtmlOutput html;
-	
+	/*Test::HtmlOutput html;
+
 	file.open( "dfactory.html" );
 	ets.run( html );
 	html.generate( file, true, "DFactory" );
-	file.close();
-	
+	file.close();*/
+
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
