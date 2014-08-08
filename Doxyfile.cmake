@@ -414,7 +414,7 @@ EXTRACT_ALL            = YES
 # be included in the documentation.
 # The default value is: NO.
 
-EXTRACT_PRIVATE        = NO
+EXTRACT_PRIVATE        = YES
 
 # If the EXTRACT_PACKAGE tag is set to YES all members with package or internal
 # scope will be included in the documentation.
@@ -814,7 +814,8 @@ EXCLUDE_PATTERNS       = */test*.cpp \
                          CMake*.cpp \
                          CMake*.h \
                          dlib*.cpp \
-                         client*.cpp
+                         client*.cpp \
+                         d*.dox
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -840,7 +841,7 @@ EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@ \
 # files are included.
 
 EXAMPLE_PATTERNS       = test*.cpp \
-                         *.dox
+                         d*.dox
 
 # If the EXAMPLE_RECURSIVE tag is set to YES then subdirectories will be
 # searched for input files to be used with the \include or \dontinclude commands
