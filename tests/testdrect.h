@@ -47,10 +47,16 @@ public:
 	TestDRect()
 	{
 		TEST_ADD( TestDRect::constructor_test )
+		TEST_ADD( TestDRect::constructor_dpoint_test )
+		TEST_ADD( TestDRect::apex_test )
+		TEST_ADD( TestDRect::inside_test )
 	}
 
 private:
 	void constructor_test();
+	void constructor_dpoint_test();
+	void apex_test();
+	void inside_test();
 };
 
 #endif // _TESTDRECT_H

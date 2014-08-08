@@ -35,9 +35,10 @@
 #define DRECT_H
 
 #include <vector>
-#include <sstream>
+#include <iostream>
 
 #include "dpoint.h"
+#include "dstring.h"
 
 /**
  * A simple way to define and use rect.\n
@@ -53,11 +54,11 @@
  */
 template <typename T>class DRect
 {
-	public:
+public:
 	/**
 	 * Constructs an empty rect.
 	 */
-	DRect(void) { Ax = 0; Ay = 0; Bx = 0; By = 0; };
+	DRect(void) : Ax ( 0 ), Ay ( 0 ), Bx ( 0 ), By ( 0 ) {};
 
 	/**
 	 * Constructs a rect with two opposite points.
@@ -88,7 +89,7 @@ template <typename T>class DRect
 	/**
 	 * Copy all values to rect
 	 */
-	DRect& operator= (const DRect &rect)
+	DRect & operator= (const DRect &rect)
 	{
 		Ax = rect.Ax;
 		Ay = rect.Ay;
@@ -103,35 +104,90 @@ template <typename T>class DRect
 	 * @brief Opposite apex of rectangle.
 	 * @author Didier FABERT <didier.fabert@gmail.com>
 	 */
-	typedef struct
+	class Apex
 	{
+	public:
+		
+		/**
+		 * Constructs an empty rect.
+		 */
+		Apex() {}
+		
+		/**
+		 * Constructs rect from values.
+		 */
+		Apex( T vax, T vay, T vbx, T vby )
+		{
+			ax = vax;
+			ay = vay;
+			bx = vbx;
+			by = vby;
+		}
+		
+		/**
+		 * Virtual destructor.
+		 */
+		virtual ~Apex() {}
+	
+		/**
+		 * Compare two Apex
+		 */
+		friend bool operator == ( const Apex & apex1, const Apex & apex2 )
+		{
+			if ( apex1.ax != apex2.ax ) return false;
+			if ( apex1.ay != apex2.ay ) return false;
+			if ( apex1.bx != apex2.bx ) return false;
+			if ( apex1.by != apex2.by ) return false;
+			return true;
+		}
+		
+		/// X coordinate of the first apex
 		T ax;
+		/// Y coordinate of the first apex
 		T ay;
+		/// X coordinate of the second apex
 		T bx;
+		/// Y coordinate of the second apex
 		T by;
-	}Apex;
+	};
+
+	/**
+	 * Define rect from four point coordinates.
+	 */
+	DRect & setVal( T ax, T ay, T bx, T by )
+	{
+		Ax = ax;
+		Ay = ay;
+		Bx = bx;
+		By = by;
+		formatRect();
+		return *this;
+	}
 	
 	/**
-	 * Set two opposite points of the rect
+	 * Define rect from two opposite points of the rect
 	 */
-	void setPoints(DPoint<T> pt1, DPoint<T> pt2)
+	DRect & setPoints(DPoint<T> pt1, DPoint<T> pt2)
 	{
 		Ax = pt1.getX();
 		Ay = pt1.getY();
 		Bx = pt2.getX();
 		By = pt2.getY();
 		formatRect();
+		return *this;
 	};
 	
 	/**
-	 * Set two opposite points of the rect
+	 * Define rect from apex
 	 */
-	void setApex(Apex apex)
+	DRect & setApex(Apex apex)
 	{		
 		Ax = apex.ax;
 		Ay = apex.ay;
 		Bx = apex.bx;
 		By = apex.by;
+		formatRect();
+		return *this;
 	}
 	
 	/**
@@ -147,6 +203,59 @@ template <typename T>class DRect
 		apex.by = By;
 		return apex;
 	}
+	
+	/**
+	 * Make a string with two opposite apex coordinates
+	 */
+	const DString toString() const
+	{
+		std::ostringstream oss;
+		
+		oss << "{" << Ax << "," << Ay << "," << Bx << "," << By << "}";
+		return oss.str();
+	}
+	
+	/**
+	 * Return true if \p pt is inside rect. False otherwise.
+	 * @param pt The point to check
+	 * @param border Specify if border rect is a part of rect. True by default. 
+	 */
+	bool isInside(DPoint<T> pt, bool border = true)
+	{
+		if ( border && pt.getX() < Ax ) return false;
+		if ( ! border && pt.getX() <= Ax ) return false;
+		if ( border && pt.getY() < Ay ) return false;
+		if ( ! border && pt.getY() <= Ay ) return false;
+		if ( border && pt.getX() > Bx ) return false;
+		if ( ! border && pt.getX() >= Bx ) return false;
+		if ( border && pt.getY() > By ) return false;
+		if ( ! border && pt.getY() >= By ) return false;
+		return true;
+	}
+	
+	/**
+	 * Return true if rect are equals. False otherwise.
+	 * rect are equals if, and only if, all values are equals.
+	 */
+	friend bool operator == ( const DRect & pt1, const DRect & pt2 )
+	{
+		if ( pt1.Ax != pt2.Ax ) return false;
+		if ( pt1.Ay != pt2.Ay ) return false;
+		if ( pt1.Bx != pt2.Bx ) return false;
+		if ( pt1.By != pt2.By ) return false;
+		return true;
+	}
+	
+    /**
+	 * Writes DRect to the stream s and returns a reference to the stream.
+	 */
+	friend std::ostream& operator<< (std::ostream& s, const DRect &rect)
+	{
+		s << rect.toString();
+		return s;
+	}
+
+private:
 	
 	/**
 	 * Make the point \p A, the one which have the smallest coordinates and
@@ -170,34 +279,6 @@ template <typename T>class DRect
 		}
 	};
 	
-	/**
-	 * Make a string with two opposite apex coordinates
-	 */
-	std::string toString()
-	{
-		std::ostringstream oss;
-		
-		oss << "{" << Ax << "," << Ay << "," << Bx << "," << By << "}";
-		return oss.str();
-	}
-	
-	bool isInside(DPoint<T> point, bool border = true)
-	{
-		return true;
-	}
-	
-// iostream
-    /**
-	 * Writes DRect to the stream s and returns a reference to the stream.
-	 */
-	friend std::ostream& operator<< (std::ostream& s, const DRect &rect)
-	{
-		s << "{" << rect.Ax << "," << rect.Ay << "," << rect.Bx << ","
-				<< rect.By << "}";
-		return s;
-	}
-
-private:
 	/// The smaller X corner coordinate
 	T Ax;
 	/// The smaller Y corner coordinate
