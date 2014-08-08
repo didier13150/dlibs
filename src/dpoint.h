@@ -44,7 +44,7 @@
  * @code
  * typedef DPoint<int> Point;
  *
- * Point pt1; // is equal to DPoint<int> pt1;
+ * Point pt1; // is similar to DPoint<int> pt1;
  * @endcode
  *
  * @brief 2D point.
@@ -124,8 +124,8 @@ public:
      * Returns a reference to the X coordinate of the point.
      * Using a reference makes it possible to directly manipulate X.
      * @code
-     * DPoint<int> mtx(5,4);
-     * mtx.refX()++; // mtx become (6,4)
+     * DPoint<int> pt(5,4);
+     * pt.refX()++; // pt become (6,4)
      * @endcode
      */
     T& refX(void)
@@ -137,8 +137,8 @@ public:
      * Returns a reference to the X coordinate of the point.
      * Using a reference makes it possible to directly manipulate Y.
      * @code
-     * DPoint<int> mtx(5,4);
-     * mtx.refY()++; // mtx become (5,5)
+     * DPoint<int> pt(5,4);
+     * pt.refY()++; // pt become (5,5)
      * @endcode
      */
     T& refY(void)
@@ -148,22 +148,22 @@ public:
 
 // affect
     /**
-    * Copy both X and Y values to mtx
+    * Copy both X and Y values to pt
     */
-    DPoint& operator= (const DPoint &mtx)
+    DPoint& operator= (const DPoint &pt)
     {
-        X = mtx.X;
-        Y = mtx.Y;
+        X = pt.X;
+        Y = pt.Y;
         return *this;
     }
 
 // Compare
     /**
-     * Returns TRUE if mtx1 and mtx2 are equal; otherwise returns FALSE.
+     * Returns TRUE if pt1 and pt2 are equal; otherwise returns FALSE.
      */
-    friend bool operator== (const DPoint &mtx1, const DPoint &mtx2)
+    friend bool operator== (const DPoint &pt1, const DPoint &pt2)
     {
-        if ((mtx1.X == mtx2.X) && (mtx1.Y == mtx2.Y))
+        if ((pt1.X == pt2.X) && (pt1.Y == pt2.Y))
         {
             return true;
         }
@@ -171,11 +171,11 @@ public:
     }
 
     /**
-     * Returns TRUE if mtx1 and mtx2 are not equal; otherwise returns FALSE.
+     * Returns TRUE if pt1 and pt2 are not equal; otherwise returns FALSE.
      */
-    friend bool operator!= (const DPoint &mtx1, const DPoint &mtx2)
+    friend bool operator!= (const DPoint &pt1, const DPoint &pt2)
     {
-        if ((mtx1.X == mtx2.X) && (mtx1.Y == mtx2.Y))
+        if ((pt1.X == pt2.X) && (pt1.Y == pt2.Y))
         {
             return false;
         }
@@ -184,48 +184,48 @@ public:
 
 // Add
     /**
-     * Returns the sum of mtx1 and mtx2. Each component is added separately.
+     * Returns the sum of pt1 and pt2. Each component is added separately.
      */
-    friend DPoint operator+ (DPoint mtx1, DPoint mtx2)
+    friend DPoint operator+ (DPoint pt1, DPoint pt2)
     {
         DPoint c;
-        c.X = mtx1.X + mtx2.X;
-        c.Y = mtx1.Y + mtx2.Y;
+        c.X = pt1.X + pt2.X;
+        c.Y = pt1.Y + pt2.Y;
         return c;
     }
 
     /**
-     * Returns the sum of mtx1 and v. Each component is added separately.
+     * Returns the sum of pt1 and v. Each component is added separately.
      */
-    friend DPoint operator+ (DPoint mtx, T v)
+    friend DPoint operator+ (DPoint pt, T v)
     {
         DPoint c;
-        c.X = mtx.X + v;
-        c.Y = mtx.Y + v;
+        c.X = pt.X + v;
+        c.Y = pt.Y + v;
         return c;
     }
 
     /**
-     * Returns the sum of v and mtx1. Each component is added separately.
+     * Returns the sum of v and pt1. Each component is added separately.
      */
-    friend DPoint operator+ (T v, DPoint mtx)
+    friend DPoint operator+ (T v, DPoint pt)
     {
         DPoint c;
-        c.X = mtx.X + v;
-        c.Y = mtx.Y + v;
+        c.X = pt.X + v;
+        c.Y = pt.Y + v;
         return c;
     }
 
 // operator +=
     /**
-     * Adds DPoint mtx to this DPoint and returns a reference to this
+     * Adds DPoint pt to this DPoint and returns a reference to this
      * DPoint.
      * Each component is added separately.
      */
-    DPoint& operator+= (DPoint mtx)
+    DPoint& operator+= (DPoint pt)
     {
-        X = X + mtx.X;
-        Y = Y + mtx.Y;
+        X = X + pt.X;
+        Y = Y + pt.Y;
         return *this;
     }
     /**
@@ -240,50 +240,50 @@ public:
 
 // Mult
     /**
-     * Returns a DPoint formed by multiplying both components of mtx1 and
-     * mtx2.
+     * Returns a DPoint formed by multiplying both components of pt1 and
+     * pt2.
      * Each component is multiplied separately.
      */
-    friend DPoint operator* (DPoint mtx1, DPoint mtx2)
+    friend DPoint operator* (DPoint pt1, DPoint pt2)
     {
         DPoint c;
-        c.X = mtx1.X * mtx2.X;
-        c.Y = mtx1.Y * mtx2.Y;
+        c.X = pt1.X * pt2.X;
+        c.Y = pt1.Y * pt2.Y;
         return c;
     }
 
     /**
-     * Returns a DPoint formed by multiplying both components of mtx1 by v.
+     * Returns a DPoint formed by multiplying both components of pt1 by v.
      */
-    friend DPoint operator* (DPoint mtx, T v)
+    friend DPoint operator* (DPoint pt, T v)
     {
         DPoint c;
-        c.X = mtx.X * v;
-        c.Y = mtx.Y * v;
+        c.X = pt.X * v;
+        c.Y = pt.Y * v;
         return c;
     }
 
     /**
-     * Returns a DPoint formed by multiplying v by both components of mtx1.
+     * Returns a DPoint formed by multiplying v by both components of pt1.
      */
-    friend DPoint operator* (T v, DPoint mtx)
+    friend DPoint operator* (T v, DPoint pt)
     {
         DPoint c;
-        c.X = mtx.X * v;
-        c.Y = mtx.Y * v;
+        c.X = pt.X * v;
+        c.Y = pt.Y * v;
         return c;
     }
 
 // operator *=
     /**
-     * Multiplies this DPoint's x and y by mtx, and returns a reference to
+     * Multiplies this DPoint's x and y by pt, and returns a reference to
      * this point.
      * Each component is multiplied separately.
      */
-    DPoint& operator*= (DPoint mtx)
+    DPoint& operator*= (DPoint pt)
     {
-        X = X * mtx.X;
-        Y = Y * mtx.Y;
+        X = X * pt.X;
+        Y = Y * pt.Y;
         return *this;
     }
     /**
@@ -299,48 +299,48 @@ public:
 
 // subtract
     /**
-     * Returns mtx2 subtracted from mtx1. Each component is subtracted
+     * Returns pt2 subtracted from pt1. Each component is subtracted
      * separately.
      */
-    friend DPoint operator- (DPoint mtx1, DPoint mtx2)
+    friend DPoint operator- (DPoint pt1, DPoint pt2)
     {
         DPoint c;
-        c.X = mtx1.X - mtx2.X;
-        c.Y = mtx1.Y - mtx2.Y;
+        c.X = pt1.X - pt2.X;
+        c.Y = pt1.Y - pt2.Y;
         return c;
     }
 
     /**
-     * Returns v subtracted from mtx. Each component is subtracted separately.
+     * Returns v subtracted from pt. Each component is subtracted separately.
      */
-    friend DPoint operator- (DPoint mtx, T v)
+    friend DPoint operator- (DPoint pt, T v)
     {
         DPoint c;
-        c.X = mtx.X - v;
-        c.Y = mtx.Y - v;
+        c.X = pt.X - v;
+        c.Y = pt.Y - v;
         return c;
     }
 
     /**
-     * Returns mtx subtracted from v. Each component is subtracted separately.
+     * Returns pt subtracted from v. Each component is subtracted separately.
      */
-    friend DPoint operator- (T v, DPoint mtx)
+    friend DPoint operator- (T v, DPoint pt)
     {
         DPoint c;
-        c.X = v - mtx.X;
-        c.Y = v - mtx.Y;
+        c.X = v - pt.X;
+        c.Y = v - pt.Y;
         return c;
     }
 
 // operator -=
     /**
-    * Subtracts DPoint mtx from this DPoint and returns a reference to
+    * Subtracts DPoint pt from this DPoint and returns a reference to
     * this point.
     */
-    DPoint& operator-= (DPoint mtx)
+    DPoint& operator-= (DPoint pt)
     {
-        X = X - mtx.X;
-        Y = Y - mtx.Y;
+        X = X - pt.X;
+        Y = Y - pt.Y;
         return *this;
     }
     /**
@@ -357,60 +357,60 @@ public:
 
 // divide
     /**
-     * Returns the DPoint formed by dividing mtx1 by mtx2.
+     * Returns the DPoint formed by dividing pt1 by pt2.
      * Each component is divided separately.
      * @attention return a null DPoint in case of divide by 0
      */
-    friend DPoint operator/ (DPoint mtx1, DPoint mtx2)
+    friend DPoint operator/ (DPoint pt1, DPoint pt2)
     {
         DPoint c;
-        if (mtx2.X) c.X = mtx1.X / mtx2.X;
+        if (pt2.X) c.X = pt1.X / pt2.X;
         else { c.clear(); return c; }
-        if (mtx2.Y) c.Y = mtx1.Y / mtx2.Y;
+        if (pt2.Y) c.Y = pt1.Y / pt2.Y;
         else { c.clear(); return c; }
         return c;
     }
 
     /**
-     * Returns the DPoint formed by dividing both components of mtx by v.
+     * Returns the DPoint formed by dividing both components of pt by v.
      * @attention return a null DPoint in case of divide by 0
      */
-    friend DPoint operator/ (DPoint mtx, T v)
+    friend DPoint operator/ (DPoint pt, T v)
     {
         DPoint c;
-        if (v) { c.X = mtx.X / v; }
+        if (v) { c.X = pt.X / v; }
         else { c.clear(); return c; }
-        if (v) { c.Y = mtx.Y / v; }
+        if (v) { c.Y = pt.Y / v; }
         else { c.clear(); return c; }
         return c;
     }
 
     /**
-     * Returns the DPoint formed by dividing v by mtx.
+     * Returns the DPoint formed by dividing v by pt.
      * Each component is divided separately.
      * @attention return a null DPoint in case of divide by 0
      */
-    friend DPoint operator/ (T v, DPoint mtx)
+    friend DPoint operator/ (T v, DPoint pt)
     {
         DPoint c;
-        if (mtx.Y) { c.X = v / mtx.X; }
+        if (pt.Y) { c.X = v / pt.X; }
         else { c.clear(); return c; }
-        if (mtx.Y) { c.Y = v / mtx.Y; }
+        if (pt.Y) { c.Y = v / pt.Y; }
         else { c.clear(); return c; }
         return c;
     }
 
 // operator /=
     /**
-     * Divides both X and Y by mtx, and returns a reference to this point.
+     * Divides both X and Y by pt, and returns a reference to this point.
      * Each component is divided separately.
      * @attention return a null DPoint in case of divide by 0
      */
-    DPoint& operator/= (DPoint mtx)
+    DPoint& operator/= (DPoint pt)
     {
-        if (mtx.X) X = X / mtx.X;
+        if (pt.X) X = X / pt.X;
         else { clear(); return *this; }
-        if (mtx.Y) Y = Y / mtx.Y;
+        if (pt.Y) Y = Y / pt.Y;
         else { clear(); return *this; }
         return *this;
     }
@@ -429,11 +429,11 @@ public:
 // Compare
     /**
      * Compare two points.\n
-     * Return true if both X and Y of mtx1 are superior than mtx2 X and Y.
+     * Return true if both X and Y of pt1 are superior than pt2 X and Y.
      */
-    friend bool operator> (DPoint mtx1, DPoint mtx2)
+    friend bool operator> (DPoint pt1, DPoint pt2)
     {
-        if ((mtx1.X > mtx2.X) && (mtx1.Y > mtx2.Y))
+        if ((pt1.X > pt2.X) && (pt1.Y > pt2.Y))
         {
             return true;
         }
@@ -442,11 +442,11 @@ public:
 
     /**
      * Compare two points.\n
-     * Return true if both X and Y of mtx1 are equal or superior than mtx2 X and Y.
+     * Return true if both X and Y of pt1 are equal or superior than pt2 X and Y.
      */
-    friend bool operator>= (DPoint mtx1, DPoint mtx2)
+    friend bool operator>= (DPoint pt1, DPoint pt2)
     {
-        if ((mtx1.X >= mtx2.X) && (mtx1.Y >= mtx2.Y))
+        if ((pt1.X >= pt2.X) && (pt1.Y >= pt2.Y))
         {
             return true;
         }
@@ -455,11 +455,11 @@ public:
 
     /**
      * Compare two points.\n
-     * Return true if both X and Y of mtx1 are inferior than mtx2 X and Y.
+     * Return true if both X and Y of pt1 are inferior than pt2 X and Y.
      */
-    friend bool operator< (DPoint mtx1, DPoint mtx2)
+    friend bool operator< (DPoint pt1, DPoint pt2)
     {
-        if ((mtx1.X < mtx2.X) && (mtx1.Y < mtx2.Y))
+        if ((pt1.X < pt2.X) && (pt1.Y < pt2.Y))
         {
             return true;
         }
@@ -468,11 +468,11 @@ public:
 
     /**
      * Compare two points.\n
-     * Return true if both X and Y of mtx1 are equal or inferior than mtx2 X and Y.
+     * Return true if both X and Y of pt1 are equal or inferior than pt2 X and Y.
      */
-    friend bool operator<= (DPoint mtx1, DPoint mtx2)
+    friend bool operator<= (DPoint pt1, DPoint pt2)
     {
-        if ((mtx1.X <= mtx2.X) && (mtx1.Y <= mtx2.Y))
+        if ((pt1.X <= pt2.X) && (pt1.Y <= pt2.Y))
         {
             return true;
         }
@@ -480,12 +480,12 @@ public:
     }
 
     /**
-     * Return true if X is sup than mtx.X ; false otherwise.
-     * @deprecated Please use (mtx1.getX() > mtx2.getX()) instead.
+     * Return true if X is sup than pt.X ; false otherwise.
+     * @deprecated Please use (pt1.getX() > pt2.getX()) instead.
      */
-    bool isX_Sup(DPoint mtx)
+    bool isX_Sup(DPoint pt)
     {
-        if (X > mtx.X)
+        if (X > pt.X)
         {
             return true;
         }
@@ -493,12 +493,12 @@ public:
     }
 
     /**
-     * Return true if X is equal or sup than mtx.X ; false otherwise.
-     * @deprecated Please use (mtx1.getX() >= mtx2.getX()) instead.
+     * Return true if X is equal or sup than pt.X ; false otherwise.
+     * @deprecated Please use (pt1.getX() >= pt2.getX()) instead.
      */
-    bool isX_ESup(DPoint mtx)
+    bool isX_ESup(DPoint pt)
     {
-        if (X >= mtx.X)
+        if (X >= pt.X)
         {
             return true;
         }
@@ -506,12 +506,12 @@ public:
     }
 
     /**
-     * Return true if Y is sup than mtx.Y ; false otherwise.
-     * @deprecated Please use (mtx1.getY() < mtx2.getY()) instead.
+     * Return true if Y is sup than pt.Y ; false otherwise.
+     * @deprecated Please use (pt1.getY() < pt2.getY()) instead.
      */
-    bool isY_Sup(DPoint mtx)
+    bool isY_Sup(DPoint pt)
     {
-        if (Y > mtx.Y)
+        if (Y > pt.Y)
         {
             return true;
         }
@@ -519,12 +519,12 @@ public:
     }
 
     /**
-     * Return true if Y is equal or sup than mtx.Y ; false otherwise.
-     * @deprecated Please use (mtx1.getY() <= mtx2.getY()) instead.
+     * Return true if Y is equal or sup than pt.Y ; false otherwise.
+     * @deprecated Please use (pt1.getY() <= pt2.getY()) instead.
      */
-    bool isY_ESup(DPoint mtx)
+    bool isY_ESup(DPoint pt)
     {
-        if (Y >= mtx.Y)
+        if (Y >= pt.Y)
         {
             return true;
         }
@@ -535,17 +535,17 @@ public:
     /**
     * Writes DPoint to the stream s and returns a reference to the stream.
     */
-    friend std::ostream& operator<< (std::ostream& s, const DPoint &mtx)
+    friend std::ostream& operator<< (std::ostream& s, const DPoint &pt)
     {
-        s << "{" << mtx.X << "," << mtx.Y << "}";
+        s << "{" << pt.X << "," << pt.Y << "}";
         return s;
     }
 
     /**
-     * Reads a DPoint from the stream s into DPoint mtx and returns a
+     * Reads a DPoint from the stream s into DPoint pt and returns a
      * reference to the stream.
      */
-    friend std::istream& operator>> (std::istream& s, DPoint &mtx)
+    friend std::istream& operator>> (std::istream& s, DPoint &pt)
     {
         std::string str, str1, str2;
         std::string::size_type pos1, pos2;
@@ -559,11 +559,11 @@ public:
         {
             str1 = str.substr(pos1 + 1, pos2 - pos1 -1);
             std::istringstream iss1(str1);
-            iss1 >> mtx.X;
+            iss1 >> pt.X;
         }
         else
         {
-            mtx.X = 0;
+            pt.X = 0;
         }
         pos1 = str.find("}");
         if (pos1 != std::string::npos && pos2 != std::string::npos &&
@@ -571,11 +571,11 @@ public:
         {
             str2 = str.substr(pos2 + 1, pos1 - pos2 - 1);
             std::istringstream iss2(str2);
-            iss2 >> mtx.Y;
+            iss2 >> pt.Y;
         }
         else
         {
-            mtx.Y = 0;
+            pt.Y = 0;
         }
 
         return s;
