@@ -53,10 +53,10 @@ class DAppOption
 		/**
 		 * Default Constructor
 		 */
-		DAppOption ( DString option_name,
-		             DString option_description,
-		             char option_alias = 0,
-		             bool required = false );
+		DAppOption ( const DString & name,
+		             const DString & description,
+		             const DString & example,
+		             char alias = 0 );
 
 		/**
 		 * Destructor
@@ -69,27 +69,38 @@ class DAppOption
 		void clear();
 
 		/**
+		 * Set the option
+		 */
+		void set ( const DString & name,
+				   const DString & description,
+				   const DString & example,
+				   char alias = 0 );
+
+		/**
 		 * Print DAppOption object in flux
 		 */
 		friend std::ostream& operator<< ( std::ostream& s, const DAppOption & arg );
 
 		/// Option name
-		DString name;
+		DString _name;
 
 		/// Option description ( for displaying help )
-		DString description;
+		DString _description;
+
+		/// Option example ( for displaying help )
+		DString _example;
 
 		/// Option value
-		DString value;
+		DString _value;
 
 		/// Alias option ( also named short name )
-		char alias;
+		char _alias;
 
 		/// Mandatory value option flag
-		bool have_mandatory_value;
+		bool _have_mandatory_value;
 
 		/// Option present in command line flag
-		bool is_set;
+		bool _is_set;
 };
 
 /**
@@ -213,18 +224,6 @@ class DAppCmdLine
 		 * Empty constructor.
 		 */
 		DAppCmdLine();
-
-		/**
-		 * Default constructor.
-		 * @param argc The number of command line item
-		 * @param argv a array of C string char
-		 * @param optlist The option list
-		 * @param arglist The mandatory argument list
-		 */
-		DAppCmdLine ( int argc,
-		           char ** argv,
-		           const DAppOptionList & optlist,
-		           const DAppArgList & arglist );
 
 		/**
 		 * Default destructor.

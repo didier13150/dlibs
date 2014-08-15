@@ -38,18 +38,7 @@ DAppCmdLine::DAppCmdLine()
 	m_autoID = 0;
 	m_found = 0;
 	m_maxSummarySize = 0;
-}
-
-DAppCmdLine::DAppCmdLine( int argc,
-			  char ** argv,
-			  const DAppOptionList & optList,
-			  const DAppArgList & argList)
-{
-	m_autoID = 0;
-	m_found = 0;
-	setArguments( argList );
-	setOptions( optList );
-	parse( argc, argv );
+	m_appversion = "VERSION_NOT_SET";
 }
 
 DAppCmdLine::~DAppCmdLine()
@@ -69,9 +58,8 @@ void DAppCmdLine::addOption ( const DString & name,
                               const char alias )
 {
 	DString buffer;
-	bool required = false;
-	if ( ! example.isEmpty() ) required = true;
-	DAppOption opt ( name, description, alias, required );
+	
+	DAppOption opt ( name, description, example, alias );
 	DAppHelp help;
 	
 	// Insert option
@@ -93,7 +81,7 @@ void DAppCmdLine::addOption ( const DString & name,
 	buffer.append ( "-" );
 	buffer.append ( name );
 
-	if ( required )
+	if ( ! example.isEmpty() )
 	{
 		buffer.append ( "=" );
 		buffer.append ( example );
@@ -112,7 +100,7 @@ void DAppCmdLine::addOption ( const DString & name,
 
 void DAppCmdLine::addOption ( const DAppOption & opt )
 {
-	addOption( opt.name, opt.description, opt.description, opt.alias );
+	addOption( opt._name, opt._description, opt._example, opt._alias );
 }
 
 void DAppCmdLine::setOptions ( const DAppOptionList & list )
@@ -139,7 +127,7 @@ const DString & DAppCmdLine::getOption ( const DString & name ) const
 
 	if ( ito != m_options.end() )
 	{
-		return ( ito->second.value );
+		return ( ito->second._value );
 	}
 
 	// search in alias
@@ -151,7 +139,7 @@ const DString & DAppCmdLine::getOption ( const DString & name ) const
 
 		if ( ito != m_options.end() )
 		{
-			return ( ito->second.value );
+			return ( ito->second._value );
 		}
 	}
 	
@@ -166,11 +154,11 @@ bool DAppCmdLine::haveOption ( const DString & name ) const
 	ito = m_options.find( name );
 	if ( ito != m_options.end() )
 	{
-		if ( ito->second.have_mandatory_value )
+		if ( ito->second._have_mandatory_value )
 			//TODO check if mandatory opt is set before report
-			return ( ito->second.is_set );
+			return ( ito->second._is_set );
 		else
-			return ( ito->second.is_set );
+			return ( ito->second._is_set );
 	}
 
 	//search in alias
@@ -182,10 +170,10 @@ bool DAppCmdLine::haveOption ( const DString & name ) const
 
 		if ( ito != m_options.end() )
 		{
-			if ( ito->second.have_mandatory_value )
-				return ( ito->second.is_set );
+			if ( ito->second._have_mandatory_value )
+				return ( ito->second._is_set );
 			else
-				return ( ito->second.is_set );
+				return ( ito->second._is_set );
 		}
 	}
 	
@@ -301,8 +289,8 @@ bool DAppCmdLine::parse ( int argc, char** argv )
 				return false;
 				
 			}
-			m_options[optname].value = optarg;
-			m_options[optname].is_set = true;
+			m_options[optname]._value = optarg;
+			m_options[optname]._is_set = true;
 			value_on_next = false;
 		}
 		// It's an option
@@ -323,17 +311,17 @@ bool DAppCmdLine::parse ( int argc, char** argv )
 			if ( buffer.contains ( "=" ) )
 			{
 				optarg = buffer.section ( "=", 1, 1 ).removeWhiteSpace();
-				m_options[optname].value = optarg;
-				m_options[optname].is_set = true;
+				m_options[optname]._value = optarg;
+				m_options[optname]._is_set = true;
 			}
 			else
 			{
-				if ( m_options[optname].have_mandatory_value)
+				if ( m_options[optname]._have_mandatory_value)
 				{
 					value_on_next = true;
 				}
 				else {
-					m_options[optname].is_set = true;
+					m_options[optname]._is_set = true;
 				}
 			}
 		}
@@ -402,40 +390,58 @@ const DString & DAppCmdLine::getLastError() const
 
 DAppOption::DAppOption()
 {
-	alias = 0;
-	have_mandatory_value = false;
-	is_set = false;
+	_alias = 0;
+	_have_mandatory_value = false;
+	_is_set = false;
 }
 
-DAppOption::DAppOption ( DString option_name,
-                         DString option_description,
-                         char option_alias,
-                         bool argument_mandatory )
-	: name ( option_name ),
-	description ( option_description ),
-	alias ( option_alias ),
-	have_mandatory_value ( argument_mandatory ),
-	is_set(false)
+DAppOption::DAppOption ( const DString & name,
+						 const DString & description,
+						 const DString & example,
+						 char alias )
+	: _name ( name ),
+	_description ( description ),
+	_example ( example ),
+	_alias ( alias ),
+	_have_mandatory_value ( false ),
+	_is_set( false )
 {
+	if ( ! example.isEmpty() ) _have_mandatory_value = true;
 }
 
 DAppOption::~DAppOption()
 {
 }
 
+void DAppOption::set( const DString & name,
+					  const DString & description,
+					  const DString & example,
+					  char alias )
+{
+	_name = name;
+	_description = description;
+	_value.clear();
+	_example = example;
+	_alias = alias;
+	if ( ! example.isEmpty() ) _have_mandatory_value = true;
+	else _have_mandatory_value = false;
+}
+
 void DAppOption::clear()
 {
-	name.clear();
-	description.clear();
-	value.clear();
-	alias = 0;
+	_name.clear();
+	_description.clear();
+	_value.clear();
+	_example.clear();
+	_alias = 0;
+	_have_mandatory_value = false;
 }
 
 std::ostream& operator<< ( std::ostream& s, const DAppOption & opt )
 {
-	DString val = opt.value;
+	DString val = opt._value;
 	if ( val.isEmpty() ) {
-		if( opt.have_mandatory_value ) {
+		if( opt._have_mandatory_value ) {
 			val = "NO VALUE";
 		}
 	}
@@ -444,10 +450,11 @@ std::ostream& operator<< ( std::ostream& s, const DAppOption & opt )
 		val.append( "\"" );
 	}
 	
-	s << "opt[" << opt.name << " (" << opt.alias << ")] = " << val ;
-	s << " [Is set=" << opt.is_set << "] ";
-	s << " [Must have value=" << opt.have_mandatory_value << "] ";
-	s << " (" << opt.description << ")";
+	s << "opt[" << opt._name << " (" << opt._alias << ")] = " << val ;
+	s << " [Example=" << opt._example << "] ";
+	s << " [Is set=" << opt._is_set << "] ";
+	s << " [Must have value=" << opt._have_mandatory_value << "] ";
+	s << " (" << opt._description << ")";
 	return s;
 }
 

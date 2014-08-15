@@ -44,7 +44,7 @@ void TestDAppCmdLine::constructor_test()
 {
 	DAppCmdLine args;
 	int argc = 0;
-	const char * argv[] = { "constructor_test" };
+	const char * argv[] = { "/my/path/constructor_test" };
 
 	args.setAppVersion( "1.0.0" );
 	args.addOption( "help", "Print this help", 'h' );
@@ -55,40 +55,9 @@ void TestDAppCmdLine::constructor_test()
 
 	if ( ! args.parse( argc, const_cast<char**>(argv) ) )
 	{
-		std::cout << "Error on parsing command line : " << args.getLastError() << std::endl;
+		TEST_FAIL( "Error on parsing command line" )
 		return;
 	}
-	/*
-	if ( args.haveOption( "version" ) )
-	{
-		args.showVersion();
-		return;
-	}
-
-	else if ( args.haveOption( "help" ) )
-	{
-		args.showHelp();
-		return;
-	}
-
-	else if ( args.haveOption( "prefix" ) )
-	{
-		std::cout << "Request for prefix" << std::endl;
-		return;
-	}
-
-	else if ( args.haveOption( "tarname" ) )
-	{
-		std::cout << "Request for tarname" << std::endl;
-		return;
-	}
-
-	else if ( args.haveOption( "bugreport" ) )
-	{
-		std::cout << "Request for bugreport" << std::endl;
-		return;
-	}
-	args.showHelp();*/
 }
 
 void TestDAppCmdLine::arg_and_opt_test()
@@ -106,10 +75,9 @@ void TestDAppCmdLine::arg_and_opt_test()
 
 	if ( ! args.parse( argc, const_cast<char**>(argv) ) )
 	{
-		std::cout << "Error on parsing command line : " << args.getLastError() << std::endl;
+		TEST_FAIL( "Error on parsing command line" )
 		return;
 	}
-	args.showHelp();
 }
 
 void TestDAppCmdLine::show_help_test()
@@ -117,17 +85,67 @@ void TestDAppCmdLine::show_help_test()
 	DAppCmdLine args;
 	int argc = 0;
 	const char * argv[] = { "/my/path/constructor_test" };
+	std::streambuf *backup;
+	std::ostringstream stream;
+	DString buffer;
 
-	//args.setAppVersion( "1.0.0" );
-	//args.addOption( "help", "Print this help", 'h' );
-	//args.addOption( "version", "Show version", 'v' );
+	args.addArgument( "First arg" );
+	args.addOption( "help", "Print this help", 'h' );
 
 	if ( ! args.parse( argc, const_cast<char**>(argv) ) )
 	{
-		std::cout << "Error on parsing command line : " << args.getLastError() << std::endl;
+		TEST_FAIL( "Error on parsing command line" )
 		return;
 	}
+	
+	// Redirect stdout to buffer
+	backup = std::cout.rdbuf();
+	std::cout.rdbuf( stream.rdbuf() );
 	args.showHelp();
+	std::cout.rdbuf(backup);
+	buffer = stream.str();
+	TEST_ASSERT_MSG( buffer == "\nconstructor_test [opts] [First arg]\n\n  -h, --help Print this help\n\n", "Show help is not printed correctly" )
+}
+
+void TestDAppCmdLine::show_version_test()
+{
+	DAppCmdLine args;
+	int argc = 0;
+	const char * argv[] = { "/my/path/constructor_test" };
+	std::streambuf *backup;
+	std::ostringstream stream;
+	DString buffer;
+
+	args.addArgument( "First arg" );
+	args.addOption( "help", "Print this help", 'h' );
+
+	if ( ! args.parse( argc, const_cast<char**>(argv) ) )
+	{
+		TEST_FAIL( "Error on parsing command line" )
+		return;
+	}
+	
+	// Redirect stdout to buffer
+	backup = std::cout.rdbuf();
+	
+	std::cout.rdbuf( stream.rdbuf() );
+	args.showVersion();
+	std::cout.rdbuf(backup);
+	buffer = stream.str();
+	TEST_ASSERT_MSG( buffer == "constructor_test Version : VERSION_NOT_SET\n", "Show version is not printed correctly" )
+	
+	// clear stream: clear internal state and set empty data
+	stream.clear();
+	stream.str("");
+	
+	args.setAppVersion( "1.2.3" );
+	
+	std::cout.rdbuf( stream.rdbuf() );
+	args.showVersion();
+	std::cout.rdbuf(backup);
+	buffer = stream.str();
+	//std::cout << std::endl << "\"" << buffer  << "\"" << std::endl;
+	TEST_ASSERT_MSG( buffer == "constructor_test Version : 1.2.3\n", "Show version is not printed correctly" )
 }
 
 int main( int argc, char** argv )
