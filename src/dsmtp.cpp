@@ -180,6 +180,7 @@ DSMTP::ERRNO DSMTP::send()
 	DStringList formatedBody;
 
 	sock.setTimeout(m_timeout);
+	sock.setBufferSize( 1024 );
 	if (sock.openSock(m_data.host) != DSock::SUCCESS)
 	{
 		m_serverlog.push_back( m_data.host.toString() );

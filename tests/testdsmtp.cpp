@@ -42,6 +42,32 @@
 
 void TestDSMTP::constructor_test()
 {
+	DSMTP mail;
+	DSMTP::ERRNO code;
+	DURL server;
+	DStringList transaction;
+	DStringList::const_iterator it;
+
+	server.setURL( "smtp://localhost.localdomain:25" );
+
+	mail.setHost ( server );
+	mail.setSender ( "root@localhost.localdomain" );
+	mail.addReceiver ( "root@localhost.localdomain" );
+	mail.setEmail ( "DLibs test", "This is just a simple DLibs test, SMTP part" );
+	code = mail.send();
+	std::cout << std::endl << code << std::endl;
+	std::cout << mail.getLastError() << std::endl;
+	
+	TEST_ASSERT_MSG( mail.getLastError() == DString::empty(), "Error reported when sending email" )
+	if ( code != DSMTP::SUCCESS )
+	{
+		transaction = mail.getTransactionLog();
+		for ( it = transaction.begin() ; it != transaction.end() ; it++ )
+		{
+			std::cout << *it << std::endl;
+		}
+		TEST_FAIL( "Email not sent" )
+	}
 }
 
 int main( int argc, char** argv )
@@ -58,7 +84,7 @@ int main( int argc, char** argv )
 #endif
 
 #ifdef TEST_STDOUT
-	Test::TextOutput output( Test::TextOutput::Verbose, std::cout );
+	Test::TextOutput output( Test::TextOutput::Verbose, std::cout << std::endl );
 
 	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
 #endif
