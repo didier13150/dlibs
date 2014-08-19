@@ -41,7 +41,7 @@ using namespace std;
 
 DSock::DSock()
 {
-	m_buffSize = 80;
+	m_buffSize = 256;
 }
 
 DSock::~DSock()
@@ -204,7 +204,7 @@ int DClientSock::writeMessage ( const DString & message,
 	{
 		writeMessage ( message, checkSock );
 		if ( m_status == NO_SOCKET ) break;
-		usleep ( 10000 );
+		usleep ( 100000 );
 		i++;
 	}
 	return m_status;
@@ -294,7 +294,8 @@ int DClientSock::readMessage ( DString & message, unsigned short int retry )
 int DClientSock::readMessage ( DString & message )
 {
 	int numberChar;
-	char *buffer;
+	char *bufchar;
+	DString buffer;
 	DTimer timer;
 
 	// clear line
@@ -307,20 +308,24 @@ int DClientSock::readMessage ( DString & message )
 		return m_status;
 	}
 
-	buffer = new char[ m_buffSize + 1 ];
+	bufchar = new char[ m_buffSize + 1 ];
 
 	// Start timer
 	timer.start ( m_timeout );
 
-	while ( message.length() == 0 && timer.timeToTimeout() )
+	while ( timer.timeToTimeout() )
 	{
-		memset ( buffer, 0x0, m_buffSize );
-		numberChar = recv ( m_hSocket, buffer, m_buffSize, 0 );
+		memset ( bufchar, 0x0, m_buffSize + 1 );
+		numberChar = recv ( m_hSocket, bufchar, sizeof( bufchar ), 0 );
 		if ( numberChar < 0 )
 		{
-			m_lastError = "No data, ";
-			m_lastError += strerror ( errno );
-			m_status = RECV_NOTHING;
+			if ( ! message.length() )
+			{
+				m_lastError = "No data, ";
+				m_lastError += strerror ( errno );
+				m_status = RECV_NOTHING;
+				break;
+			}
 		}
 		else if ( numberChar == 0 )
 		{
@@ -332,24 +337,29 @@ int DClientSock::readMessage ( DString & message )
 		}
 		else
 		{
-			message = buffer;
-			message.truncate ( numberChar );
-			if ( message.length() > 0 )
+			buffer = bufchar;
+			buffer.truncate ( numberChar );
+			if ( buffer.length() > 0 )
 			{
 				if (m_debug)
 				{
-					printMessage(message);
+					printMessage(buffer);
 				}
+				message += buffer;
 				m_status = SUCCESS;
 				m_lastError = "";
 			}
 			else
 			{
-				m_status = RECV_EMPTY;
-				m_lastError = "Receive an empty message";
+				if ( ! message.length() )
+				{
+					m_status = RECV_EMPTY;
+					m_lastError = "Receive an empty message";
+				}
+				break;
 			}
 		}
-		usleep ( 10000 );
+		usleep ( 100000 );
 	}
 
 	if ( timer.isStarted() )
@@ -357,7 +367,7 @@ int DClientSock::readMessage ( DString & message )
 		timer.stop();
 	}
 
-	delete[]( buffer );
+	delete[]( bufchar );
 
 	return m_status;
 }
@@ -497,7 +507,7 @@ int DServerSock::writeMessage ( int hSock,
 	while ( i < retry &&  m_status != SUCCESS )
 	{
 		writeMessage ( hSock, message, checkSock );
-		usleep ( 10000 );
+		usleep ( 100000 );
 		i++;
 	}
 	return m_status;
@@ -587,9 +597,13 @@ int DServerSock::readMessage ( int hSock, DString &message, unsigned short int r
 int DServerSock::readMessage ( int hSock, DString &message )
 {
 	int numberChar;
-	char * buffer;
+	char * bufchar;
+	DString buffer;
 	DTimer timer;
 
+	// clear line
+	message.clear();
+	
 	if ( hSock < 0 || m_status == NO_SOCKET )
 	{
 		m_status = NO_SOCKET;
@@ -597,22 +611,23 @@ int DServerSock::readMessage ( int hSock, DString &message )
 		return m_status;
 	}
 
-	buffer = new char[ m_buffSize + 1 ];
+	bufchar = new char[ m_buffSize + 1 ];
 	
-	// clear line
-	message.clear();
-
 	timer.start ( m_timeout );
 
-	while ( message.length() == 0 && timer.timeToTimeout() )
+	while ( timer.timeToTimeout() )
 	{
-		memset ( buffer, 0x0, m_buffSize );
-		numberChar = recv ( hSock, buffer, m_buffSize, 0 );
+		memset ( bufchar, 0x0, m_buffSize + 1 );
+		numberChar = recv ( hSock, bufchar, sizeof( bufchar ), 0 );
 		if ( numberChar < 0 )
 		{
-			m_lastError = "No data, ";
-			m_lastError += strerror ( errno );
-			m_status = RECV_NOTHING;
+			if ( ! message.length() )
+			{
+				m_lastError = "No data, ";
+				m_lastError += strerror ( errno );
+				m_status = RECV_NOTHING;
+				break;
+			}
 		}
 		else if ( numberChar == 0 )
 		{
@@ -623,31 +638,36 @@ int DServerSock::readMessage ( int hSock, DString &message )
 		}
 		else
 		{
-			message = buffer;
-			message.truncate ( numberChar );
-			if ( message.length() > 0 )
+			buffer = bufchar;
+			buffer.truncate ( numberChar );
+			message += buffer;
+			if ( buffer.length() > 0 )
 			{
 				if (m_debug)
 				{
-					printMessage(message);
+					printMessage(buffer);
 				}
 				m_status = SUCCESS;
 				m_lastError = "";
 			}
 			else
 			{
-				m_status = RECV_EMPTY;
-				m_lastError = "Receive an empty message";
+				if ( ! message.length() )
+				{
+					m_status = RECV_EMPTY;
+					m_lastError = "Receive an empty message";
+				}
+				break;
 			}
 		}
-		usleep ( 10000 );
+		usleep ( 100000 );
 	}
 
 	if ( timer.isStarted() )
 	{
 		timer.stop();
 	}
-	delete[]( buffer );
+	delete[]( bufchar );
 
 	return m_status;
 }

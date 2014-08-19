@@ -48,11 +48,15 @@ public:
 	{
 		TEST_ADD( TestDSocket::basic_com_test )
 		TEST_ADD( TestDSocket::url_test )
+		TEST_ADD( TestDSocket::small_buf_test )
+		TEST_ADD( TestDSocket::client_smtp_helo_test )
 	}
 
 private:
 	void basic_com_test();
 	void url_test();
+	void small_buf_test();
+	void client_smtp_helo_test();
 };
 
 #endif // _TESTDSOCKET_H
