@@ -36,6 +36,7 @@
 
 #include "dstring.h"
 #include "durl.h"
+#include <unistd.h>
 
 
 /**
@@ -236,6 +237,8 @@ private:
 	DStringList m_serverlog;
 	/// The socket read timeout
 	unsigned long int m_timeout;
+	/// Sleep time between read and write
+	useconds_t m_sleep;
 
 	/// Check if stmp server return is correct
 	bool checkReturn( const DString & status, const DString & expected);

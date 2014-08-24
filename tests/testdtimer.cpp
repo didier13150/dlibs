@@ -50,6 +50,11 @@ void TestDTimer::start_precision_test()
 	sleep( 1 );
 	TEST_ASSERT_MSG( timer.timeToTimeout() == 0, "Timeout not reached" )
 	TEST_ASSERT_MSG( timer.isStarted() == false, "Timer not stopped" )
+	timer.restart();
+	TEST_ASSERT_MSG( timer.timeToTimeout() >= 0, "Timer not restarted" )
+	TEST_ASSERT_MSG( timer.isStarted() == true, "Timer not restarted" )
+	timer.stop();
+	TEST_ASSERT_MSG( timer.isStarted() == false, "Timer not stopped" )
 }
 void TestDTimer::start_rounded_test()
 {

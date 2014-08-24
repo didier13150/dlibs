@@ -55,8 +55,6 @@ void TestDSMTP::constructor_test()
 	mail.addReceiver ( "root@localhost.localdomain" );
 	mail.setEmail ( "DLibs test", "This is just a simple DLibs test, SMTP part" );
 	code = mail.send();
-	std::cout << std::endl << code << std::endl;
-	std::cout << mail.getLastError() << std::endl;
 	
 	TEST_ASSERT_MSG( mail.getLastError() == DString::empty(), "Error reported when sending email" )
 	if ( code != DSMTP::SUCCESS )
