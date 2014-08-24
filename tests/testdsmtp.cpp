@@ -51,8 +51,8 @@ void TestDSMTP::constructor_test()
 	server.setURL( "smtp://localhost.localdomain:25" );
 
 	mail.setHost ( server );
-	mail.setSender ( "root@localhost.localdomain" );
-	mail.addReceiver ( "root@localhost.localdomain" );
+	mail.setSender ( "root@localhost" );
+	mail.addReceiver ( "root@localhost" );
 	mail.setEmail ( "DLibs test", "This is just a simple DLibs test, SMTP part" );
 	code = mail.send();
 	
