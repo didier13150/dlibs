@@ -49,7 +49,8 @@ void DSMTP::Data::clear()
 	receiver.clear();
 	bcc.clear();
 	subject.clear();
-	body.clear();
+	txtbody.clear();
+	htmlbody.clear();
 }
 
 /******************************************************************************/
@@ -57,9 +58,9 @@ void DSMTP::Data::clear()
 DSMTP::DSMTP()
 {
 	m_data.clear();
-	m_timeout = 2000;
+	m_timeout = 1000;
 	m_errno = SUCCESS;
-	m_sleep = 100000;
+	m_isMultiPart = false;
 }
 
 DSMTP::~DSMTP()
@@ -161,16 +162,27 @@ void DSMTP::removeCC(const DString & receiver)
 	}
 }
 
-void DSMTP::setEmail(const DString & subject, const DString & body)
+void DSMTP::setEmail(const DString & subject, const DString & txtbody)
 {
 	m_data.subject = subject;
-	m_data.body = body;
+	m_data.txtbody = txtbody;
+}
+
+void DSMTP::setEmail(const DString & subject,
+					 const DString & txtbody,
+					 const DString & htmlbody
+					)
+{
+	m_data.subject = subject;
+	m_data.txtbody = txtbody;
+	m_data.htmlbody = htmlbody;
+	m_isMultiPart = true;
 }
 
 void DSMTP::unsetEmail()
 {
 	m_data.subject.clear();
-	m_data.body.clear();
+	m_data.txtbody.clear();
 }
 
 DSMTP::ERRNO DSMTP::send()
@@ -192,7 +204,7 @@ DSMTP::ERRNO DSMTP::send()
 		return m_errno;
 	}
 
-	timer.start( 1000 );
+	timer.start( m_timeout );
     // Listen server informations
 	while ( timer.timeToTimeout() )
 	{
@@ -485,7 +497,23 @@ DSMTP::ERRNO DSMTP::send()
 		return m_errno;
 	}
 	
-	formatedBody = m_data.body.split("\n");
+	buffer = "MIME-Version: 1.0";
+	m_serverlog.push_back(buffer);
+	if (sock.writeMessage(buffer) != DSock::SUCCESS)
+	{
+		m_errno = NO_SEND_DATA;
+		return m_errno;
+	}
+	
+	buffer = "Content-Type: text/plain; charset=utf-8";
+	m_serverlog.push_back(buffer);
+	if (sock.writeMessage(buffer) != DSock::SUCCESS)
+	{
+		m_errno = NO_SEND_DATA;
+		return m_errno;
+	}
+	
+	formatedBody = m_data.txtbody.split("\n");
 	for (it = formatedBody.begin() ; it != formatedBody.end() ; it++)
 	{
 		buffer = *it;
