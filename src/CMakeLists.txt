@@ -16,6 +16,7 @@ set(Dlibs_LIBRARY_SRCS
     dappcmdline.cpp
     denv.cpp
     dprocess.cpp
+    dbase64.cpp
     ${DMYSQL_SRCS}
     ${DPGSQL_SRCS}
    )
@@ -43,6 +44,7 @@ set(Dlibs_HEADERS_INSTALL
     dappcmdline.h
     denv.h
     dprocess.h
+    dbase64.h
     ${DMYSQL_HEADERS_INSTALL}
     ${DPGSQL_HEADERS_INSTALL}
    )

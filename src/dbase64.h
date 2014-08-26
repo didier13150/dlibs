@@ -13,7 +13,7 @@
  *   \_|  o|                                             ,__,                 *
  *    \___/      Copyright (C) 2009 by didier fabert     (oo)____             *
  *     ||||__                                            (__)    )\           *
- *     (___)_)   File : test.h                              ||--|| *          *
+ *     (___)_)   File : dbase64.h                           ||--|| *          *
  *                                                                            *
  *   This program is free software; you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published by     *
@@ -28,19 +28,66 @@
  *   You should have received a copy of the GNU General Public License        *
  *   along with this program; if not, write to the                            *
  *   Free Software Foundation, Inc.,                                          *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                *
- *                                                                            *
- *   Common Header for all Unit Tests                                         *
- *                                                                            *
+ *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.             *
  ******************************************************************************/
 
-#ifndef _TEST_H_
-#define _TEST_H_
+#ifndef _DBASE64_H
+#define _DBASE64_H
 
-#define TEST_STDOUT 1
-//undef TEST_HTML 1
+#include <unistd.h>
+#include <string.h>
+#include "dstring.h"
 
-#define CMAKE_SOURCE_DIR "@CMAKE_SOURCE_DIR@"
+class DBase64
+{
+public:
+	/**
+	 * Empty Constructor.
+	 */
+	DBase64();
+	
+	/**
+	 * Destructor
+	 */
+	~DBase64();
 
-#endif // _TEST_H_
- 
+	/**
+	 * Set encoded string
+	 * @param str encoded string
+	 */
+	void setEncoded( const DString & str );
+	
+	/**
+	 * Get encoded string
+	 */
+	const DString & getEncoded();
+	
+	/**
+	 * Get wrapped encoded string list. 
+	 * wrap encoded lines after COLS character (default 76).  Use 0 to disable line wrapping
+	 */
+	DStringList getWrappedEncoded( int wrapping = 76 );
+	
+	/**
+	 * Encode file
+	 * @param filename Filename to encode
+	 */
+	const DString & encodeFromFile( const DString & filename );
+	
+	/**
+	 * Decode base64 string and put content into filename
+	 */
+	void decodeToFile( const DString & filename );
+	
+protected:
+	void _base64_encode( const char * srcp, int len, char * dstp );
+	void _base64_decode( const char * srcp, int len, char * dstp );
+	
+	size_t _base64_length( char * str );
+	size_t _base64_length( int len );
+	size_t _ascii_length( size_t len );
+	
+	DString m_encoded;
+};
+
+#endif // _DBASE64_H

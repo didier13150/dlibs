@@ -6,6 +6,11 @@ find_path( CPPTEST_INCLUDE
          )
 
 find_library(CPPTEST_LIBRARY NAMES cpptest)
+
+configure_file(test.h.cmake
+               ${Dlibs_BINARY_DIR}/test.h
+              )
+
 include_directories (.
                      ${Dlibs_BINARY_DIR}
                      ${CMAKE_SOURCE_DIR}/src
@@ -41,6 +46,7 @@ if(POSTGRESQL_FOUND)
 endif(POSTGRESQL_FOUND)
 add_executable(testdsettings testdsettings.cpp)
 add_executable(testdlog testdlog.cpp)
+add_executable(testdbase64 testdbase64.cpp)
 
 target_link_libraries(testdstring dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
 target_link_libraries(testdsingleton dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
@@ -68,6 +74,7 @@ endif(POSTGRESQL_FOUND)
 target_link_libraries(testdlog dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
 target_link_libraries(testdsettings dlibs ${CPPTEST_LIBRARY} ${LIBXML2_LIBRARIES} ${REALTIME_LIBRARY})
 target_link_libraries(testdexception dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
+target_link_libraries(testdbase64 dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
 
 add_test(dstring ${CMAKE_CURRENT_BINARY_DIR}/testdstring)
 add_test(dsingleton ${CMAKE_CURRENT_BINARY_DIR}/testdsingleton)
@@ -94,3 +101,4 @@ if(POSTGRESQL_FOUND)
   add_test(dpgsql ${CMAKE_CURRENT_BINARY_DIR}/testdpgsql)
 endif(POSTGRESQL_FOUND)
 add_test(dexception ${CMAKE_CURRENT_BINARY_DIR}/testdexception)
+add_test(dbase64 ${CMAKE_CURRENT_BINARY_DIR}/testdbase64)
