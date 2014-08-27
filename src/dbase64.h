@@ -13,7 +13,7 @@
  *   \_|  o|                                             ,__,                 *
  *    \___/      Copyright (C) 2009 by didier fabert     (oo)____             *
  *     ||||__                                            (__)    )\           *
- *     (___)_)   File : testdsmtp.cpp                       ||--|| *          *
+ *     (___)_)   File : dbase64.h                           ||--|| *          *
  *                                                                            *
  *   This program is free software; you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published by     *
@@ -29,62 +29,65 @@
  *   along with this program; if not, write to the                            *
  *   Free Software Foundation, Inc.,                                          *
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.             *
- *                                                                            *
- *   Unit Test for DSMTP                                                      *
- *                                                                            *
  ******************************************************************************/
 
-#include <cstdlib>
-#include <iostream>
-#include <fstream>
-#include "testdsmtp.h"
-#include "test.h"
+#ifndef _DBASE64_H
+#define _DBASE64_H
 
-void TestDSMTP::constructor_test()
+#include <unistd.h>
+#include <string.h>
+#include "dstring.h"
+
+class DBase64
 {
-	DSMTP mail;
-	DSMTP::ERRNO code;
-	DURL server;
-	DStringList transaction;
-	DStringList::const_iterator it;
-
-	server.setURL( "smtp://localhost.localdomain:25" );
-
-	mail.setHost ( server );
-	mail.setSender ( "root@localhost" );
-	mail.addReceiver ( "root@localhost" );
-	mail.setEmail ( "DLibs test", "This is just a simple DLibs test, SMTP part" );
-	code = mail.send();
+public:
+	/**
+	 * Empty Constructor.
+	 */
+	DBase64();
 	
-	TEST_ASSERT_MSG( mail.getLastError() == DString::empty(), "Error reported when sending email" )
-	if ( code != DSMTP::SUCCESS )
-	{
-		transaction = mail.getTransactionLog();
-		for ( it = transaction.begin() ; it != transaction.end() ; it++ )
-		{
-			std::cout << *it << std::endl;
-		}
-		TEST_FAIL( "Email not sent" )
-	}
-}
+	/**
+	 * Destructor
+	 */
+	~DBase64();
 
-int main( int argc, char** argv )
-{
-	TestDSMTP ets;
-#ifdef TEST_HTML
-	std::ofstream file;
-	Test::HtmlOutput html;
+	/**
+	 * Set encoded string
+	 * @param str encoded string
+	 */
+	void setEncoded( const DString & str );
+	
+	/**
+	 * Get encoded string
+	 */
+	const DString & getEncoded();
+	
+	/**
+	 * Get wrapped encoded string list. 
+	 * wrap encoded lines after COLS character (default 76).  Use 0 to disable line wrapping
+	 */
+	DStringList getWrappedEncoded( int wrapping = 76 );
+	
+	/**
+	 * Encode file
+	 * @param filename Filename to encode
+	 */
+	const DString & encodeFromFile( const DString & filename );
+	
+	/**
+	 * Decode base64 string and put content into filename
+	 */
+	void decodeToFile( const DString & filename );
+	
+protected:
+	void _base64_encode( const char * srcp, int len, char * dstp );
+	void _base64_decode( const char * srcp, int len, char * dstp );
+	
+	size_t _base64_length( char * str );
+	size_t _base64_length( int len );
+	size_t _ascii_length( size_t len );
+	
+	DString m_encoded;
+};
 
-	file.open( "dsmtp.html" );
-	ets.run( html );
-	html.generate( file, true, "DSMTP" );
-	file.close();
-#endif
-
-#ifdef TEST_STDOUT
-	Test::TextOutput output( Test::TextOutput::Verbose, std::cout << std::endl );
-
-	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
-#endif
-	return EXIT_SUCCESS;
-}
+#endif // _DBASE64_H

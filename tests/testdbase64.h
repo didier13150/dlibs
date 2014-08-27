@@ -13,7 +13,7 @@
  *   \_|  o|                                             ,__,                 *
  *    \___/      Copyright (C) 2009 by didier fabert     (oo)____             *
  *     ||||__                                            (__)    )\           *
- *     (___)_)   File : test.h                              ||--|| *          *
+ *     (___)_)   File : testdbase64.h                       ||--|| *          *
  *                                                                            *
  *   This program is free software; you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published by     *
@@ -30,15 +30,31 @@
  *   Free Software Foundation, Inc.,                                          *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                *
  *                                                                            *
- *   Common Header for all Unit Tests                                         *
+ *   Unit Test for DBase64                                                    *
  *                                                                            *
  ******************************************************************************/
 
-#ifndef _TEST_H_
-#define _TEST_H_
+#ifndef _TESTDBASE64_H
+#define _TESTDBASE64_H
 
-#define TEST_STDOUT 1
-//undef TEST_HTML 1
+#include <cpptest.h>
 
-#endif // _TEST_H_
- 
+#include "dbase64.h"
+
+class TestDBase64 : public Test::Suite
+{
+public:
+	TestDBase64()
+	{
+		TEST_ADD( TestDBase64::encode_test )
+		TEST_ADD( TestDBase64::decode_test )
+		TEST_ADD( TestDBase64::encode_wrapped_test )
+	}
+
+private:
+	void encode_test();
+	void decode_test();
+	void encode_wrapped_test();
+};
+
+#endif // _TESTDBASE64_H

@@ -49,7 +49,6 @@ public:
 		TEST_ADD( TestDSocket::basic_com_test )
 		TEST_ADD( TestDSocket::url_test )
 		TEST_ADD( TestDSocket::small_buf_test )
-		TEST_ADD( TestDSocket::client_smtp_helo_test )
 	}
 
 private:

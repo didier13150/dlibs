@@ -204,36 +204,6 @@ void TestDSocket::small_buf_test()
 	server.closeSock();
 }
 
-void TestDSocket::client_smtp_helo_test()
-{
-	DClientSock client;
-	DString buffer;
-	int err;
-	DURL url;
-
-	url.setURL( "smtp://localhost" );
-
-	client.setTimeout ( 1500 );
-	client.setBufferSize( 8 );
-	
-	err = client.openSock ( url );
-	if ( err != DSock::SUCCESS )
-	{
-		TEST_FAIL( "Can not open socket on client side" )
-		return;
-	}
-
-	err = client.writeMessage ( "HELO localhost.localdomain" );
-	TEST_ASSERT_MSG( err == DSock::SUCCESS, "Client can not write message" )
-
-	err = client.readMessage ( buffer );
-	std::cout << std::endl << "\"" << buffer << "\"" << std::endl;
-	TEST_ASSERT_MSG( err == DSock::SUCCESS, "Client can not read message" )
-	TEST_ASSERT_MSG( buffer.simplifyWhiteSpace().left(3) == "220", "Client receive wrong message" )
-
-	client.closeSock();
-}
-
 int main( int argc, char** argv )
 {
 	TestDSocket ets;

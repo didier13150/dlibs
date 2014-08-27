@@ -13,7 +13,7 @@
  *   \_|  o|                                             ,__,                 *
  *    \___/      Copyright (C) 2009 by didier fabert     (oo)____             *
  *     ||||__                                            (__)    )\           *
- *     (___)_)   File : testdsmtp.cpp                       ||--|| *          *
+ *     (___)_)   File : test.h                              ||--|| *          *
  *                                                                            *
  *   This program is free software; you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published by     *
@@ -28,63 +28,19 @@
  *   You should have received a copy of the GNU General Public License        *
  *   along with this program; if not, write to the                            *
  *   Free Software Foundation, Inc.,                                          *
- *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.             *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                *
  *                                                                            *
- *   Unit Test for DSMTP                                                      *
+ *   Common Header for all Unit Tests                                         *
  *                                                                            *
  ******************************************************************************/
 
-#include <cstdlib>
-#include <iostream>
-#include <fstream>
-#include "testdsmtp.h"
-#include "test.h"
+#ifndef _TEST_H_
+#define _TEST_H_
 
-void TestDSMTP::constructor_test()
-{
-	DSMTP mail;
-	DSMTP::ERRNO code;
-	DURL server;
-	DStringList transaction;
-	DStringList::const_iterator it;
+#define TEST_STDOUT 1
+//undef TEST_HTML 1
 
-	server.setURL( "smtp://localhost.localdomain:25" );
+#define CMAKE_SOURCE_DIR "@CMAKE_SOURCE_DIR@"
 
-	mail.setHost ( server );
-	mail.setSender ( "root@localhost" );
-	mail.addReceiver ( "root@localhost" );
-	mail.setEmail ( "DLibs test", "This is just a simple DLibs test, SMTP part" );
-	code = mail.send();
-	
-	TEST_ASSERT_MSG( mail.getLastError() == DString::empty(), "Error reported when sending email" )
-	if ( code != DSMTP::SUCCESS )
-	{
-		transaction = mail.getTransactionLog();
-		for ( it = transaction.begin() ; it != transaction.end() ; it++ )
-		{
-			std::cout << *it << std::endl;
-		}
-		TEST_FAIL( "Email not sent" )
-	}
-}
-
-int main( int argc, char** argv )
-{
-	TestDSMTP ets;
-#ifdef TEST_HTML
-	std::ofstream file;
-	Test::HtmlOutput html;
-
-	file.open( "dsmtp.html" );
-	ets.run( html );
-	html.generate( file, true, "DSMTP" );
-	file.close();
-#endif
-
-#ifdef TEST_STDOUT
-	Test::TextOutput output( Test::TextOutput::Verbose, std::cout << std::endl );
-
-	return ets.run( output ) ? EXIT_SUCCESS : EXIT_FAILURE;
-#endif
-	return EXIT_SUCCESS;
-}
+#endif // _TEST_H_
+ 

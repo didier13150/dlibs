@@ -36,6 +36,7 @@
 
 #include "dstring.h"
 #include "durl.h"
+#include <unistd.h>
 
 
 /**
@@ -111,8 +112,10 @@ public:
 			DStringList bcc;
 			/// The email subject
 			DString subject;
-			/// The email text
-			DString body;
+			/// The text email message
+			DString txtbody;
+			/// The html email message
+			DString htmlbody;
 
 			/**
 			 * Clear all email data
@@ -185,8 +188,22 @@ public:
 
 	/**
 	 * Set the email subject and main message
+	 * @param subject Email subject
+	 * @param txtbody Email text message
 	 */
-	void setEmail(const DString & subject, const DString & body);
+	void setEmail(const DString & subject, const DString & txtbody);
+
+	/**
+	 * Set the email subject and main message
+	 * @param subject Email subject
+	 * @param txtbody Email text message
+	 * @param htmlbody Email html message
+	 */
+	void setEmail(const DString & subject,
+				  const DString & txtbody,
+				  const DString & htmlbody
+				 );
+	
 	/**
 	 * Unset the email subject and main message
 	 */
@@ -236,6 +253,8 @@ private:
 	DStringList m_serverlog;
 	/// The socket read timeout
 	unsigned long int m_timeout;
+	/// Multi-part flag
+	bool m_isMultiPart;
 
 	/// Check if stmp server return is correct
 	bool checkReturn( const DString & status, const DString & expected);

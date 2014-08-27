@@ -33,6 +33,7 @@
 
 #include "dsmtp.h"
 #include "dsocket.h"
+#include "dtimer.h"
 
 DSMTP::Data::Data()
 {
@@ -48,7 +49,8 @@ void DSMTP::Data::clear()
 	receiver.clear();
 	bcc.clear();
 	subject.clear();
-	body.clear();
+	txtbody.clear();
+	htmlbody.clear();
 }
 
 /******************************************************************************/
@@ -56,8 +58,9 @@ void DSMTP::Data::clear()
 DSMTP::DSMTP()
 {
 	m_data.clear();
-	m_timeout = 2000;
+	m_timeout = 1000;
 	m_errno = SUCCESS;
+	m_isMultiPart = false;
 }
 
 DSMTP::~DSMTP()
@@ -159,16 +162,27 @@ void DSMTP::removeCC(const DString & receiver)
 	}
 }
 
-void DSMTP::setEmail(const DString & subject, const DString & body)
+void DSMTP::setEmail(const DString & subject, const DString & txtbody)
 {
 	m_data.subject = subject;
-	m_data.body = body;
+	m_data.txtbody = txtbody;
+}
+
+void DSMTP::setEmail(const DString & subject,
+					 const DString & txtbody,
+					 const DString & htmlbody
+					)
+{
+	m_data.subject = subject;
+	m_data.txtbody = txtbody;
+	m_data.htmlbody = htmlbody;
+	m_isMultiPart = true;
 }
 
 void DSMTP::unsetEmail()
 {
 	m_data.subject.clear();
-	m_data.body.clear();
+	m_data.txtbody.clear();
 }
 
 DSMTP::ERRNO DSMTP::send()
@@ -178,6 +192,8 @@ DSMTP::ERRNO DSMTP::send()
 	DStringList lines;
 	DStringList::iterator it, it2;
 	DStringList formatedBody;
+	DTimer timer;
+	int status = DSock::NO_HOST;
 
 	sock.setTimeout(m_timeout);
 	sock.setBufferSize( 1024 );
@@ -188,12 +204,21 @@ DSMTP::ERRNO DSMTP::send()
 		return m_errno;
 	}
 
+	timer.start( m_timeout );
     // Listen server informations
-	if (sock.readMessage(buffer) != DSock::SUCCESS)
+	while ( timer.timeToTimeout() )
+	{
+		status = sock.readMessage( buffer );
+		if ( status == DSock::SUCCESS && buffer.length() ) break;
+		usleep( 100000 );
+	}
+	timer.stop();
+	if ( status != DSock::SUCCESS )
 	{
 		m_errno = NO_HELO;
 		return m_errno;
 	}
+	
 	m_serverlog.push_back("->" + buffer.simplifyWhiteSpace());
 	if (!checkReturn(buffer, "220"))
 	{
@@ -216,7 +241,16 @@ DSMTP::ERRNO DSMTP::send()
 		m_errno = NO_HELO;
 		return m_errno;
 	}
-	if (sock.readMessage(buffer) != DSock::SUCCESS)
+	timer.restart();
+    // Listen server informations
+	while ( timer.timeToTimeout() )
+	{
+		status = sock.readMessage( buffer );
+		if ( status == DSock::SUCCESS && buffer.length() ) break;
+		usleep( 100000 );
+	}
+	timer.stop();
+	if ( status != DSock::SUCCESS )
 	{
 		m_errno = NO_HELO;
 		return m_errno;
@@ -236,7 +270,16 @@ DSMTP::ERRNO DSMTP::send()
 		m_errno = NO_SENDER;
 		return m_errno;
 	}
-	if (sock.readMessage(buffer) != DSock::SUCCESS)
+	timer.restart();
+    // Listen server informations
+	while ( timer.timeToTimeout() )
+	{
+		status = sock.readMessage( buffer );
+		if ( status == DSock::SUCCESS && buffer.length() ) break;
+		usleep( 100000 );
+	}
+	timer.stop();
+	if ( status != DSock::SUCCESS )
 	{
 		m_errno = NO_SENDER;
 		return m_errno;
@@ -261,7 +304,16 @@ DSMTP::ERRNO DSMTP::send()
 				m_errno = NO_RECVER;
 				return m_errno;
 			}
-			if (sock.readMessage(buffer) != DSock::SUCCESS)
+			timer.restart();
+			// Listen server informations
+			while ( timer.timeToTimeout() )
+			{
+				status = sock.readMessage( buffer );
+				if ( status == DSock::SUCCESS && buffer.length() ) break;
+				usleep( 100000 );
+			}
+			timer.stop();
+			if ( status != DSock::SUCCESS )
 			{
 				m_errno = NO_RECVER;
 				return m_errno;
@@ -288,7 +340,16 @@ DSMTP::ERRNO DSMTP::send()
 				m_errno = NO_RECVER;
 				return m_errno;
 			}
-			if (sock.readMessage(buffer) != DSock::SUCCESS)
+			timer.restart();
+			// Listen server informations
+			while ( timer.timeToTimeout() )
+			{
+				status = sock.readMessage( buffer );
+				if ( status == DSock::SUCCESS && buffer.length() ) break;
+				usleep( 100000 );
+			}
+			timer.stop();
+			if ( status != DSock::SUCCESS )
 			{
 				m_errno = NO_RECVER;
 				return m_errno;
@@ -315,7 +376,16 @@ DSMTP::ERRNO DSMTP::send()
 				m_errno = NO_RECVER;
 				return m_errno;
 			}
-			if (sock.readMessage(buffer) != DSock::SUCCESS)
+			timer.restart();
+			// Listen server informations
+			while ( timer.timeToTimeout() )
+			{
+				status = sock.readMessage( buffer );
+				if ( status == DSock::SUCCESS && buffer.length() ) break;
+				usleep( 100000 );
+			}
+			timer.stop();
+			if ( status != DSock::SUCCESS )
 			{
 				m_errno = NO_RECVER;
 				return m_errno;
@@ -337,7 +407,16 @@ DSMTP::ERRNO DSMTP::send()
 		m_errno = NO_SEND_DATA;
 		return m_errno;
 	}
-	if (sock.readMessage(buffer) != DSock::SUCCESS)
+	timer.restart();
+	// Listen server informations
+	while ( timer.timeToTimeout() )
+	{
+		status = sock.readMessage( buffer );
+		if ( status == DSock::SUCCESS && buffer.length() ) break;
+		usleep( 100000 );
+	}
+	timer.stop();
+	if ( status != DSock::SUCCESS )
 	{
 		m_errno = NO_SEND_DATA;
 		return m_errno;
@@ -418,7 +497,23 @@ DSMTP::ERRNO DSMTP::send()
 		return m_errno;
 	}
 	
-	formatedBody = m_data.body.split("\n");
+	buffer = "MIME-Version: 1.0";
+	m_serverlog.push_back(buffer);
+	if (sock.writeMessage(buffer) != DSock::SUCCESS)
+	{
+		m_errno = NO_SEND_DATA;
+		return m_errno;
+	}
+	
+	buffer = "Content-Type: text/plain; charset=utf-8";
+	m_serverlog.push_back(buffer);
+	if (sock.writeMessage(buffer) != DSock::SUCCESS)
+	{
+		m_errno = NO_SEND_DATA;
+		return m_errno;
+	}
+	
+	formatedBody = m_data.txtbody.split("\n");
 	for (it = formatedBody.begin() ; it != formatedBody.end() ; it++)
 	{
 		buffer = *it;
@@ -443,7 +538,16 @@ DSMTP::ERRNO DSMTP::send()
 		m_errno = NO_END_DATA_SENT;
 		return m_errno;
 	}
-	if (sock.readMessage(buffer) != DSock::SUCCESS)
+	timer.restart();
+	// Listen server informations
+	while ( timer.timeToTimeout() )
+	{
+		status = sock.readMessage( buffer );
+		if ( status == DSock::SUCCESS && buffer.length() ) break;
+		usleep( 100000 );
+	}
+	timer.stop();
+	if ( status != DSock::SUCCESS )
 	{
 		m_errno = NO_END_DATA_SENT;
 		return m_errno;
@@ -463,7 +567,16 @@ DSMTP::ERRNO DSMTP::send()
 		m_errno = NO_GOOD_QUIT;
 		return m_errno;
 	}
-	if (sock.readMessage(buffer) != DSock::SUCCESS)
+	timer.restart();
+	// Listen server informations
+	while ( timer.timeToTimeout() )
+	{
+		status = sock.readMessage( buffer );
+		if ( status == DSock::SUCCESS && buffer.length() ) break;
+		usleep( 100000 );
+	}
+	timer.stop();
+	if ( status != DSock::SUCCESS )
 	{
 		m_errno = NO_GOOD_QUIT;
 		return m_errno;

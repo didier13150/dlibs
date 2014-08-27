@@ -36,6 +36,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <fstream>
+#include <sys/ioctl.h>
 
 using namespace std;
 
@@ -294,9 +295,10 @@ int DClientSock::readMessage ( DString & message, unsigned short int retry )
 int DClientSock::readMessage ( DString & message )
 {
 	int numberChar;
+	int availableNbChar = 0;
 	char *bufchar;
 	DString buffer;
-	DTimer timer;
+	bool finished = false;
 
 	// clear line
 	message.clear();
@@ -307,64 +309,66 @@ int DClientSock::readMessage ( DString & message )
 		m_lastError = "No opened socket found";
 		return m_status;
 	}
-
+	
 	bufchar = new char[ m_buffSize + 1 ];
-
-	// Start timer
-	timer.start ( m_timeout );
-
-	while ( timer.timeToTimeout() )
+	
+	while ( ! finished )
 	{
-		memset ( bufchar, 0x0, m_buffSize + 1 );
-		numberChar = recv ( m_hSocket, bufchar, sizeof( bufchar ), 0 );
-		if ( numberChar < 0 )
+		ioctl( m_hSocket, FIONREAD, &availableNbChar );
+		if ( availableNbChar )
 		{
-			if ( ! message.length() )
-			{
-				m_lastError = "No data, ";
-				m_lastError += strerror ( errno );
-				m_status = RECV_NOTHING;
-				break;
-			}
-		}
-		else if ( numberChar == 0 )
-		{
-			m_lastError = "Socket disconnected, ";
-			m_lastError += strerror ( errno );
-			m_status = NO_SOCKET;
-			closeSock();
-			break;
-		}
-		else
-		{
-			buffer = bufchar;
-			buffer.truncate ( numberChar );
-			if ( buffer.length() > 0 )
-			{
-				if (m_debug)
-				{
-					printMessage(buffer);
-				}
-				message += buffer;
-				m_status = SUCCESS;
-				m_lastError = "";
-			}
-			else
+			memset ( bufchar, 0x0, m_buffSize );
+			numberChar = recv ( m_hSocket, bufchar, sizeof( bufchar ) - 1, 0 );
+			if ( numberChar < 0 )
 			{
 				if ( ! message.length() )
 				{
-					m_status = RECV_EMPTY;
-					m_lastError = "Receive an empty message";
+					m_lastError = "No data, ";
+					m_lastError += strerror ( errno );
+					m_status = RECV_NOTHING;
 				}
+			}
+			else if ( numberChar == 0 )
+			{
+				m_lastError = "Socket disconnected, ";
+				m_lastError += strerror ( errno );
+				m_status = NO_SOCKET;
+				closeSock();
 				break;
 			}
+			else
+			{
+				buffer = bufchar;
+				buffer.truncate ( numberChar );
+				if ( buffer.length() > 0 )
+				{
+					if (m_debug)
+					{
+						printMessage(buffer);
+					}
+					if ( buffer.right(2) == "\r\n" )
+					{
+						finished = true;
+					}
+					message += buffer;
+					m_status = SUCCESS;
+					m_lastError = "";
+				}
+				else
+				{
+					if ( ! message.length() )
+					{
+						m_status = RECV_EMPTY;
+						m_lastError = "Receive an empty message";
+					}
+					break;
+				}
+			}
 		}
-		usleep ( 100000 );
-	}
-
-	if ( timer.isStarted() )
-	{
-		timer.stop();
+		else
+		{
+			finished = true;
+		}
 	}
 
 	delete[]( bufchar );
@@ -597,9 +601,10 @@ int DServerSock::readMessage ( int hSock, DString &message, unsigned short int r
 int DServerSock::readMessage ( int hSock, DString &message )
 {
 	int numberChar;
+	int availableNbChar = 0;
 	char * bufchar;
 	DString buffer;
-	DTimer timer;
+	bool finished = false;
 
 	// clear line
 	message.clear();
@@ -612,61 +617,66 @@ int DServerSock::readMessage ( int hSock, DString &message )
 	}
 
 	bufchar = new char[ m_buffSize + 1 ];
-	
-	timer.start ( m_timeout );
 
-	while ( timer.timeToTimeout() )
+	while ( ! finished )
 	{
-		memset ( bufchar, 0x0, m_buffSize + 1 );
-		numberChar = recv ( hSock, bufchar, sizeof( bufchar ), 0 );
-		if ( numberChar < 0 )
+		ioctl( hSock, FIONREAD, &availableNbChar );
+		if ( availableNbChar )
 		{
-			if ( ! message.length() )
-			{
-				m_lastError = "No data, ";
-				m_lastError += strerror ( errno );
-				m_status = RECV_NOTHING;
-				break;
-			}
-		}
-		else if ( numberChar == 0 )
-		{
-			m_lastError = "Socket disconnected, ";
-			m_lastError += strerror ( errno );
-			m_status = NO_SOCKET;
-			break;
-		}
-		else
-		{
-			buffer = bufchar;
-			buffer.truncate ( numberChar );
-			message += buffer;
-			if ( buffer.length() > 0 )
-			{
-				if (m_debug)
-				{
-					printMessage(buffer);
-				}
-				m_status = SUCCESS;
-				m_lastError = "";
-			}
-			else
+			memset ( bufchar, 0x0, m_buffSize + 1 );
+			numberChar = recv ( hSock, bufchar, sizeof( bufchar ), 0 );
+			if ( numberChar < 0 )
 			{
 				if ( ! message.length() )
 				{
-					m_status = RECV_EMPTY;
-					m_lastError = "Receive an empty message";
+					m_lastError = "No data, ";
+					m_lastError += strerror ( errno );
+					m_status = RECV_NOTHING;
+					//break;
 				}
+			}
+			else if ( numberChar == 0 )
+			{
+				m_lastError = "Socket disconnected, ";
+				m_lastError += strerror ( errno );
+				m_status = NO_SOCKET;
 				break;
 			}
+			else
+			{
+				buffer = bufchar;
+				buffer.truncate ( numberChar );
+				if ( buffer.length() > 0 )
+				{
+					if (m_debug)
+					{
+						printMessage(buffer);
+					}
+					if ( buffer.right(2) == "\r\n" )
+					{
+						finished = true;
+					}
+					message += buffer;
+					m_status = SUCCESS;
+					m_lastError = "";
+				}
+				else
+				{
+					if ( ! message.length() )
+					{
+						m_status = RECV_EMPTY;
+						m_lastError = "Receive an empty message";
+					}
+					break;
+				}
+			}
 		}
-		usleep ( 100000 );
+		else
+		{
+			finished = true;
+		}
 	}
 
-	if ( timer.isStarted() )
-	{
-		timer.stop();
-	}
 	delete[]( bufchar );
 
 	return m_status;
