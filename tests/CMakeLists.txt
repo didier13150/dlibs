@@ -1,6 +1,6 @@
 enable_testing()
 
-find_path( CPPTEST_INCLUDE
+find_path( CPPTEST_INCLUDE_DIR
            "cpptest.h"
            CMAKE_INCLUDE_PATH
          )
@@ -14,7 +14,7 @@ configure_file(test.h.cmake
 include_directories (.
                      ${Dlibs_BINARY_DIR}
                      ${CMAKE_SOURCE_DIR}/src
-                     ${CPPTEST_INCLUDE}
+                     ${CPPTEST_INCLUDE_DIR}
                      ${LIBXML2_INCLUDE_DIR}
                      ${MYSQL_INCLUDE_DIR}
                      ${POSTGRESQL_INCLUDE_DIR}
