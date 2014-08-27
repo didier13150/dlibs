@@ -1411,7 +1411,7 @@ std::string & DString::getReference()
 	return m_str;
 }
 
-DString DString::convertToQuotedPrintable() const
+DString DString::toQuotedPrintable() const
 {
 	DString quoted = m_str;
 	
@@ -1510,7 +1510,7 @@ DString DString::convertToQuotedPrintable() const
 	quoted.replace( "þ", "=C3=BE" );
 	quoted.replace( "ÿ", "=C3=BF" );
 	
-	return quoted;
+	return quoted.replaceEscapeSequence( "<", ">" );
 }
 
 DString DString::replaceEscapeSequence ( const DString & begin,

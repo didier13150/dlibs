@@ -1113,7 +1113,7 @@ class DString
 		/**
 		 * Replace all special charaters with ASCII printable characters
 		 */
-		DString convertToQuotedPrintable() const;
+		DString toQuotedPrintable() const;
 
 		/**
 		 * Check if string contains only legal characters, defined in the list
