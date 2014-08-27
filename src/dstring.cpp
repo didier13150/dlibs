@@ -33,6 +33,8 @@
 
 
 #include "dstring.h"
+#include <stdint.h>
+#include <utf8.h>
 
 DString::DString()
 {
@@ -1411,106 +1413,117 @@ std::string & DString::getReference()
 	return m_str;
 }
 
+DString DString::toHTML() const
+{
+	DString quoted;
+	DString buffer;
+	
+	char * str = const_cast<char *>( m_str.c_str() ); // utf-8 string
+    char * str_i = str;                               // string iterator
+    char * end = str + strlen( str ) + 1;             // end iterator
+
+	do
+	{
+		uint32_t code = utf8::next( str_i, end ); // get 32 bit code of a utf-8 symbol
+		if ( ( code == 0 ) || ( code >= 0x7F && code <= 0x9F ) )
+		{
+			continue;
+		}
+		if ( ( code == 0x20 ) ||
+			 ( code >= 0x30 && code <= 0x39 ) ||
+			 ( code >= 0x41 && code <= 0x5a ) ||
+			 ( code >= 0x61 && code <= 0x7a ) )
+		{
+			quoted += code;
+			continue;
+		}
+		buffer.setNum( static_cast<int>( code ) );
+		buffer.prepend( "&#" );
+		buffer.append( ";" );
+		quoted += buffer;
+	}
+	while ( str_i < end );
+	
+	return quoted;
+}
+
 DString DString::toQuotedPrintable() const
 {
-	DString quoted = m_str;
+	DString quoted;
+	DString buffer;
 	
-	quoted.replace( "¡", "=C2=A1" );
-	quoted.replace( "¢", "=C2=A2" );
-	quoted.replace( "£", "=C2=A3" );
-	quoted.replace( "€", "=E2=82=AC" );
-	quoted.replace( "¥", "=C2=A5" );
-	quoted.replace( "Š", "=C5=A0" );
-	quoted.replace( "§", "=C2=A7" );
-	quoted.replace( "š", "=C5=A1" );
-	quoted.replace( "©", "=C2=A9" );
-	quoted.replace( "ª", "=C2=AA" );
-	quoted.replace( "«", "=C2=AB" );
-	quoted.replace( "¬", "=C2=AC" );
-	quoted.replace( "®", "=C2=AE" );
-	quoted.replace( "¯", "=C2=AF" );
-	quoted.replace( "°", "=C2=B0" );
-	quoted.replace( "±", "=C2=B1" );
-	quoted.replace( "²", "=C2=B2" );
-	quoted.replace( "³", "=C2=B3" );
-	quoted.replace( "Ž", "=C5=BD" );
-	quoted.replace( "µ", "=C2=B5" );
-	quoted.replace( "¶", "=C2=B6" );
-	quoted.replace( "·", "=C2=B7" );
-	quoted.replace( "ž", "=C5=BE" );
-	quoted.replace( "¹", "=C2=B9" );
-	quoted.replace( "º", "=C2=BA" );
-	quoted.replace( "»", "=C2=BB" );
-	quoted.replace( "Œ", "=C5=92" );
-	quoted.replace( "œ", "=C5=93" );
-	quoted.replace( "Ÿ", "=C5=B8" );
-	quoted.replace( "¿", "=C2=BF" );
-	quoted.replace( "À", "=C3=80" );
-	quoted.replace( "Á", "=C3=81" );
-	quoted.replace( "Â", "=C3=82" );
-	quoted.replace( "Ã", "=C3=83" );
-	quoted.replace( "Ä", "=C3=84" );
-	quoted.replace( "Å", "=C3=85" );
-	quoted.replace( "Æ", "=C3=86" );
-	quoted.replace( "Ç", "=C3=87" );
-	quoted.replace( "È", "=C3=88" );
-	quoted.replace( "É", "=C3=89" );
-	quoted.replace( "Ê", "=C3=8A" );
-	quoted.replace( "Ë", "=C3=8B" );
-	quoted.replace( "Ì", "=C3=8C" );
-	quoted.replace( "Í", "=C3=8D" );
-	quoted.replace( "Î", "=C3=8E" );
-	quoted.replace( "Ï", "=C3=8F" );
-	quoted.replace( "Ð", "=C3=90" );
-	quoted.replace( "Ñ", "=C3=91" );
-	quoted.replace( "Ò", "=C3=92" );
-	quoted.replace( "Ó", "=C3=93" );
-	quoted.replace( "Ô", "=C3=94" );
-	quoted.replace( "Õ", "=C3=95" );
-	quoted.replace( "Ö", "=C3=96" );
-	quoted.replace( "×", "=C3=97" );
-	quoted.replace( "Ø", "=C3=98" );
-	quoted.replace( "Ù", "=C3=99" );
-	quoted.replace( "Ú", "=C3=9A" );
-	quoted.replace( "Û", "=C3=9B" );
-	quoted.replace( "Ü", "=C3=9C" );
-	quoted.replace( "Ý", "=C3=9D" );
-	quoted.replace( "Þ", "=C3=9E" );
-	quoted.replace( "ß", "=C3=9F" );
-	quoted.replace( "à", "=C3=A0" );
-	quoted.replace( "á", "=C3=A1" );
-	quoted.replace( "â", "=C3=A2" );
-	quoted.replace( "ã", "=C3=A3" );
-	quoted.replace( "ä", "=C3=A4" );
-	quoted.replace( "å", "=C3=A5" );
-	quoted.replace( "æ", "=C3=A6" );
-	quoted.replace( "ç", "=C3=A7" );
-	quoted.replace( "è", "=C3=A8" );
-	quoted.replace( "é", "=C3=A9" );
-	quoted.replace( "ê", "=C3=AA" );
-	quoted.replace( "ë", "=C3=AB" );
-	quoted.replace( "ì", "=C3=AC" );
-	quoted.replace( "í", "=C3=AD" );
-	quoted.replace( "î", "=C3=AE" );
-	quoted.replace( "ï", "=C3=AF" );
-	quoted.replace( "ð", "=C3=B0" );
-	quoted.replace( "ñ", "=C3=B1" );
-	quoted.replace( "ò", "=C3=B2" );
-	quoted.replace( "ó", "=C3=B3" );
-	quoted.replace( "ô", "=C3=B4" );
-	quoted.replace( "õ", "=C3=B5" );
-	quoted.replace( "ö", "=C3=B6" );
-	quoted.replace( "÷", "=C3=B7" );
-	quoted.replace( "ø", "=C3=B8" );
-	quoted.replace( "ù", "=C3=B9" );
-	quoted.replace( "ú", "=C3=BA" );
-	quoted.replace( "û", "=C3=BB" );
-	quoted.replace( "ü", "=C3=BC" );
-	quoted.replace( "ý", "=C3=BD" );
-	quoted.replace( "þ", "=C3=BE" );
-	quoted.replace( "ÿ", "=C3=BF" );
+	char * str = const_cast<char *>( m_str.c_str() ); // utf-8 string
+    char * str_i = str;                               // string iterator
+    char * end = str + strlen( str ) + 1;             // end iterator
+
+	do
+	{
+		uint32_t code = utf8::next( str_i, end ); // get 32 bit code of a utf-8 symbol
+		if ( code == 0 )
+		{
+			continue;
+		}
+		// ISO 8859-15 additions ( modify from ISO 8859-1 )
+		if ( code == 0x20AC )
+		{
+			quoted += "=E2=82=AC";
+			continue;
+		}
+		if ( code == 0x160 )
+		{
+			quoted += "=C5=A0";
+			continue;
+		}
+		if ( code == 0x161 )
+		{
+			quoted += "=C5=A1";
+			continue;
+		}
+		if ( code == 0x17d )
+		{
+			quoted += "=C5=BD";
+			continue;
+		}
+		if ( code == 0x17e )
+		{
+			quoted += "=C5=BE";
+			continue;
+		}
+		if ( code == 0x152 )
+		{
+			quoted += "=C5=92";
+			continue;
+		}
+		if ( code == 0x153 )
+		{
+			quoted += "=C5=93";
+			continue;
+		}
+		if ( code == 0x178 )
+		{
+			quoted += "=C5=B8";
+			continue;
+		}
+		if ( code >= 0xa0 && code < 0xc0 )
+		{
+			buffer.setNum( static_cast<int>( code ), 16 ).toUpper();
+			buffer.prepend( "=C2=" );
+			quoted += buffer;
+			continue;
+		}
+		if ( code >= 0xc0 )
+		{
+			uint32_t code2 = code & 0xBF;
+			buffer.setNum( static_cast<int>( code2 ), 16 ).toUpper();
+			buffer.prepend( "=C3=" );
+			quoted += buffer;
+			continue;
+		}
+		quoted += code;
+	}
+	while ( str_i < end );
 	
-	return quoted.replaceEscapeSequence( "<", ">" );
+	return quoted;
 }
 
 DString DString::replaceEscapeSequence ( const DString & begin,

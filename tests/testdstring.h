@@ -65,6 +65,7 @@ public:
 		TEST_ADD( TestDString::contains_test )
 		TEST_ADD( TestDString::stream_test )
 		TEST_ADD( TestDString::quoted_printable_test )
+		TEST_ADD( TestDString::html_test )
 	}
     
 private:
@@ -86,6 +87,7 @@ private:
 	void contains_test();
 	void stream_test();
 	void quoted_printable_test();
+	void html_test();
 };
 
 #endif // _TESTDSTRING_H

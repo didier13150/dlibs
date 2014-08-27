@@ -560,6 +560,15 @@ void TestDString::quoted_printable_test()
 	TEST_ASSERT_MSG( str.toQuotedPrintable() == "UTF-8 =C3=B0 =C3=B1 =C3=B2 =C3=B3 =C3=B4 =C3=B5 =C3=B6 =C3=B7 =C3=B8 =C3=B9 =C3=BA =C3=BB =C3=BC =C3=BD =C3=BE =C3=BF", "Bad encodage" )
 }
 
+void TestDString::html_test()
+{
+	DString str;
+	
+	str = "UTF-8 ¡ ¢ £ € ¥ Š § š © ª « ¬ ® ¯";
+	std::cout << std::endl << str.toHTML() << std::endl;
+	TEST_ASSERT_MSG( str.toHTML() == "UTF&#45;8 &#161; &#162; &#163; &#8364; &#165; &#352; &#167; &#353; &#169; &#170; &#171; &#172; &#174; &#175;", "Bad encodage" )
+}
+
 int main( int argc, char** argv )
 {
 	TestDString ets;

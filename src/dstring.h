@@ -1114,6 +1114,11 @@ class DString
 		 * Replace all special charaters with ASCII printable characters
 		 */
 		DString toQuotedPrintable() const;
+		
+		/**
+		 * Replace all special charaters with HTML characters
+		 */
+		DString toHTML() const;
 
 		/**
 		 * Check if string contains only legal characters, defined in the list
