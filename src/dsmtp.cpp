@@ -217,7 +217,7 @@ DSMTP::ERRNO DSMTP::send()
 	DString boundary;
 	DStringList lines;
 	DStringList::iterator it, it2;
-	DStringList formatedBody;
+	DStringList body;
 	DTimer timer;
 	int status = DSock::NO_HOST;
 	DBase64 base64;
@@ -572,39 +572,38 @@ DSMTP::ERRNO DSMTP::send()
 			m_errno = NO_SEND_DATA;
 			return m_errno;
 		}
-	
-		buffer = "Content-Type: text/plain; charset=utf-8";
-		m_serverlog.push_back(buffer);
-		if (sock.writeMessage(buffer) != DSock::SUCCESS)
-		{
-			m_errno = NO_SEND_DATA;
-			return m_errno;
-		}
-		
-		buffer = "Content-Transfer-Encoding: quoted-printable";
-		m_serverlog.push_back(buffer);
-		if (sock.writeMessage(buffer) != DSock::SUCCESS)
-		{
-			m_errno = NO_SEND_DATA;
-			return m_errno;
-		}
-		if (sock.writeMessage( "" ) != DSock::SUCCESS)
-		{
-			m_errno = NO_SEND_DATA;
-			return m_errno;
-		}
 	}
 	
-	formatedBody = m_data.txtbody.split("\n");
-	for (it = formatedBody.begin() ; it != formatedBody.end() ; it++)
+	buffer = "Content-Type: text/plain; charset=utf-8";
+	m_serverlog.push_back(buffer);
+	if (sock.writeMessage(buffer) != DSock::SUCCESS)
 	{
-		buffer = *it;
-		lines = buffer.splitConstantSize( " ", 76 );
-		// send line by line
-		for (it2 = lines.begin() ; it2 != lines.end() ; it2++)
+		m_errno = NO_SEND_DATA;
+		return m_errno;
+	}
+	
+	buffer = "Content-Transfer-Encoding: quoted-printable";
+	m_serverlog.push_back(buffer);
+	if (sock.writeMessage(buffer) != DSock::SUCCESS)
+	{
+		m_errno = NO_SEND_DATA;
+		return m_errno;
+	}
+	if (sock.writeMessage( "" ) != DSock::SUCCESS)
+	{
+		m_errno = NO_SEND_DATA;
+		return m_errno;
+	}
+	
+	buffer = m_data.txtbody.toQuotedPrintable();
+	body = buffer.split( "\n", true );
+	for ( it = body.begin() ; it != body.end() ; it++ )
+	{
+		lines = it->splitConstantSize( " ", 76 );
+		for ( it2 = lines.begin() ; it2 != lines.end() ; ++it2 )
 		{
-			m_serverlog.push_back(*it2);
-			if (sock.writeMessage(*it2) != DSock::SUCCESS)
+			m_serverlog.push_back( *it2 );
+			if (sock.writeMessage( *it2 ) != DSock::SUCCESS)
 			{
 				m_errno = NO_SEND_DATA;
 				return m_errno;
