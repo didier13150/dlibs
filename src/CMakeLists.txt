@@ -69,6 +69,7 @@ include_directories (${Dlibs_BINARY_DIR}
                      ${LIBXML2_INCLUDE_DIR}
                      ${MYSQL_INCLUDE_DIR}
                      ${POSTGRESQL_INCLUDE_DIR}
+                     ${UTF8CPP_INCLUDE_DIR}
                     )
                     
 #build shared libraries

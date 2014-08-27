@@ -63,6 +63,11 @@ find_package (MySQL QUIET)
 find_package(Threads REQUIRED)
 find_library(REALTIME_LIBRARY NAMES rt PATH /usr/lib /usr/local/lib REQUIRED)
 
+find_path( UTF8CPP_INCLUDE_DIR
+           "utf8.h"
+           CMAKE_INCLUDE_PATH
+         )
+
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
