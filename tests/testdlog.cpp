@@ -230,7 +230,6 @@ void TestDLog::unintialized_test()
 
 void TestDLog::sqlite_test()
 {
-	DString message1, message2;
 	DLogger * log = DLogger::getInstance();
 	DLogParams params;
 
@@ -286,9 +285,10 @@ void TestDLog::sqlite_test()
 	TEST_ASSERT_MSG( removed == 0, "Can not deleting database file" )
 }
 
-#ifdef DLIBS_HAVE_MYSQL
 void TestDLog::mysql_test()
 {
+#ifdef DLIBS_HAVE_MYSQL
+	DLogger * log = DLogger::getInstance();
 	DLogParams params;
 
 	// specific to dmysql
@@ -297,15 +297,74 @@ void TestDLog::mysql_test()
 	params.specific["dbpassword"] = "dlibspw";
 	params.specific["dbhost"] = "localhost";
 	params.specific["dbbase"] = "dlibs";
+	params.specific["dbcreate"] = "CREATE TABLE applog (date, level, message);";
+	// params for stdout log engine
+	params.minlevel = DLogShared::INFO;
+	params.optionnal["dateformat"] = DString::getFormat ( DString::ISO_DATE );
+	params.optionnal["pattern"] = "INSERT INTO applog(date, level, message) VALUES(\"%DATE\", \"%TYPE\", \"%MESSAGE\");";
+
+	// create database log engine
+	DLogEngine * dblog = log->addLogEngine ( DLogEngine::DATABASE, params );
+
+	log->insertMessage ( "Debug message", DLogShared::DEBUG );
+	log->insertMessage ( "Info message", DLogShared::INFO );
+
+	log->removeLogEngine ( dblog );
+	log->close();
+	DLogger::deleteInstance();
+
+    DFactory<DDatabase> factory;
+    DDatabaseParams dbparams;
+    DDatabaseResult results;
+	DDatabaseRows::const_iterator it;
+
+#ifdef WITH_EXCEPTIONS
+    DFactory<DDatabase>::Register ( "mysql", new DMySQL ( false ) );
+#else
+	DFactory<DDatabase>::Register ( "mysql", new DMySQL () );
+#endif
+    DDatabase * db = factory.create ( "mysql" );
+    dbparams.host = params.specific["dbhost"];
+    dbparams.user = params.specific["dbuser"];
+    dbparams.password = params.specific["dbpassword"];
+    dbparams.base = params.specific["dbbase"];
+
+	db->setParams ( dbparams );
+	results = db->open();
+	if ( results.errnb != 0 )
+	{
+		db->close();
+		delete db;
+		TEST_FAIL( "Database not opened" )
+		return;
+	}
+	
+	results = db->exec ( "SELECT * FROM applog;" );
+	if ( results.errnb != 0 )
+	{
+		db->close();
+		delete db;
+		TEST_FAIL( "Database not opened" )
+		return;
+	}
+	TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully" )
+
+	TEST_ASSERT_MSG( results.rows.size() == 1, "Wrong number of row in database sqlite" )
+	it = results.rows.begin();
+	TEST_ASSERT_MSG( it != results.rows.end(), "Wrong number of row in database sqlite" )
+	TEST_ASSERT_MSG( it->at("level") == "INFOS", "Wrong level on database sqlite" )
+	TEST_ASSERT_MSG( it->at("message") == "Info message", "Wrong message on database sqlite" )
+	db->close();
+	delete db;
+#endif
 }
 
-#endif
 
-#ifdef DLIBS_HAVE_PGSQL
 void TestDLog::pgsql_test()
 {
-}
+#ifdef DLIBS_HAVE_PGSQL
 #endif
+}
 
 int main( int argc, char** argv )
 {

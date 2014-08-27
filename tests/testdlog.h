@@ -51,13 +51,9 @@ public:
 		TEST_ADD( TestDLog::stream_test )
 		TEST_ADD( TestDLog::syslog_test )
 		TEST_ADD( TestDLog::sqlite_test )
-#ifdef DLIBS_HAVE_MYSQL
 		TEST_ADD( TestDLog::mysql_test )
-#endif
-#ifdef DLIBS_HAVE_PGSQL
 		TEST_ADD( TestDLog::pgsql_test )
-#endif
-		//TEST_ADD( TestDLog::unintialized_test )
+		TEST_ADD( TestDLog::unintialized_test )
 	}
 
 private:
@@ -66,12 +62,8 @@ private:
 	void socket_test();
 	void syslog_test();
 	void sqlite_test();
-#ifdef DLIBS_HAVE_MYSQL
 	void mysql_test();
-#endif
-#ifdef DLIBS_HAVE_PGSQL
 	void pgsql_test();
-#endif
 	void unintialized_test();
 };
 
