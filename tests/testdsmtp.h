@@ -46,11 +46,15 @@ class TestDSMTP : public Test::Suite
 public:
 	TestDSMTP()
 	{
-		TEST_ADD( TestDSMTP::constructor_test )
+		TEST_ADD( TestDSMTP::simple_test )
+		TEST_ADD( TestDSMTP::with_attach_test )
+		TEST_ADD( TestDSMTP::get_mime_type )
 	}
 
 private:
-	void constructor_test();
+	void simple_test();
+	void with_attach_test();
+	void get_mime_type();
 };
 
 #endif // _TESTDSMTP_H

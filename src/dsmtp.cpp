@@ -34,6 +34,8 @@
 #include "dsmtp.h"
 #include "dsocket.h"
 #include "dtimer.h"
+#include "dprocess.h"
+#include "dbase64.h"
 
 DSMTP::Data::Data()
 {
@@ -60,7 +62,6 @@ DSMTP::DSMTP()
 	m_data.clear();
 	m_timeout = 1000;
 	m_errno = SUCCESS;
-	m_isMultiPart = false;
 }
 
 DSMTP::~DSMTP()
@@ -162,6 +163,31 @@ void DSMTP::removeCC(const DString & receiver)
 	}
 }
 
+void DSMTP::addAttach( const DString & filename )
+{
+	m_data.attached.push_back( filename );
+}
+
+void DSMTP::removeAttach( const DString & filename )
+{
+	DStringList::iterator it;
+	
+	if (filename.isEmpty())
+	{
+		m_data.attached.clear();
+	}
+	else
+	{
+		for (it = m_data.attached.begin() ; it != m_data.attached.end() ; it++)
+		{
+			if ((*it) == filename)
+			{
+				m_data.attached.erase(it);
+			}
+		}
+	}
+}
+
 void DSMTP::setEmail(const DString & subject, const DString & txtbody)
 {
 	m_data.subject = subject;
@@ -176,7 +202,6 @@ void DSMTP::setEmail(const DString & subject,
 	m_data.subject = subject;
 	m_data.txtbody = txtbody;
 	m_data.htmlbody = htmlbody;
-	m_isMultiPart = true;
 }
 
 void DSMTP::unsetEmail()
@@ -189,11 +214,19 @@ DSMTP::ERRNO DSMTP::send()
 {
 	DClientSock sock;
 	DString buffer;
+	DString boundary;
 	DStringList lines;
 	DStringList::iterator it, it2;
 	DStringList formatedBody;
 	DTimer timer;
 	int status = DSock::NO_HOST;
+	DBase64 base64;
+	bool multipart = false;
+	
+	if ( m_data.htmlbody.length() || m_data.attached.size() )
+	{
+		multipart = true;
+	}
 
 	sock.setTimeout(m_timeout);
 	sock.setBufferSize( 1024 );
@@ -505,24 +538,155 @@ DSMTP::ERRNO DSMTP::send()
 		return m_errno;
 	}
 	
-	buffer = "Content-Type: text/plain; charset=utf-8";
-	m_serverlog.push_back(buffer);
-	if (sock.writeMessage(buffer) != DSock::SUCCESS)
+	if ( multipart )
 	{
-		m_errno = NO_SEND_DATA;
-		return m_errno;
+		srand( time( NULL ) );
+		int random = rand();
+		boundary.setNum( random );
+		boundary.prepend( DString::timeToString( time( NULL ), "%Y%m%d%H%M%S-" ) );
+		boundary.prepend( "----------=dsmtp-" );
+		buffer= "Content-Type: multipart/mixed;\n boundary=\"" + boundary + "\"";
+		m_serverlog.push_back(buffer);
+		if (sock.writeMessage(buffer) != DSock::SUCCESS)
+		{
+			m_errno = NO_SEND_DATA;
+			return m_errno;
+		}
+		if (sock.writeMessage( "" ) != DSock::SUCCESS)
+		{
+			m_errno = NO_SEND_DATA;
+			return m_errno;
+		}
+		
+		buffer = "This is a multi-part message in MIME format.";
+		m_serverlog.push_back(buffer);
+		if (sock.writeMessage(buffer) != DSock::SUCCESS)
+		{
+			m_errno = NO_SEND_DATA;
+			return m_errno;
+		}
+		
+		m_serverlog.push_back( "--" + boundary );
+		if (sock.writeMessage( "--" + boundary ) != DSock::SUCCESS)
+		{
+			m_errno = NO_SEND_DATA;
+			return m_errno;
+		}
+	
+		buffer = "Content-Type: text/plain; charset=utf-8";
+		m_serverlog.push_back(buffer);
+		if (sock.writeMessage(buffer) != DSock::SUCCESS)
+		{
+			m_errno = NO_SEND_DATA;
+			return m_errno;
+		}
+		
+		buffer = "Content-Transfer-Encoding: quoted-printable";
+		m_serverlog.push_back(buffer);
+		if (sock.writeMessage(buffer) != DSock::SUCCESS)
+		{
+			m_errno = NO_SEND_DATA;
+			return m_errno;
+		}
+		if (sock.writeMessage( "" ) != DSock::SUCCESS)
+		{
+			m_errno = NO_SEND_DATA;
+			return m_errno;
+		}
 	}
 	
 	formatedBody = m_data.txtbody.split("\n");
 	for (it = formatedBody.begin() ; it != formatedBody.end() ; it++)
 	{
 		buffer = *it;
-		lines = buffer.splitConstantSize( " ", 78 );
+		lines = buffer.splitConstantSize( " ", 76 );
 		// send line by line
 		for (it2 = lines.begin() ; it2 != lines.end() ; it2++)
 		{
 			m_serverlog.push_back(*it2);
 			if (sock.writeMessage(*it2) != DSock::SUCCESS)
+			{
+				m_errno = NO_SEND_DATA;
+				return m_errno;
+			}
+		}
+		lines.clear();
+	}
+	
+	if ( multipart )
+	{
+		for ( it = m_data.attached.begin() ; it != m_data.attached.end() ; ++it )
+		{
+			base64.encodeFromFile( *it );
+			lines = base64.getWrappedEncoded( 76 );
+			
+			if (sock.writeMessage( "" ) != DSock::SUCCESS)
+			{
+				m_errno = NO_SEND_DATA;
+				return m_errno;
+			}
+			m_serverlog.push_back( "--" + boundary );
+			if (sock.writeMessage( "--" + boundary ) != DSock::SUCCESS)
+			{
+				m_errno = NO_SEND_DATA;
+				return m_errno;
+			}
+			buffer = "Content-Type: ";
+			buffer += getMimeType( *it );
+			buffer += ";\n name=\"";
+			buffer += it->section( "/", -1, -1 );
+			buffer += "\"";
+			m_serverlog.push_back( buffer );
+			if (sock.writeMessage( buffer ) != DSock::SUCCESS)
+			{
+				m_errno = NO_SEND_DATA;
+				return m_errno;
+			}
+			
+			buffer = "Content-Transfer-Encoding: base64";
+			m_serverlog.push_back( buffer );
+			if (sock.writeMessage( buffer ) != DSock::SUCCESS)
+			{
+				m_errno = NO_SEND_DATA;
+				return m_errno;
+			}
+			
+			buffer = "Content-Disposition: attachment;\n filename=\"";
+			buffer += it->section( "/", -1, -1 );
+			buffer += "\"";
+			m_serverlog.push_back( buffer );
+			if (sock.writeMessage( buffer ) != DSock::SUCCESS)
+			{
+				m_errno = NO_SEND_DATA;
+				return m_errno;
+			}
+			
+			if (sock.writeMessage( "" ) != DSock::SUCCESS)
+			{
+				m_errno = NO_SEND_DATA;
+				return m_errno;
+			}
+			
+			for (it2 = lines.begin() ; it2 != lines.end() ; it2++)
+			{
+				m_serverlog.push_back(*it2);
+				if (sock.writeMessage(*it2) != DSock::SUCCESS)
+				{
+					m_errno = NO_SEND_DATA;
+					return m_errno;
+				}
+			}
+			lines.clear();
+			
+			if (sock.writeMessage( "" ) != DSock::SUCCESS)
+			{
+				m_errno = NO_SEND_DATA;
+				return m_errno;
+			}
+			
+			buffer = "--" + boundary + "--";
+			m_serverlog.push_back( buffer );
+			if (sock.writeMessage( buffer ) != DSock::SUCCESS)
 			{
 				m_errno = NO_SEND_DATA;
 				return m_errno;
@@ -682,4 +846,21 @@ const DStringList & DSMTP::getTransactionLog() const
 void DSMTP::setTimeOut(unsigned long int timeout)
 {
 	m_timeout = timeout;
+}
+
+DString getMimeType( const DString & filename )
+{
+	DProcess process;
+	DString type;
+
+	process.setExecutable( "file" );
+	process << "-b";
+	process << "--mime-type";
+	process << filename;	
+	process.setComMode( DProcess::READ_ONLY );
+	process.setExeMode( DProcess::BLOCK );
+	process.start();
+	type = process.getOutput().stripWhiteSpace();
+	process.stop();
+	return type;
 }

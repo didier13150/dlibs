@@ -116,6 +116,8 @@ public:
 			DString txtbody;
 			/// The html email message
 			DString htmlbody;
+			/// Attached document list (with path)
+			DStringList attached;
 
 			/**
 			 * Clear all email data
@@ -185,6 +187,15 @@ public:
 	 * Add a single BCC receiver
 	 */
 	void addBCC(const DString & receiver);
+	
+	/**
+	 * Add attached document to email
+	 */
+	void addAttach( const DString & filename );
+	/**
+	 * Remove an attached document
+	 */
+	void removeAttach( const DString & filename );
 
 	/**
 	 * Set the email subject and main message
@@ -242,6 +253,7 @@ public:
 	 */
 	void setTimeOut(unsigned long int timeout);
 	
+	
 private:
 	/// Email data
 	Data m_data;
@@ -253,11 +265,17 @@ private:
 	DStringList m_serverlog;
 	/// The socket read timeout
 	unsigned long int m_timeout;
-	/// Multi-part flag
-	bool m_isMultiPart;
 
 	/// Check if stmp server return is correct
 	bool checkReturn( const DString & status, const DString & expected);
 };
 
+
+/**
+ * @relates DSMTP
+ * Get MIME Type from filename
+ * \param filename File name
+ * \return MIME Type
+ */
+DString getMimeType( const DString & filename );
 #endif // DSMTP_H

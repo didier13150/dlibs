@@ -40,7 +40,10 @@
 #include "testdsmtp.h"
 #include "test.h"
 
-void TestDSMTP::constructor_test()
+#define TESTFILE CMAKE_SOURCE_DIR"/tux.png"
+#define WRAPPING 76
+
+void TestDSMTP::simple_test()
 {
 	DSMTP mail;
 	DSMTP::ERRNO code;
@@ -66,6 +69,41 @@ void TestDSMTP::constructor_test()
 		}
 		TEST_FAIL( "Email not sent" )
 	}
+}
+
+void TestDSMTP::with_attach_test()
+{
+	DSMTP mail;
+	DSMTP::ERRNO code;
+	DURL server;
+	DStringList transaction;
+	DStringList::const_iterator it;
+
+	server.setURL( "smtp://localhost.localdomain:25" );
+
+	mail.setHost ( server );
+	mail.setSender ( "root@localhost" );
+	mail.addReceiver ( "root@localhost" );
+	mail.addAttach( TESTFILE );
+	mail.setEmail ( "DLibs test", "This is just a simple DLibs test, SMTP part", "test" );
+	code = mail.send();
+	
+	TEST_ASSERT_MSG( mail.getLastError() == DString::empty(), "Error reported when sending email" )
+	if ( code != DSMTP::SUCCESS )
+	{
+		transaction = mail.getTransactionLog();
+		for ( it = transaction.begin() ; it != transaction.end() ; it++ )
+		{
+			std::cout << *it << std::endl;
+		}
+		TEST_FAIL( "Email not sent" )
+	}
+}
+void TestDSMTP::get_mime_type()
+{
+	TEST_ASSERT_MSG( getMimeType( CMAKE_SOURCE_DIR"/tux.png" ) == "image/png", "Bad format reported for tux PNG image" )
+	TEST_ASSERT_MSG( getMimeType( CMAKE_SOURCE_DIR"/logo.svg" ) == "image/svg+xml", "Bad format reported for tux SVG image" )
+	TEST_ASSERT_MSG( getMimeType( CMAKE_SOURCE_DIR"/AUTHORS" ) == "text/plain", "Bad format reported for tux PNG image" ) 
 }
 
 int main( int argc, char** argv )
