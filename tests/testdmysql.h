@@ -40,6 +40,7 @@
 #include <cpptest.h>
 
 #include "dmysql.h"
+#include "dfactory.h"
 
 class TestDMySQL : public Test::Suite
 {
@@ -51,6 +52,7 @@ public:
 		TEST_ADD( TestDMySQL::network_connect_test )
 		TEST_ADD( TestDMySQL::insert_test )
 		TEST_ADD( TestDMySQL::insert_exception_test )
+		TEST_ADD( TestDMySQL::factory_test )
 	}
 
 private:
@@ -59,6 +61,7 @@ private:
 	void network_connect_test();
 	void insert_test();
 	void insert_exception_test();
+	void factory_test();
 };
 
 #endif // _TESTDMYSQL_H

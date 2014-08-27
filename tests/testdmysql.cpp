@@ -273,6 +273,52 @@ void TestDMySQL::insert_exception_test()
     delete db;
 }
 
+void TestDMySQL::factory_test()
+{
+	DFactory<DDatabase> factory;
+	DDatabaseParams params;
+	DDatabaseResult results;
+	DDatabaseRows::const_iterator it;
+
+#ifdef WITH_EXCEPTIONS
+	DFactory<DDatabase>::Register ( "mysql", new DMySQL ( true ) );
+#else
+	DFactory<DDatabase>::Register ( "mysql", new DMySQL () );
+#endif
+	DDatabase * db = factory.create ( "mysql" );
+	params.host = "localhost";
+	params.user = DBUSER;
+	params.password = DBPASSWD;
+	params.base = DBBASE;
+
+	db->setParams ( params );
+	try
+	{
+		db->open();
+		results = db->exec ( "SHOW TABLES" );
+		std::cout << results << std::endl;
+		results = db->exec ( "SELECT * FROM TABLES" );
+		std::cout << results << std::endl;
+		db->close();
+	}
+	catch (const DException_database & e)
+	{
+		std::cout << "DException_database exception encoured" << std::endl;
+		std::cout << e.dWhat() << std::endl;
+	}
+	catch (const DException & e)
+	{
+		std::cout << "DException exception encoured" << std::endl;
+		std::cout << e.dWhat() << std::endl;
+	}
+	catch ( ... )
+	{
+		std::cout << "Another unknow exception encoured" << std::endl;
+	}
+	db->close();
+	delete db;
+}
+
 int main( int argc, char** argv )
 {
 	TestDMySQL ets;
