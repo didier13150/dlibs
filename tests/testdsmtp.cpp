@@ -56,7 +56,15 @@ void TestDSMTP::simple_test()
 	mail.setHost ( server );
 	mail.setSender ( "root@localhost" );
 	mail.addReceiver ( "root@localhost" );
-	mail.setEmail ( "DLibs test", "This is just a simple DLibs test, SMTP part" );
+	
+	DString buffer = "This is just a simple DLibs test, SMTP part\n\n";
+	buffer += "¡ ¢ £ € ¥ Š § š © ª « ¬ ® ¯";
+	buffer += " ° ± ² ³ Ž µ ¶ · ž ¹ º » Œ œ Ÿ ¿";
+	buffer += " À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï";
+	buffer += " Ð Ñ Ò Ó Ô Õ Ö × Ø Ù Ú Û Ü Ý Þ ß";
+	buffer += " à á â ã ä å æ ç è é ê ë ì í î ï";
+	buffer += " ð ñ ò ó ô õ ö ÷ ø ù ú û ü ý þ ÿ";
+	mail.setEmail ( "DLibs test", buffer, "test" );
 	code = mail.send();
 	
 	TEST_ASSERT_MSG( mail.getLastError() == DString::empty(), "Error reported when sending email" )
@@ -85,7 +93,16 @@ void TestDSMTP::with_attach_test()
 	mail.setSender ( "root@localhost" );
 	mail.addReceiver ( "root@localhost" );
 	mail.addAttach( TESTFILE );
-	mail.setEmail ( "DLibs test", "This is just a simple DLibs test, SMTP part", "test" );
+	
+	DString buffer = "This is just a simple DLibs test, SMTP part\n\n";
+	
+	buffer += "¡ ¢ £ € ¥ Š § š © ª « ¬ ® ¯";
+	buffer += " ° ± ² ³ Ž µ ¶ · ž ¹ º » Œ œ Ÿ ¿";
+	buffer += " À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï";
+	buffer += " Ð Ñ Ò Ó Ô Õ Ö × Ø Ù Ú Û Ü Ý Þ ß";
+	buffer += " à á â ã ä å æ ç è é ê ë ì í î ï";
+	buffer += " ð ñ ò ó ô õ ö ÷ ø ù ú û ü ý þ ÿ";
+	mail.setEmail ( "DLibs test", buffer, "test" );
 	code = mail.send();
 	
 	TEST_ASSERT_MSG( mail.getLastError() == DString::empty(), "Error reported when sending email" )
