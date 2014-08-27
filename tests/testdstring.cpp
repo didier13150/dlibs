@@ -542,6 +542,27 @@ void TestDString::stream_test()
 	TEST_ASSERT_MSG( oss.str() == "abcdef123456789", "Outputting stream failed" )
 }
 
+void TestDString::quoted_printable_test()
+{
+	DString str = "UTF-8 À";
+	TEST_ASSERT_MSG( str.convertToQuotedPrintable() == "UTF-8 =C3=80", "Bad encodage" )
+	
+	std::cout << std::endl;
+	
+	str = "UTF-8 ¡ ¢ £ € ¥ Š § š © ª « ¬ ® ¯";
+	TEST_ASSERT_MSG( str.convertToQuotedPrintable() == "UTF-8 =C2=A1 =C2=A2 =C2=A3 =E2=82=AC =C2=A5 =C5=A0 =C2=A7 =C5=A1 =C2=A9 =C2=AA =C2=AB =C2=AC =C2=AE =C2=AF", "Bad encodage" )
+	str = "UTF-8 ° ± ² ³ Ž µ ¶ · ž ¹ º » Œ œ Ÿ ¿";
+	TEST_ASSERT_MSG( str.convertToQuotedPrintable() == "UTF-8 =C2=B0 =C2=B1 =C2=B2 =C2=B3 =C5=BD =C2=B5 =C2=B6 =C2=B7 =C5=BE =C2=B9 =C2=BA =C2=BB =C5=92 =C5=93 =C5=B8 =C2=BF", "Bad encodage" )
+	str = "UTF-8 À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï";
+	TEST_ASSERT_MSG( str.convertToQuotedPrintable() == "UTF-8 =C3=80 =C3=81 =C3=82 =C3=83 =C3=84 =C3=85 =C3=86 =C3=87 =C3=88 =C3=89 =C3=8A =C3=8B =C3=8C =C3=8D =C3=8E =C3=8F", "Bad encodage" )
+	str = "UTF-8 Ð Ñ Ò Ó Ô Õ Ö × Ø Ù Ú Û Ü Ý Þ ß";
+	TEST_ASSERT_MSG( str.convertToQuotedPrintable() == "UTF-8 =C3=90 =C3=91 =C3=92 =C3=93 =C3=94 =C3=95 =C3=96 =C3=97 =C3=98 =C3=99 =C3=9A =C3=9B =C3=9C =C3=9D =C3=9E =C3=9F", "Bad encodage" )
+	str = "UTF-8 à á â ã ä å æ ç è é ê ë ì í î ï";
+	TEST_ASSERT_MSG( str.convertToQuotedPrintable() == "UTF-8 =C3=A0 =C3=A1 =C3=A2 =C3=A3 =C3=A4 =C3=A5 =C3=A6 =C3=A7 =C3=A8 =C3=A9 =C3=AA =C3=AB =C3=AC =C3=AD =C3=AE =C3=AF", "Bad encodage" )
+	str = "UTF-8 ð ñ ò ó ô õ ö ÷ ø ù ú û ü ý þ ÿ";
+	TEST_ASSERT_MSG( str.convertToQuotedPrintable() == "UTF-8 =C3=B0 =C3=B1 =C3=B2 =C3=B3 =C3=B4 =C3=B5 =C3=B6 =C3=B7 =C3=B8 =C3=B9 =C3=BA =C3=BB =C3=BC =C3=BD =C3=BE =C3=BF", "Bad encodage" )
+}
+
 int main( int argc, char** argv )
 {
 	TestDString ets;

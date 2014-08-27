@@ -709,7 +709,7 @@ class DString
 		*/
 		DString left ( unsigned int len ) const;
 		/**
-		* Returns a substring that contains the len rightmost characters of the
+		* Returns a substring that contains the len right most characters of the
 		* string.
 		* The whole string is returned if len exceeds the length of the string.
 		*/
@@ -1100,6 +1100,7 @@ class DString
 		 * string.\n
 		 * The human readable string of an escape sequence char begin by the string
 		 * \em begin and end by the string \em end.
+		 * @example Escape sequence CR LF will be printed &lt;CR&gt;&lt;LF&gt;
 		 */
 		DString replaceEscapeSequence ( const DString & begin = "<",
 										const DString & end = ">" ) const;
@@ -1108,6 +1109,11 @@ class DString
 		 * Remove any escape sequence char (ASCII code < 0x20)
 		 */
 		DString removeEscapeSequence() const;
+		
+		/**
+		 * Replace all special charaters with ASCII printable characters
+		 */
+		DString convertToQuotedPrintable() const;
 
 		/**
 		 * Check if string contains only legal characters, defined in the list
