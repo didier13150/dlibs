@@ -63,10 +63,13 @@ find_package (MySQL QUIET)
 find_package(Threads REQUIRED)
 find_library(REALTIME_LIBRARY NAMES rt PATH /usr/lib /usr/local/lib REQUIRED)
 
-find_path( UTF8CPP_INCLUDE_DIR
-           "utf8.h"
-           CMAKE_INCLUDE_PATH
-         )
+message(STATUS "Looking for utf8cpp")
+find_path( UTF8CPP_INCLUDE_DIR "utf8.h" CMAKE_INCLUDE_PATH )
+if(UTF8CPP_INCLUDE_DIR)
+message(STATUS "utf8cpp found")
+else()
+message(FATAL_ERROR "utf8cpp library not found (install utf8cpp-devel).")
+endif()
 
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
