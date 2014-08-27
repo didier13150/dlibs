@@ -565,7 +565,6 @@ void TestDString::html_test()
 	DString str;
 	
 	str = "UTF-8 ¡ ¢ £ € ¥ Š § š © ª « ¬ ® ¯";
-	std::cout << std::endl << str.toHTML() << std::endl;
 	TEST_ASSERT_MSG( str.toHTML() == "UTF&#45;8 &#161; &#162; &#163; &#8364; &#165; &#352; &#167; &#353; &#169; &#170; &#171; &#172; &#174; &#175;", "Bad encodage" )
 }
 
