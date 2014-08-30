@@ -41,6 +41,7 @@
 #include "testdlog.h"
 #include "test.h"
 #include "dsqlite.h"
+#include "dsettings.h"
 #ifdef DLIBS_HAVE_MYSQL
   #include "dmysql.h"
 #endif
@@ -109,6 +110,9 @@ void TestDLog::stream_test()
 	DLogger * log = 0;
 	DLogParams params;
 	DLogEngine * console = 0;
+	std::streambuf *backup;
+	std::ostringstream stream;
+	DString buffer, reference;
 
 	log = DLogger::getInstance();
 	TEST_ASSERT_MSG( log != 0, "Can not get logger instance" )
@@ -117,16 +121,30 @@ void TestDLog::stream_test()
 	console = log->addLogEngine ( DLogEngine::STDOUT, params );
 	TEST_ASSERT_MSG( console != 0, "Can not add stdout engine" )
 
-	log->insertMessage ( "Debug message", DLogShared::DEBUG );
-	log->insertMessage ( "Info message", DLogShared::INFO );
-
+	// Redirect stdout to buffer
+	backup = std::cout.rdbuf();
+	std::cout.rdbuf( stream.rdbuf() );
+	
 	log->debug( "Debug message" );
+	reference = "Debug message\n";
 	log->verbose( "Verbose message" );
+	reference += "Verbose message\n";
 	log->info( "Info message" );
+	reference += "Info message\n";
 	log->signal( "Signal message" );
+	reference += "Signal message\n";
 	log->warning( "Warning message" );
+	reference += "Warning message\n";
 	log->error( "Error message" );
+	reference += "Error message\n";
 	log->critical( "Critical message" );
+	reference += "Critical message\n";
+	
+	// Get stream and restore stdout
+	std::cout.rdbuf(backup);
+	buffer = stream.str();
+	
+	TEST_ASSERT_MSG( buffer == reference, "Wrong stream output" )
 
 	log->removeLogEngine ( console );
 	log->close();
@@ -290,14 +308,54 @@ void TestDLog::mysql_test()
 #ifdef DLIBS_HAVE_MYSQL
 	DLogger * log = DLogger::getInstance();
 	DLogParams params;
+	DSettings sets;
+	DString dbbase, dbuser, dbpasswd, dbhost;
+	int err;
+	
+	err = sets.setFileName ( "test-settings.xml" );
+	if ( err != DSettings::SUCCESS )
+	{
+		TEST_FAIL( "Can not specify settings file." )
+		dbbase = "test";
+		dbuser = "root";
+		dbpasswd = "";
+	}
+	
+	err = sets.readEntry ( "/settings/mysql/base", dbbase );
+	if ( err != DSettings::SUCCESS )
+	{
+		TEST_FAIL( "Can not read entry for database name." )
+		dbbase = "test";
+	}
+	
+	err = sets.readEntry ( "/settings/mysql/user", dbuser );
+	if ( err != DSettings::SUCCESS )
+	{
+		TEST_FAIL( "Can not read entry for database user." )
+		dbuser = "root";
+	}
+	
+	err = sets.readEntry ( "/settings/mysql/password", dbpasswd );
+	if ( err != DSettings::SUCCESS )
+	{
+		TEST_FAIL( "Can not read entry for database password." )
+		dbpasswd = "";
+	}
+	
+	err = sets.readEntry ( "/settings/mysql/host", dbhost );
+	if ( err != DSettings::SUCCESS )
+	{
+		TEST_FAIL( "Can not read entry for database hostname." )
+		dbhost = "localhost";
+	}
 
 	// specific to dmysql
 	params.specific["dbtype"] = "dmysql";
-	params.specific["dbuser"] = "dlibs";
-	params.specific["dbpassword"] = "dlibspw";
-	params.specific["dbhost"] = "localhost";
-	params.specific["dbbase"] = "dlibs";
-	params.specific["dbcreate"] = "CREATE TABLE applog (date, level, message);";
+	params.specific["dbuser"] = dbuser;
+	params.specific["dbpassword"] = dbpasswd;
+	params.specific["dbhost"] = dbhost;
+	params.specific["dbbase"] = dbbase;
+	params.specific["dbcreate"] = "CREATE TABLE applog (date VARCHAR(20), level VARCHAR(5), message TEXT);";
 	// params for stdout log engine
 	params.minlevel = DLogShared::INFO;
 	params.optionnal["dateformat"] = DString::getFormat ( DString::ISO_DATE );
@@ -344,7 +402,7 @@ void TestDLog::mysql_test()
 	{
 		db->close();
 		delete db;
-		TEST_FAIL( "Database not opened" )
+		TEST_FAIL( "Select all rows from table failed" )
 		return;
 	}
 	TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully" )

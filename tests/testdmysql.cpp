@@ -40,6 +40,7 @@
 #include "testdmysql.h"
 #include "test.h"
 #include "config.h"
+#include "dsettings.h"
 
 #ifndef WITH_EXCEPTIONS
   #define COMPILE_WITH_EXCEPTIONS 0
@@ -47,15 +48,58 @@
   #define COMPILE_WITH_EXCEPTIONS 1
   #include "dexception.h"
 #endif
-#ifndef DBUSER
-#define DBUSER "root"
-#endif
-#ifndef DBPASSWD
-#define DBPASSWD "obione"
-#endif
-#ifndef DBBASE
-#define DBBASE "test"
-#endif
+
+void TestDMySQL::setup()
+{
+	DSettings sets;
+	int err;
+	
+	err = sets.setFileName ( "test-settings.xml" );
+	if ( err != DSettings::SUCCESS )
+	{
+		TEST_FAIL( "Can not specify settings file." )
+		_dbbase = "test";
+		_dbuser = "root";
+		_dbpasswd = "";
+		_dbhost = _dbhost;
+	}
+	
+	err = sets.readEntry ( "/settings/mysql/base", _dbbase );
+	if ( err != DSettings::SUCCESS )
+	{
+		TEST_FAIL( "Can not read entry for database name." )
+		_dbbase = "test";
+	}
+	
+	err = sets.readEntry ( "/settings/mysql/user", _dbuser );
+	if ( err != DSettings::SUCCESS )
+	{
+		TEST_FAIL( "Can not read entry for database user." )
+		_dbuser = "root";
+	}
+	
+	err = sets.readEntry ( "/settings/mysql/password", _dbpasswd );
+	if ( err != DSettings::SUCCESS )
+	{
+		TEST_FAIL( "Can not read entry for database password." )
+		_dbpasswd = "";
+	}
+	
+	err = sets.readEntry ( "/settings/mysql/host", _dbhost );
+	if ( err != DSettings::SUCCESS )
+	{
+		TEST_FAIL( "Can not read entry for database hostname." )
+		_dbhost = "localhost";
+	}
+	
+	err = sets.readEntry ( "/settings/mysql/ip", _dbip );
+	if ( err != DSettings::SUCCESS )
+	{
+		TEST_FAIL( "Can not read entry for database IP Addr." )
+		_dbip = "127.0.0.1";
+	}
+}
+
 void TestDMySQL::exception_enabled()
 {
 #if COMPILE_WITH_EXCEPTIONS
@@ -73,9 +117,9 @@ void TestDMySQL::socket_connect_test()
 	DDatabaseRows::const_iterator it;
 
 	params.host = "localhost";
-	params.user = DBUSER;
-	params.password = DBPASSWD;
-	params.base = DBBASE;
+	params.user = _dbuser;
+	params.password = _dbpasswd;
+	params.base = _dbbase;
 
 #if COMPILE_WITH_EXCEPTIONS
     db = new DMySQL ( false );
@@ -105,9 +149,9 @@ void TestDMySQL::network_connect_test()
 	DDatabaseRows::const_iterator it;
 
 	params.host = "127.0.0.1";
-	params.user = DBUSER;
-	params.password = DBPASSWD;
-	params.base = DBBASE;
+	params.user = _dbuser;
+	params.password = _dbpasswd;
+	params.base = _dbbase;
 
 #if COMPILE_WITH_EXCEPTIONS
     db = new DMySQL ( false );
@@ -137,10 +181,10 @@ void TestDMySQL::insert_test()
 	DDatabaseResult results;
 	DDatabaseRows::const_iterator it;
 
-	params.host = "localhost";
-	params.user = DBUSER;
-	params.password = DBPASSWD;
-	params.base = DBBASE;
+	params.host = _dbhost;
+	params.user = _dbuser;
+	params.password = _dbpasswd;
+	params.base = _dbbase;
 
 #if COMPILE_WITH_EXCEPTIONS
     db = new DMySQL ( false );
@@ -157,7 +201,7 @@ void TestDMySQL::insert_test()
 		return;
 	}
 
-	results = db->exec ( "CREATE TABLE mytable (field1 INT(8), field2 INT(8) );" );
+	results = db->exec ( "CREATE TABLE IF NOT EXISTS mytable (field1 INT(8), field2 INT(8) );" );
 	if ( results.errnb != 0 )
 	{
 		db->close();
@@ -236,10 +280,10 @@ void TestDMySQL::insert_exception_test()
 	DDatabaseResult results;
 	DDatabaseRows::const_iterator it;
 
-	params.host = "localhost";
-	params.user = DBUSER;
-	params.password = DBPASSWD;
-	params.base = DBBASE;
+	params.host = _dbhost;
+	params.user = _dbuser;
+	params.password = _dbpasswd;
+	params.base = _dbbase;
 
 #if COMPILE_WITH_EXCEPTIONS
     db = new DMySQL ( true );
@@ -250,10 +294,12 @@ void TestDMySQL::insert_exception_test()
 	try
 	{
 		db->open();
-		results = db->exec ( "SHOW TABLES" );
-		std::cout << results << std::endl;
-		results = db->exec ( "SELECT * FROM TABLES" );
-		std::cout << results << std::endl;
+		db->exec ( "SHOW TABLES" );
+		db->exec ( "CREATE TABLE IF NOT EXISTS mytable (field1 INT(8), field2 INT(8) );" );
+		db->exec ( "INSERT INTO mytable(field1, field2) VALUES(1, 2);" );
+		db->exec ( "INSERT INTO mytable(field1, field2) VALUES(2, NULL);" );
+		db->exec ( "SELECT * FROM mytable" );
+		db->exec ( "DROP TABLE mytable" );
 		db->close();
 	}
 	catch (const DException_database & e)
@@ -286,19 +332,21 @@ void TestDMySQL::factory_test()
 	DFactory<DDatabase>::Register ( "mysql", new DMySQL () );
 #endif
 	DDatabase * db = factory.create ( "mysql" );
-	params.host = "localhost";
-	params.user = DBUSER;
-	params.password = DBPASSWD;
-	params.base = DBBASE;
+	params.host = _dbhost;
+	params.user = _dbuser;
+	params.password = _dbpasswd;
+	params.base = _dbbase;
 
 	db->setParams ( params );
 	try
 	{
 		db->open();
-		results = db->exec ( "SHOW TABLES" );
-		std::cout << results << std::endl;
-		results = db->exec ( "SELECT * FROM TABLES" );
-		std::cout << results << std::endl;
+		db->exec ( "SHOW TABLES" );
+		db->exec ( "CREATE TABLE IF NOT EXISTS mytable (field1 INT(8), field2 INT(8) );" );
+		db->exec ( "INSERT INTO mytable(field1, field2) VALUES(1, 2);" );
+		db->exec ( "INSERT INTO mytable(field1, field2) VALUES(2, NULL);" );
+		db->exec ( "SELECT * FROM mytable" );
+		db->exec ( "DROP TABLE mytable" );
 		db->close();
 	}
 	catch (const DException_database & e)

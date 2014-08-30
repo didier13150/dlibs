@@ -131,6 +131,12 @@ configure_file(${Dlibs_SOURCE_DIR}/Doxyfile.cmake
                ${Dlibs_BINARY_DIR}/Doxyfile
                @ONLY
               )
+
+configure_file(test-settings.xml.cmake
+               ${Dlibs_BINARY_DIR}/tests/test-settings.xml
+               @ONLY
+              )
+
 if(WITH_TESTS)
   enable_testing()
   add_subdirectory(tests)

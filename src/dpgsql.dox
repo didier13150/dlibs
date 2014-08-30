@@ -19,9 +19,9 @@ int main( int argc, char ** argv )
 	DString table;
 
 	params.host = "localhost";
-	params.user = "root";
-	params.password = "obione";
-	params.base="test";
+	params.user = "user";
+	params.password = "userpassword";
+	params.base = "dbbase";
 
 	sql.setParams ( params );
 	

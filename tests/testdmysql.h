@@ -47,6 +47,7 @@ class TestDMySQL : public Test::Suite
 public:
 	TestDMySQL()
 	{
+		TEST_ADD( TestDMySQL::setup )
 		TEST_ADD( TestDMySQL::exception_enabled )
 		TEST_ADD( TestDMySQL::socket_connect_test )
 		TEST_ADD( TestDMySQL::network_connect_test )
@@ -56,12 +57,19 @@ public:
 	}
 
 private:
+	void setup();
 	void exception_enabled();
 	void socket_connect_test();
 	void network_connect_test();
 	void insert_test();
 	void insert_exception_test();
 	void factory_test();
+	
+	DString _dbhost;
+	DString _dbip;
+	DString _dbbase;
+	DString _dbuser;
+	DString _dbpasswd;
 };
 
 #endif // _TESTDMYSQL_H
