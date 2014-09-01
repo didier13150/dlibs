@@ -36,5 +36,4 @@
 #define _DLIBS_H_
 
 @Dlibs_all_include@
-
 #endif // _DLIBS_H_

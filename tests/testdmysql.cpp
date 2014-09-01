@@ -131,12 +131,12 @@ void TestDMySQL::socket_connect_test()
 	results = db->open();
 	if ( results.errnb != 0 )
 	{
+		TEST_FAIL( "Database not opened" )
 		db->close();
 		delete db;
 		return;
 	}
 
-	TEST_FAIL( "Database not opened" )
 	// Clean up
 	db->close();
     delete db;
