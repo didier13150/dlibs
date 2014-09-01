@@ -37,7 +37,6 @@
 #include "dskeleton.h"
 #include "ddatabase.h"
 #include "dstring.h"
-#include "config.h"
 
 #include <vector>
 #include <map>
@@ -64,12 +63,10 @@ class DSQLite : public DDatabase
 		 */
 		DSQLite();
 
-#ifdef WITH_EXCEPTIONS
 		/**
 		 * Default Constructor
 		 */
 		DSQLite ( bool use_dexceptions );
-#endif
 		
 		/**
 		 * Destructor

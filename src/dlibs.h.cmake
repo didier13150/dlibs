@@ -34,6 +34,7 @@
 
 #ifndef _DLIBS_H_
 #define _DLIBS_H_
-#include "config.h"
+
 @Dlibs_all_include@
+
 #endif // _DLIBS_H_

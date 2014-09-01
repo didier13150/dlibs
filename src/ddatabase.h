@@ -44,7 +44,6 @@
 #include "dstring.h"
 #include "dskeleton.h"
 #include "dprototype.h"
-#include "config.h"
 
 /**
  * @relates DMyDatabase
@@ -190,12 +189,10 @@ class DDatabase : public DSkeleton, public DPrototype<DDatabase>
 		 */
 		DDatabase();
 
-#ifdef WITH_EXCEPTIONS
 		/**
 		 * Default constructor for managing exceptions
 		 */
 		DDatabase ( bool );
-#endif
 		
 		/**
 		 * Virtual destructor

@@ -35,6 +35,7 @@
 #include <iostream>
 
 #include "dlibs.h"
+#include "config.h"
 
 int main (int argc, char *argv[])
 {

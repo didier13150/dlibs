@@ -43,13 +43,11 @@ DSQLite::DSQLite()
 	init();
 }
 
-#ifdef WITH_EXCEPTIONS
 DSQLite::DSQLite ( bool use_dexceptions )
 		: DDatabase( use_dexceptions )
 {
 	init();
 }
-#endif
 
 DSQLite::~DSQLite()
 {

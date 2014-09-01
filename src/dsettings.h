@@ -40,7 +40,6 @@
 #include <libxml/xpath.h>
 #include "dstring.h"
 #include "dskeleton.h"
-#include "config.h"
 
 /**
  * @typedef xmlNodePtrList
@@ -77,12 +76,11 @@ public:
      * Empty constructor
      */
     DSettings ( void );
-#ifdef WITH_EXCEPTIONS
+	
     /**
      * Default constructor
      */
     DSettings ( bool );
-#endif
     /**
      * Default destructor
      */

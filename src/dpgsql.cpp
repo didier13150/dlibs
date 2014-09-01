@@ -31,8 +31,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.             *
  ******************************************************************************/
 
-#include "dpgsql.h"
 #include "config.h"
+#include "dpgsql.h"
 #include <postgres.h>
 #ifdef WITH_EXCEPTIONS
   #include "dexception.h"
@@ -43,11 +43,9 @@ DPgSQL::DPgSQL()
 {
 }
 
-#ifdef WITH_EXCEPTIONS
 DPgSQL::DPgSQL( bool use_dexceptions ) : DDatabase ( use_dexceptions )
 {
 }
-#endif
 
 
 DPgSQL::~DPgSQL()

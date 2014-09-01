@@ -43,12 +43,10 @@ DSettings::DSettings () : DSkeleton ()
 	init();
 }
 
-#ifdef WITH_EXCEPTIONS
 DSettings::DSettings ( bool use_dexceptions ) : DSkeleton ( use_dexceptions )
 {
 	init();
 }
-#endif
 
 DSettings::~DSettings ()
 {

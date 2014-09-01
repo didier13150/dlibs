@@ -31,6 +31,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.             *
  ******************************************************************************/
 
+#include "config.h"
 #include "dmysql.h"
 #include <mysql.h>
 #ifdef WITH_EXCEPTIONS
@@ -42,12 +43,10 @@ DMySQL::DMySQL() : DDatabase()
 	init();
 }
 
-#ifdef WITH_EXCEPTIONS
 DMySQL::DMySQL ( bool use_dexceptions ) : DDatabase ( use_dexceptions )
 {
 	init();
 }
-#endif
 
 DMySQL::~DMySQL()
 {

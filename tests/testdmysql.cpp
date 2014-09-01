@@ -136,7 +136,7 @@ void TestDMySQL::socket_connect_test()
 		return;
 	}
 
-	TEST_ASSERT_MSG( results.errnb == 0, "Database not opened" )
+	TEST_FAIL( "Database not opened" )
 	// Clean up
 	db->close();
     delete db;
@@ -168,7 +168,7 @@ void TestDMySQL::network_connect_test()
 		return;
 	}
 
-	TEST_ASSERT_MSG( results.errnb == 0, "Database not opened" )
+	TEST_FAIL( "Database not opened" )
 	// Clean up
 	db->close();
     delete db;
@@ -206,7 +206,7 @@ void TestDMySQL::insert_test()
 	{
 		db->close();
 		delete db;
-		TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully (create table)" )
+		TEST_FAIL( "Query not executed successfully (create table)" )
 		return;
 	}
 
@@ -215,7 +215,7 @@ void TestDMySQL::insert_test()
 	{
 		db->close();
 		delete db;
-		TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully (insert 1)" )
+		TEST_FAIL( "Query not executed successfully (insert 1)" )
 		return;
 	}
 
@@ -224,7 +224,7 @@ void TestDMySQL::insert_test()
 	{
 		db->close();
 		delete db;
-		TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully (insert 2)" )
+		TEST_FAIL( "Query not executed successfully (insert 2)" )
 		return;
 	}
 
@@ -233,7 +233,7 @@ void TestDMySQL::insert_test()
 	{
 		db->close();
 		delete db;
-		TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully (select 1)" )
+		TEST_FAIL( "Query not executed successfully (select 1)" )
 		return;
 	}
 
@@ -248,7 +248,7 @@ void TestDMySQL::insert_test()
 	{
 		db->close();
 		delete db;
-		TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully (select 2)" )
+		TEST_FAIL( "Query not executed successfully (select 2)" )
 		return;
 	}
 
@@ -264,7 +264,7 @@ void TestDMySQL::insert_test()
 	{
 		db->close();
 		delete db;
-		TEST_ASSERT_MSG( results.errnb == 0, "Query not executed successfully (create table)" )
+		TEST_FAIL( "Query not executed successfully (create table)" )
 		return;
 	}
 
@@ -275,6 +275,7 @@ void TestDMySQL::insert_test()
 
 void TestDMySQL::insert_exception_test()
 {
+#if COMPILE_WITH_EXCEPTIONS
 	DMySQL * db = 0;
 	DDatabaseParams params;
 	DDatabaseResult results;
@@ -285,11 +286,7 @@ void TestDMySQL::insert_exception_test()
 	params.password = _dbpasswd;
 	params.base = _dbbase;
 
-#if COMPILE_WITH_EXCEPTIONS
     db = new DMySQL ( true );
-#else
-	TEST_ASSERT_MSG( db != 0, "Exceptions not enabled" )
-#endif
 	db->setParams ( params );
 	try
 	{
@@ -317,6 +314,7 @@ void TestDMySQL::insert_exception_test()
 		std::cout << "Another unknow exception encoured" << std::endl;
 	}
     delete db;
+#endif
 }
 
 void TestDMySQL::factory_test()
@@ -325,17 +323,16 @@ void TestDMySQL::factory_test()
 	DDatabaseParams params;
 	DDatabaseResult results;
 	DDatabaseRows::const_iterator it;
+	DDatabase * db = 0;
 
-#ifdef WITH_EXCEPTIONS
-	DFactory<DDatabase>::Register ( "mysql", new DMySQL ( true ) );
-#else
-	DFactory<DDatabase>::Register ( "mysql", new DMySQL () );
-#endif
-	DDatabase * db = factory.create ( "mysql" );
 	params.host = _dbhost;
 	params.user = _dbuser;
 	params.password = _dbpasswd;
 	params.base = _dbbase;
+	
+#ifdef WITH_EXCEPTIONS
+	DFactory<DDatabase>::Register ( "mysql", new DMySQL ( true ) );
+	db = factory.create ( "mysql" );
 
 	db->setParams ( params );
 	try
@@ -363,8 +360,64 @@ void TestDMySQL::factory_test()
 	{
 		std::cout << "Another unknow exception encoured" << std::endl;
 	}
+#else
+	DFactory<DDatabase>::Register ( "mysql", new DMySQL() );
+	db = new DMySQL();
+	db->setParams ( params );
+
+	results = db->open();
+	if ( results.errnb != 0 )
+	{
+		TEST_FAIL( "Database not opened" )
+		db->close();
+		delete db;
+		return;
+	}
+
+	results = db->exec ( "CREATE TABLE IF NOT EXISTS mytable (field1 INT(8), field2 INT(8) );" );
+	if ( results.errnb != 0 )
+	{
+		TEST_FAIL( "Database not created" )
+		db->close();
+		delete db;
+		return;
+	}
+	results = db->exec ( "INSERT INTO mytable(field1, field2) VALUES(1, 2);" );
+	if ( results.errnb != 0 )
+	{
+		TEST_FAIL( "Insert failed" )
+		db->close();
+		delete db;
+		return;
+	}
+	results = db->exec ( "INSERT INTO mytable(field1, field2) VALUES(2, NULL);" );
+	if ( results.errnb != 0 )
+	{
+		TEST_FAIL( "Insert failed" )
+		db->close();
+		delete db;
+		return;
+	}
+	results = db->exec ( "SELECT * FROM mytable" );
+	if ( results.errnb != 0 )
+	{
+		TEST_FAIL( "Select failed" )
+		db->close();
+		delete db;
+		return;
+	}
+	results = db->exec ( "DROP TABLE mytable" );
+	if ( results.errnb != 0 )
+	{
+		TEST_FAIL( "Database not dropped" )
+		db->close();
+		delete db;
+		return;
+	}
+#endif
+	// Clean up
 	db->close();
-	delete db;
+    delete db;
 }
 
 int main( int argc, char** argv )

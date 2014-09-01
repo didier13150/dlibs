@@ -46,7 +46,6 @@
 #include "dsingleton.h"
 #include "dfactory.h"
 #include "ddatabase.h"
-#include "config.h"
 
 class DLogEngine;
 

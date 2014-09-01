@@ -37,7 +37,6 @@
 #include "ddatabase.h"
 #include "dstring.h"
 #include "dskeleton.h"
-#include "config.h"
 
 #include <vector>
 #include <map>
@@ -132,12 +131,10 @@ public:
 	 */
 	DMySQL();
 
-#ifdef WITH_EXCEPTIONS
 	/**
 	 * Default Constructor
 	 */
 	DMySQL( bool use_dexceptions );
-#endif
 
 	/**
 	 * Destructor

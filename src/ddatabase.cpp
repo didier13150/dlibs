@@ -38,12 +38,10 @@ DDatabase::DDatabase() : DSkeleton()
 	internal_init();
 }
 
-#ifdef WITH_EXCEPTIONS
 DDatabase::DDatabase( bool useException ) : DSkeleton( useException )
 {
 	internal_init();
 }
-#endif
 
 DDatabase::~DDatabase()
 {
