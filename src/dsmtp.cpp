@@ -465,7 +465,15 @@ DSMTP::ERRNO DSMTP::send()
 		boundary.setNum( random );
 		boundary.prepend( DString::timeToString( time( NULL ), "%Y%m%d%H%M%S-" ) );
 		boundary.prepend( "----------=dsmtp-" );
-		buffer= "Content-Type: multipart/mixed;\n boundary=\"" + boundary + "\"";
+		
+		if ( m_data.htmlbody.length() )
+		{
+			buffer= "Content-Type: multipart/alternative;\n boundary=\"" + boundary + "\"";
+		}
+		else
+		{
+			buffer= "Content-Type: multipart/mixed;\n boundary=\"" + boundary + "\"";
+		}
 		m_serverlog.push_back(buffer);
 		if (sock.writeMessage(buffer) != DSock::SUCCESS)
 		{
@@ -531,9 +539,50 @@ DSMTP::ERRNO DSMTP::send()
 		}
 		lines.clear();
 	}
+	body.clear();
 	
 	if ( multipart )
 	{
+		if ( m_data.htmlbody.length() )
+		{
+			m_serverlog.push_back( "--" + boundary );
+			if (sock.writeMessage( "--" + boundary ) != DSock::SUCCESS)
+			{
+				m_errno = NO_SEND_DATA;
+				return m_errno;
+			}
+			
+			buffer = "Content-Type: text/html; charset=utf-8";
+			m_serverlog.push_back( buffer );
+			if (sock.writeMessage( buffer ) != DSock::SUCCESS)
+			{
+				m_errno = NO_SEND_DATA;
+				return m_errno;
+			}
+			buffer = "Content-Transfer-Encoding: quoted-printable";
+			m_serverlog.push_back( buffer );
+			if (sock.writeMessage( buffer ) != DSock::SUCCESS)
+			{
+				m_errno = NO_SEND_DATA;
+				return m_errno;
+			}
+			
+			body = m_data.htmlbody.split( "\n", true );
+			for ( it = body.begin() ; it != body.end() ; it++ )
+			{
+				lines = it->splitConstantSize( " ", 76 );
+				for ( it2 = lines.begin() ; it2 != lines.end() ; ++it2 )
+				{
+					m_serverlog.push_back( *it2 );
+					if (sock.writeMessage( *it2 ) != DSock::SUCCESS)
+					{
+						m_errno = NO_SEND_DATA;
+						return m_errno;
+					}
+				}
+				lines.clear();
+			}
+		}
 		for ( it = m_data.attached.begin() ; it != m_data.attached.end() ; ++it )
 		{
 			base64.encodeFromFile( *it );

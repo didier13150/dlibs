@@ -43,6 +43,13 @@
 #define TESTFILE CMAKE_SOURCE_DIR"/tux.png"
 #define WRAPPING 76
 
+static DString utf8chars =   "¡ ¢ £ € ¥ Š § š © ª « ¬ ® ¯"
+							" ° ± ² ³ Ž µ ¶ · ž ¹ º » Œ œ Ÿ ¿"
+							" À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï"
+							" Ð Ñ Ò Ó Ô Õ Ö × Ø Ù Ú Û Ü Ý Þ ß"
+							" à á â ã ä å æ ç è é ê ë ì í î ï"
+							" ð ñ ò ó ô õ ö ÷ ø ù ú û ü ý þ ÿ";
+
 void TestDSMTP::simple_test()
 {
 	DSMTP mail;
@@ -58,24 +65,68 @@ void TestDSMTP::simple_test()
 	mail.addReceiver ( "root@localhost" );
 	
 	DString buffer = "This is just a simple DLibs test, SMTP part\n\n";
-	buffer += "¡ ¢ £ € ¥ Š § š © ª « ¬ ® ¯";
-	buffer += " ° ± ² ³ Ž µ ¶ · ž ¹ º » Œ œ Ÿ ¿";
-	buffer += " À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï";
-	buffer += " Ð Ñ Ò Ó Ô Õ Ö × Ø Ù Ú Û Ü Ý Þ ß";
-	buffer += " à á â ã ä å æ ç è é ê ë ì í î ï";
-	buffer += " ð ñ ò ó ô õ ö ÷ ø ù ú û ü ý þ ÿ";
-	mail.setEmail ( "DLibs test", buffer, "test" );
+	buffer += utf8chars;
+	mail.setEmail ( "DLibs test", buffer );
 	code = mail.send();
 	
 	TEST_ASSERT_MSG( mail.getLastError() == DString::empty(), "Error reported when sending email" )
-	if ( code != DSMTP::SUCCESS )
+	TEST_ASSERT_MSG( code == DSMTP::SUCCESS, "Email not sent" )
+	
+	transaction = mail.getTransactionLog();
+	for ( it = transaction.begin() ; it != transaction.end() ; it++ )
 	{
-		transaction = mail.getTransactionLog();
-		for ( it = transaction.begin() ; it != transaction.end() ; it++ )
+		std::cout << *it << std::endl;
+	}
+}
+
+void TestDSMTP::html_test()
+{
+	DSMTP mail;
+	DSMTP::ERRNO code;
+	DURL server;
+	DStringList transaction, charlist;
+	DStringList::const_iterator it;
+	int i = 2;
+
+	server.setURL( "smtp://localhost.localdomain:25" );
+
+	mail.setHost ( server );
+	mail.setSender ( "root@localhost" );
+	mail.addReceiver ( "root@localhost" );
+	
+	DString buffer = "This is just a simple DLibs test, SMTP part\n\n";
+	buffer += utf8chars;
+	
+	charlist = utf8chars.split( " " );
+	DString html = "<!DOCTYPE html>\n<html>\n<body>\n<h1>This is just a simple DLibs test, SMTP part</h1>\n";
+	html += "<table>\n";
+	html += "<tr>\n";
+	for ( it = charlist.begin() ; it != charlist.end() ; ++it )
+	{
+		if ( ! ( i % 16 ) )
 		{
-			std::cout << *it << std::endl;
+			html += "</tr>\n";
+			html += "<tr>\n";
 		}
-		TEST_FAIL( "Email not sent" )
+		html += "<td>";
+		html += it->toHTML();
+		html += "</td>\n";
+		i++;
+	}
+
+	html += "</tr>\n";
+	html += "</table>\n";
+	html += "</body>\n</html>";
+	mail.setEmail ( "DLibs test", buffer, html );
+	code = mail.send();
+	
+	TEST_ASSERT_MSG( mail.getLastError() == DString::empty(), "Error reported when sending email" )
+	TEST_ASSERT_MSG( code == DSMTP::SUCCESS, "Email not sent" )
+	
+	transaction = mail.getTransactionLog();
+	for ( it = transaction.begin() ; it != transaction.end() ; it++ )
+	{
+		std::cout << *it << std::endl;
 	}
 }
 
@@ -95,14 +146,8 @@ void TestDSMTP::with_attach_test()
 	mail.addAttach( TESTFILE );
 	
 	DString buffer = "This is just a simple DLibs test, SMTP part\n\n";
-	
-	buffer += "¡ ¢ £ € ¥ Š § š © ª « ¬ ® ¯";
-	buffer += " ° ± ² ³ Ž µ ¶ · ž ¹ º » Œ œ Ÿ ¿";
-	buffer += " À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï";
-	buffer += " Ð Ñ Ò Ó Ô Õ Ö × Ø Ù Ú Û Ü Ý Þ ß";
-	buffer += " à á â ã ä å æ ç è é ê ë ì í î ï";
-	buffer += " ð ñ ò ó ô õ ö ÷ ø ù ú û ü ý þ ÿ";
-	mail.setEmail ( "DLibs test", buffer, "test" );
+	buffer += utf8chars;
+	mail.setEmail ( "DLibs test", buffer );
 	code = mail.send();
 	
 	TEST_ASSERT_MSG( mail.getLastError() == DString::empty(), "Error reported when sending email" )

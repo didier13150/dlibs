@@ -47,12 +47,14 @@ public:
 	TestDSMTP()
 	{
 		TEST_ADD( TestDSMTP::simple_test )
+		TEST_ADD( TestDSMTP::html_test )
 		TEST_ADD( TestDSMTP::with_attach_test )
 		TEST_ADD( TestDSMTP::get_mime_type )
 	}
 
 private:
 	void simple_test();
+	void html_test();
 	void with_attach_test();
 	void get_mime_type();
 };
