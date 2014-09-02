@@ -38,6 +38,7 @@
 #include "durl.h"
 #include <unistd.h>
 
+class DClientSock;
 
 /**
  * @brief SMTP operations.
@@ -268,6 +269,8 @@ private:
 
 	/// Check if stmp server return is correct
 	bool checkReturn( const DString & status, const DString & expected);
+	
+	inline void readMessage( DClientSock & sock, const DString & code, ERRNO errval );
 };
 
 

@@ -210,6 +210,31 @@ void DSMTP::unsetEmail()
 	m_data.txtbody.clear();
 }
 
+void DSMTP::readMessage( DClientSock & sock, const DString & code, DSMTP::ERRNO errval )
+{
+	DTimer timer;
+	int status = DSock::NO_HOST;
+	DString buffer;
+	
+	timer.start( m_timeout );
+    // Listen server informations
+	while ( timer.timeToTimeout() )
+	{
+		status = sock.readMessage( buffer );
+		if ( status == DSock::SUCCESS && buffer.length() ) break;
+		usleep( 100000 );
+	}
+	timer.stop();
+	m_serverlog.push_back("->" + buffer.simplifyWhiteSpace());
+	
+	if ( ( status != DSock::SUCCESS ) || ( ! checkReturn( buffer, code ) ) )
+	{
+		m_errno = errval;
+		return;
+	}
+	m_errno = DSMTP::SUCCESS;
+}
+
 DSMTP::ERRNO DSMTP::send()
 {
 	DClientSock sock;
@@ -218,8 +243,6 @@ DSMTP::ERRNO DSMTP::send()
 	DStringList lines;
 	DStringList::iterator it, it2;
 	DStringList body;
-	DTimer timer;
-	int status = DSock::NO_HOST;
 	DBase64 base64;
 	bool multipart = false;
 	
@@ -236,26 +259,9 @@ DSMTP::ERRNO DSMTP::send()
 		m_errno = NO_HOST;
 		return m_errno;
 	}
-
-	timer.start( m_timeout );
-    // Listen server informations
-	while ( timer.timeToTimeout() )
+	readMessage( sock, "220", NO_HELO );
+	if ( m_errno != DSMTP::SUCCESS )
 	{
-		status = sock.readMessage( buffer );
-		if ( status == DSock::SUCCESS && buffer.length() ) break;
-		usleep( 100000 );
-	}
-	timer.stop();
-	if ( status != DSock::SUCCESS )
-	{
-		m_errno = NO_HELO;
-		return m_errno;
-	}
-	
-	m_serverlog.push_back("->" + buffer.simplifyWhiteSpace());
-	if (!checkReturn(buffer, "220"))
-	{
-		m_errno = NO_HELO;
 		return m_errno;
 	}
 
@@ -274,24 +280,10 @@ DSMTP::ERRNO DSMTP::send()
 		m_errno = NO_HELO;
 		return m_errno;
 	}
-	timer.restart();
-    // Listen server informations
-	while ( timer.timeToTimeout() )
+	
+	readMessage( sock, "250", NO_HELO );
+	if ( m_errno != DSMTP::SUCCESS )
 	{
-		status = sock.readMessage( buffer );
-		if ( status == DSock::SUCCESS && buffer.length() ) break;
-		usleep( 100000 );
-	}
-	timer.stop();
-	if ( status != DSock::SUCCESS )
-	{
-		m_errno = NO_HELO;
-		return m_errno;
-	}
-	m_serverlog.push_back("->" + buffer.simplifyWhiteSpace());
-	if (!checkReturn(buffer, "250"))
-	{
-		m_errno = NO_HELO;
 		return m_errno;
 	}
 	
@@ -303,24 +295,10 @@ DSMTP::ERRNO DSMTP::send()
 		m_errno = NO_SENDER;
 		return m_errno;
 	}
-	timer.restart();
-    // Listen server informations
-	while ( timer.timeToTimeout() )
+	
+	readMessage( sock, "250", NO_SENDER );
+	if ( m_errno != DSMTP::SUCCESS )
 	{
-		status = sock.readMessage( buffer );
-		if ( status == DSock::SUCCESS && buffer.length() ) break;
-		usleep( 100000 );
-	}
-	timer.stop();
-	if ( status != DSock::SUCCESS )
-	{
-		m_errno = NO_SENDER;
-		return m_errno;
-	}
-	m_serverlog.push_back("->" + buffer.simplifyWhiteSpace());
-	if (!checkReturn(buffer, "250"))
-	{
-		m_errno = NO_SENDER;
 		return m_errno;
 	}
 	
@@ -337,24 +315,10 @@ DSMTP::ERRNO DSMTP::send()
 				m_errno = NO_RECVER;
 				return m_errno;
 			}
-			timer.restart();
-			// Listen server informations
-			while ( timer.timeToTimeout() )
+			
+			readMessage( sock, "250", NO_RECVER );
+			if ( m_errno != DSMTP::SUCCESS )
 			{
-				status = sock.readMessage( buffer );
-				if ( status == DSock::SUCCESS && buffer.length() ) break;
-				usleep( 100000 );
-			}
-			timer.stop();
-			if ( status != DSock::SUCCESS )
-			{
-				m_errno = NO_RECVER;
-				return m_errno;
-			}
-			m_serverlog.push_back("->" + buffer.simplifyWhiteSpace());
-			if (!checkReturn(buffer, "250"))
-			{
-				m_errno = NO_RECVER;
 				return m_errno;
 			}
 		}
@@ -373,24 +337,10 @@ DSMTP::ERRNO DSMTP::send()
 				m_errno = NO_RECVER;
 				return m_errno;
 			}
-			timer.restart();
-			// Listen server informations
-			while ( timer.timeToTimeout() )
+			
+			readMessage( sock, "250", NO_RECVER );
+			if ( m_errno != DSMTP::SUCCESS )
 			{
-				status = sock.readMessage( buffer );
-				if ( status == DSock::SUCCESS && buffer.length() ) break;
-				usleep( 100000 );
-			}
-			timer.stop();
-			if ( status != DSock::SUCCESS )
-			{
-				m_errno = NO_RECVER;
-				return m_errno;
-			}
-			m_serverlog.push_back("->" + buffer.simplifyWhiteSpace());
-			if (!checkReturn(buffer, "250"))
-			{
-				m_errno = NO_RECVER;
 				return m_errno;
 			}
 		}
@@ -409,24 +359,9 @@ DSMTP::ERRNO DSMTP::send()
 				m_errno = NO_RECVER;
 				return m_errno;
 			}
-			timer.restart();
-			// Listen server informations
-			while ( timer.timeToTimeout() )
+			readMessage( sock, "250", NO_RECVER );
+			if ( m_errno != DSMTP::SUCCESS )
 			{
-				status = sock.readMessage( buffer );
-				if ( status == DSock::SUCCESS && buffer.length() ) break;
-				usleep( 100000 );
-			}
-			timer.stop();
-			if ( status != DSock::SUCCESS )
-			{
-				m_errno = NO_RECVER;
-				return m_errno;
-			}
-			m_serverlog.push_back("->" + buffer.simplifyWhiteSpace());
-			if (!checkReturn(buffer, "250"))
-			{
-				m_errno = NO_RECVER;
 				return m_errno;
 			}
 		}
@@ -440,24 +375,9 @@ DSMTP::ERRNO DSMTP::send()
 		m_errno = NO_SEND_DATA;
 		return m_errno;
 	}
-	timer.restart();
-	// Listen server informations
-	while ( timer.timeToTimeout() )
+	readMessage( sock, "354", NO_SEND_DATA );
+	if ( m_errno != DSMTP::SUCCESS )
 	{
-		status = sock.readMessage( buffer );
-		if ( status == DSock::SUCCESS && buffer.length() ) break;
-		usleep( 100000 );
-	}
-	timer.stop();
-	if ( status != DSock::SUCCESS )
-	{
-		m_errno = NO_SEND_DATA;
-		return m_errno;
-	}
-	m_serverlog.push_back("->" + buffer.simplifyWhiteSpace());
-	if (!checkReturn(buffer, "354"))
-	{
-		m_errno = NO_SEND_DATA;
 		return m_errno;
 	}
 	
@@ -701,24 +621,9 @@ DSMTP::ERRNO DSMTP::send()
 		m_errno = NO_END_DATA_SENT;
 		return m_errno;
 	}
-	timer.restart();
-	// Listen server informations
-	while ( timer.timeToTimeout() )
+	readMessage( sock, "250", NO_END_DATA_SENT );
+	if ( m_errno != DSMTP::SUCCESS )
 	{
-		status = sock.readMessage( buffer );
-		if ( status == DSock::SUCCESS && buffer.length() ) break;
-		usleep( 100000 );
-	}
-	timer.stop();
-	if ( status != DSock::SUCCESS )
-	{
-		m_errno = NO_END_DATA_SENT;
-		return m_errno;
-	}
-	m_serverlog.push_back("->" + buffer.simplifyWhiteSpace());
-	if (!checkReturn(buffer, "250"))
-	{
-		m_errno = NO_END_DATA_SENT;
 		return m_errno;
 	}
 	
@@ -730,27 +635,7 @@ DSMTP::ERRNO DSMTP::send()
 		m_errno = NO_GOOD_QUIT;
 		return m_errno;
 	}
-	timer.restart();
-	// Listen server informations
-	while ( timer.timeToTimeout() )
-	{
-		status = sock.readMessage( buffer );
-		if ( status == DSock::SUCCESS && buffer.length() ) break;
-		usleep( 100000 );
-	}
-	timer.stop();
-	if ( status != DSock::SUCCESS )
-	{
-		m_errno = NO_GOOD_QUIT;
-		return m_errno;
-	}
-	m_serverlog.push_back("->" + buffer.simplifyWhiteSpace());
-	if (!checkReturn(buffer, "221"))
-	{
-		m_errno = NO_GOOD_QUIT;
-		return m_errno;
-	}
-	m_errno = SUCCESS;
+	readMessage( sock, "221", NO_GOOD_QUIT );
 	return m_errno;
 }
 
