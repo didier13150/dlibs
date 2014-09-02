@@ -21,6 +21,7 @@ option(WITH_TESTS "Enable building of unit tests" ON)
 option(WITH_CXX11 "Build with the C++ 11 standard" ON)
 option(WITH_EXCEPTIONS "Build with exceptions enabled" ON)
 option( BUILD_SHARED_LIBS "Set to OFF to build static libraries" ON )
+option( WITH_LCOV "Set to ON to build with code coverage" OFF )
 
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
@@ -31,6 +32,7 @@ if(WITH_EXCEPTIONS)
 else(WITH_EXCEPTIONS)
   add_definitions(-Wall -O2)
 endif(WITH_EXCEPTIONS)
+
 
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-common -fstack-protector --param=ssp-buffer-size=4")
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wundef -Wpointer-arith -Wno-long-long")
@@ -52,10 +54,6 @@ endif(WITH_EXCEPTIONS)
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-z,relro")
 #set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--no-add-needed -Wl,--as-needed")
 #set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,-z,relro")
-
-#if(COMMAND CMAKE_POLICY)
-#   cmake_policy(SET CMP0003 NEW)
-#endif(COMMAND CMAKE_POLICY)
 
 find_package (LibXml2 REQUIRED)
 find_package (MySQL QUIET)
@@ -89,6 +87,17 @@ add_custom_target(changelog
                   COMMENT "Regenerating ChangeLog" VERBATIM
                  )
 
+if(WITH_LCOV)
+    find_program(LCOV_EXECUTABLE lcov PATH)
+    add_custom_target(lcov
+                      /bin/bash lcov.sh
+                      COMMENT "Generate code coverage report" VERBATIM
+                     )
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+endif(WITH_LCOV)
+                 
 # project options
 if( NOT CMAKE_BUILD_TYPE )
   set( CMAKE_BUILD_TYPE "RelWithDebInfo" )
@@ -134,6 +143,11 @@ configure_file(${Dlibs_SOURCE_DIR}/Doxyfile.cmake
 
 configure_file(test-settings.xml.cmake
                ${Dlibs_BINARY_DIR}/tests/test-settings.xml
+               @ONLY
+              )
+
+configure_file(lcov.sh.cmake
+               ${Dlibs_BINARY_DIR}/lcov.sh
                @ONLY
               )
 
