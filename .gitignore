@@ -20,3 +20,5 @@ tests/make.sh
 tests/template.*
 *.kate-swp
 tux-old.png
+.kdev4/*
+lcov/*
