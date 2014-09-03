@@ -96,9 +96,10 @@ const DString & DBase64::encodeFromFile( const DString & filename )
 	return m_encoded;
 }
 
+/*
 void DBase64::decodeToFile( const DString & filename )
 {
-	/*std::ofstream file;
+	std::ofstream file;
 	int length = _ascii_length( m_encoded.length() );
 	char * buffer = 0;
 	
@@ -108,8 +109,9 @@ void DBase64::decodeToFile( const DString & filename )
 	file.open( filename.c_str(), std::ifstream::binary );
 	file << buffer;
 	file.close();
-	delete [] buffer;*/
+	delete [] buffer;
 }
+*/
 
 void DBase64::setEncoded( const DString & str )
 {
@@ -171,9 +173,10 @@ void DBase64::_base64_encode(const char * srcp, int len, char * dstp)
 	*dstp = '\0';
 }
 
+/*
 void DBase64::_base64_decode(const char * srcp, int len, char * dstp)
 {
-	/*register int i = 0;
+	register int i = 0;
 	char * dst = dstp;
 	
 	while(i < len)
@@ -198,15 +201,16 @@ void DBase64::_base64_decode(const char * srcp, int len, char * dstp)
 
 	*dstp = '\0';
 
-	return dst;*/
+	return dst;
 }
-
+*/
+/*
 size_t DBase64::_base64_length(char * str)
 {
 	int len = strlen( str );
 	return _base64_length( len );
 }
-
+*/
 size_t DBase64::_base64_length(int len)
 {
 	size_t  npad = len % 3;
@@ -214,8 +218,9 @@ size_t DBase64::_base64_length(int len)
 	size_t  size = ( npad > 0 )? ( len + 3 - npad ) : len;
 	return ( ( size * 8 ) / 6 );
 }
-
+/*
 size_t DBase64::_ascii_length(size_t len)
 {
 	return ( ( len * 6 ) / 8 );
 }
+*/
