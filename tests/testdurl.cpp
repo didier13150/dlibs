@@ -128,6 +128,62 @@ void TestDURL::url_test()
 	TEST_ASSERT_MSG( url.getPath() == "/ip", "Url doesn't report good path" )
 	TEST_ASSERT_MSG( url.isIPAddress() == true, "Url reported as an IP address" )
 	TEST_ASSERT_MSG( url.isHostname() == false, "Url not reported as a hostname" )
+	
+	url.setURL( "ssh://didier.home/ip" );
+	TEST_ASSERT_MSG( url.getLastErrno() == DURL::NO_HOST_BY_NAME, "Url with unknown hostname set successfully" )
+	TEST_ASSERT_MSG( url.getIPAddress() == DString::empty(), "Url doesn't report empty IP" )
+	TEST_ASSERT_MSG( url.getHost() == "didier.home", "Url report wrong hostname" )
+	TEST_ASSERT_MSG( url.getPort() == 22, "Url doesn't report good port" )
+	TEST_ASSERT_MSG( url.getServiceName() == "ssh", "Url doesn't report good service" )
+	TEST_ASSERT_MSG( url.getPath() == "/ip", "Url doesn't report good path" )
+	TEST_ASSERT_MSG( url.isIPAddress() == false, "Url not reported as an IP address" )
+	TEST_ASSERT_MSG( url.isHostname() == true, "Url reported as a hostname" )
+}
+
+void TestDURL::port_test()
+{
+	TEST_ASSERT_MSG( DURL::getPortByService( "ftp", "tcp" ) == 21, "FTP url report bad port number" )
+	TEST_ASSERT_MSG( DURL::getPortByService( "ssh", "tcp" ) == 22, "SSH url report bad port number" )
+	TEST_ASSERT_MSG( DURL::getPortByService( "http", "tcp" ) == 80, "HTTP url report bad port number" )
+	TEST_ASSERT_MSG( DURL::getPortByService( "https", "tcp" ) == 443, "HTTPS url report bad port number" )
+	TEST_ASSERT_MSG( DURL::getPortByService( "nfs", "tcp" ) == 2049, "NFS url report bad port number" )
+}
+
+void TestDURL::get_url_test()
+{
+	DURL url;
+	
+	url.setURL( "ssh://didier.home/ip" );
+	TEST_ASSERT_MSG( url.getURL() == "ssh://didier.home/ip", "URL saved failed" )
+}
+
+void TestDURL::get_error_test()
+{
+	DURL url;
+	
+	url.setURL( "ssh://didier.home/ip" );
+	TEST_ASSERT_MSG( url.getLastError() == "Cannot get address by hostname", "Url with unknown hostname set successfully" )
+	
+	url.setURL( "http://1.1.1.1:8080/ip" );
+	TEST_ASSERT_MSG( url.getLastError() == "Cannot get hostname by address", "Url with IP address set successfully" )
+	
+	url.setURL( "toto://localhost/ip" );
+	TEST_ASSERT_MSG( url.getLastError() == "Cannot get port by service name", "Url with wrong protocol set successfully" )
+}
+
+void TestDURL::to_string_test()
+{
+	DURL url;
+
+	url.setURL( "ssh://didier.home/ip" );
+	TEST_ASSERT_MSG( url.toString() == "( hostname = \"didier.home\", IP address = \"\", Service = \"ssh\", Port = \"22\", Path = \"/ip\")", "Url to string failed" )
+
+	url.setURL( "ssh://localhost:2222/svn/dlibs/" );
+	TEST_ASSERT_MSG( url.toString() == "( hostname = \"localhost\", IP address = \"127.0.0.1\", Service = \"ssh\", Port = \"2222\", Path = \"/svn/dlibs\")", "Url to string failed" )
+	
+	std::cout << std::endl;
+	std::cout << "\"" << url.toString() << "\"" << std::endl;
+
 }
 
 int main( int argc, char** argv )

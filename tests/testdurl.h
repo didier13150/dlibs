@@ -48,11 +48,19 @@ public:
 	{
 		TEST_ADD( TestDURL::constructor_test )
 		TEST_ADD( TestDURL::url_test )
+		TEST_ADD( TestDURL::port_test )
+		TEST_ADD( TestDURL::get_url_test )
+		TEST_ADD( TestDURL::get_error_test )
+		TEST_ADD( TestDURL::to_string_test )
 	}
 
 private:
 	void constructor_test();
 	void url_test();
+	void port_test();
+	void get_url_test();
+	void get_error_test();
+	void to_string_test();
 };
 
 #endif // _TESTDURL_H

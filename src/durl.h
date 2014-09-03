@@ -188,11 +188,6 @@ private:
 		* Clear the data.
 		*/
 		void clear();
-		
-		/**
-		* Print the url data
-		*/
-		const DString & toString() const;
 	
 		/// The protocol name
 		DString service;

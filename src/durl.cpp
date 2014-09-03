@@ -144,7 +144,6 @@ int DURL::setURL( const DString & address )
 			m_error = "Cannot get address by hostname";
 			m_errno = NO_HOST_BY_NAME;
 			m_url.ip.clear();
-			return m_errno;
 		}
 		else
 		{
@@ -160,8 +159,7 @@ int DURL::setURL( const DString & address )
 		if ( ! m_url.port )
 		{
 			m_error = "Cannot get port by service name";
-			m_errno = NO_SERVICE;
-			return m_errno;
+			if ( m_errno == SUCCESS ) m_errno = NO_SERVICE;
 		}
 	}
 	
@@ -315,11 +313,6 @@ void DURL::DURLData::clear()
 	path.clear();
 	url.clear();
 	port = 0;
-}
-
-const DString & DURL::DURLData::toString() const
-{	
-	return url;
 }
 
 int DURL::getPortByService( const DString & servicename, const DString & protocol )
