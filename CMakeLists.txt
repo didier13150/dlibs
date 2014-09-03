@@ -28,9 +28,9 @@ include(CheckCXXCompilerFlag)
 include(CheckCXXSourceCompiles)
 
 if(WITH_EXCEPTIONS)
-  add_definitions(-Wall -O2 -fexceptions)
+  add_definitions(-Wall -Wextra -fexceptions)
 else(WITH_EXCEPTIONS)
-  add_definitions(-Wall -O2)
+  add_definitions(-Wall -Wextra)
 endif(WITH_EXCEPTIONS)
 
 
@@ -93,9 +93,13 @@ if(WITH_LCOV)
                       /bin/bash lcov.sh
                       COMMENT "Generate code coverage report" VERBATIM
                      )
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O0 -fprofile-arcs --coverage")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -fprofile-arcs -ftest-coverage --coverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -fprofile-arcs -ftest-coverage --coverage")
+else(WITH_LCOV)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O2")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
 endif(WITH_LCOV)
                  
 # project options
