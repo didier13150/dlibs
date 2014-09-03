@@ -4,7 +4,10 @@ OUTPUT_DIR="@CMAKE_SOURCE_DIR@"
 
 # Clean up
 make clean
+rm -rf CMakeFiles src Testing tests
+
 find . -name '*.info' -delete
+find . -name '*.gcda' -delete
 rm -rf ../lcov/??*
 
 # Reset lcov
