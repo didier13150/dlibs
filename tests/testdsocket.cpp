@@ -204,7 +204,7 @@ void TestDSocket::small_buf_test()
 	server.closeSock();
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDSocket ets;
 #ifdef TEST_HTML

@@ -168,7 +168,7 @@ void TestDSMTP::get_mime_type()
 	TEST_ASSERT_MSG( getMimeType( CMAKE_SOURCE_DIR"/AUTHORS" ) == "text/plain", "Bad format reported for tux PNG image" ) 
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDSMTP ets;
 #ifdef TEST_HTML

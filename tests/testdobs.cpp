@@ -62,7 +62,7 @@ void TestDObs::constructor_test()
 	barometer.setValue( 1020 );
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDObs ets;
 #ifdef TEST_HTML

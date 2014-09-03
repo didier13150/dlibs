@@ -103,7 +103,7 @@ void TestDFactory::ddatabase_test()
 #endif
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDFactory ets;
 #ifdef TEST_HTML

@@ -219,7 +219,7 @@ void TestDURL::encode_test()
 	TEST_ASSERT_MSG( url.getPath() == "/My%20Documents/My%20Music/ABBA%20-%201974", "Url doesn't report good path" )
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDURL ets;
 

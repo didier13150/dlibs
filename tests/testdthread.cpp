@@ -94,7 +94,7 @@ void TestDThread::just_stop_test()
 	foo.stop();
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDThread ets;
 #ifdef TEST_HTML

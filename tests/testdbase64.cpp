@@ -93,7 +93,7 @@ void TestDBase64::decode_test()
 	
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDBase64 ets;
 #ifdef TEST_HTML

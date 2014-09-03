@@ -420,7 +420,7 @@ void TestDMySQL::factory_test()
     delete db;
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDMySQL ets;
 #ifdef TEST_HTML

@@ -68,7 +68,7 @@ void TestDTimer::start_rounded_test()
 	TEST_ASSERT_MSG( timer.isStarted() == false, "Timer not stopped" )
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDTimer ets;
 

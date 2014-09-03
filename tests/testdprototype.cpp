@@ -44,7 +44,7 @@ void TestDPrototype::constructor_test()
 {
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDPrototype ets;
 #ifdef TEST_HTML

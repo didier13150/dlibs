@@ -139,7 +139,7 @@ void TestDPoint::stream_test()
 
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDPoint ets;
 #ifdef TEST_HTML

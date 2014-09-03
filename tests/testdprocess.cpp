@@ -96,7 +96,7 @@ void TestDProcess::nonblock_test()
 	process.stop();
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDProcess ets;
 #ifdef TEST_HTML

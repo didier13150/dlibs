@@ -75,7 +75,7 @@ void TestDEnv::getenv_test()
 	DEnv::deleteInstance();
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDEnv ets;
 #ifdef TEST_HTML

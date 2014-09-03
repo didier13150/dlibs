@@ -148,7 +148,7 @@ void TestDAppCmdLine::show_version_test()
 	TEST_ASSERT_MSG( buffer == "constructor_test Version : 1.2.3\n", "Show version is not printed correctly" )
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDAppCmdLine ets;
 #ifdef TEST_HTML

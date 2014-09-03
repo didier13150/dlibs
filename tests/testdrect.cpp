@@ -90,7 +90,7 @@ void TestDRect::inside_test()
 	TEST_ASSERT_MSG( rect.isInside( pt3, false ) == false, "Check if a point is inside a rect failed" )
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDRect ets;
 #ifdef TEST_HTML

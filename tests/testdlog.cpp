@@ -424,7 +424,7 @@ void TestDLog::pgsql_test()
 #endif
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDLog ets;
 #ifdef TEST_HTML

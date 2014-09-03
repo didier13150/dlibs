@@ -165,7 +165,7 @@ void TestDException::xml_test()
 	std::cout << std::endl;
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDException ets;
 #ifdef TEST_HTML

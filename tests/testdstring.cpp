@@ -568,7 +568,7 @@ void TestDString::html_test()
 	TEST_ASSERT_MSG( str.toHTML() == "UTF&#45;8 &#161; &#162; &#163; &#8364; &#165; &#352; &#167; &#353; &#169; &#170; &#171; &#172; &#174; &#175;", "Bad encodage" )
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDString ets;
 #ifdef TEST_HTML

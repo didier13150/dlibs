@@ -64,7 +64,7 @@ void TestDSingleton::killonly_test()
 	Foo::deleteInstance();
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDSingleton ets;
 #ifdef TEST_HTML

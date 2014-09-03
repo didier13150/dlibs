@@ -57,7 +57,7 @@ void TestDEvent::set_event_test()
 	TEST_ASSERT_MSG( event.what() == "Second event", "Wrong description on event" )
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDEvent ets;
 #ifdef TEST_HTML

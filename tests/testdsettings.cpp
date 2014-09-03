@@ -165,7 +165,7 @@ void TestDSettings::delete_config()
 	TEST_ASSERT_MSG( success == 0, "Can not deleting settings file" )
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDSettings ets;
 #ifdef TEST_HTML

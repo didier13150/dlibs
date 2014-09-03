@@ -44,7 +44,7 @@ void TestDPgSQL::constructor_test()
 {
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDPgSQL ets;
 #ifdef TEST_HTML

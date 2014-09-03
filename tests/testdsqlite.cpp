@@ -103,7 +103,7 @@ void TestDSqlite::constructor_test()
 	TEST_ASSERT_MSG( removed == 0, "Can not deleting database file" )
 }
 
-int main( int argc, char** argv )
+int main()
 {
 	TestDSqlite ets;
 #ifdef TEST_HTML
