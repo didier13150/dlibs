@@ -38,6 +38,7 @@
 #include <errno.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <utf8.h>
 
 DURL::DURL()
 {
@@ -64,38 +65,39 @@ int DURL::setURL( const DString & address )
 
 	clear();
 	m_url.url = address;
+	encode();
 	
 	// if protocol is set
-	if ( address.contains( "://" ) )
+	if ( m_url.url.contains( "://" ) )
 	{
-		m_url.service = address.section( "://", 0, 0 );
+		m_url.service = m_url.url.section( "://", 0, 0 );
 		
 		// extract hostname and port if any
-		if ( address.section( "://", 1 ).contains( ":" ) )
+		if ( m_url.url.section( "://", 1 ).contains( ":" ) )
 		{
-			m_url.hostname = address.section( "://", 1 ).section( ":", 0, 0 );
-			m_url.port = address.section( "://", 1 ).section( ":", 1, 1 ).section( "/", 0, 0 ).toInt();
-			m_url.path = address.section( "://", 1 ).section( ":", 1, 1 ).section( "/", 1 );
+			m_url.hostname = m_url.url.section( "://", 1 ).section( ":", 0, 0 );
+			m_url.port = m_url.url.section( "://", 1 ).section( ":", 1, 1 ).section( "/", 0, 0 ).toInt();
+			m_url.path = m_url.url.section( "://", 1 ).section( ":", 1, 1 ).section( "/", 1 );
 		}
 		else
 		{
-			m_url.hostname = address.section( "://", 1 ).section( "/", 0, 0 );
-			m_url.path = address.section( "://", 1 ).section( "/", 1 );
+			m_url.hostname = m_url.url.section( "://", 1 ).section( "/", 0, 0 );
+			m_url.path = m_url.url.section( "://", 1 ).section( "/", 1 );
 		}
 	}
 	else
 	{
 		// extract hostname and port if any
-		if ( address.contains( ":" ) )
+		if ( m_url.url.contains( ":" ) )
 		{
-			m_url.hostname = address.section( ":", 0, 0 );
-			m_url.port = address.section( ":", 1, 1 ).section( "/", 0, 0 ).toInt();
-			m_url.path = address.section( ":", 1, 1 ).section( "/", 1 );
+			m_url.hostname = m_url.url.section( ":", 0, 0 );
+			m_url.port = m_url.url.section( ":", 1, 1 ).section( "/", 0, 0 ).toInt();
+			m_url.path = m_url.url.section( ":", 1, 1 ).section( "/", 1 );
 		}
 		else
 		{
-			m_url.hostname = address.section( "/", 0, 0 );
-			m_url.path = address.section( "/", 1 );
+			m_url.hostname = m_url.url.section( "/", 0, 0 );
+			m_url.path = m_url.url.section( "/", 1 );
 		}
 	}
 	m_url.ip = m_url.hostname;
@@ -212,6 +214,52 @@ bool DURL::isIP( const DString & address )
 	}
 	return isIP;
 }
+
+DString DURL::getHexaCharString( uint32_t code )
+{
+	DString buffer;
+	buffer.setNum( static_cast<int>( code ), 16 ).toUpper();
+	buffer.prepend( "%" );
+	return buffer;
+}
+
+void DURL::encode()
+{
+	DString buffer;
+	
+	char * str = const_cast<char *>( m_url.url.c_str() ); // utf-8 string
+    char * str_i = str;                                   // string iterator
+    char * end = str + strlen( str ) + 1;                 // end iterator
+
+    m_url.url.clear();
+	do
+	{
+		uint32_t code = utf8::next( str_i, end ); // get 32 bit code of a utf-8 symbol
+		// enhanced ascii char are not allowed on URL
+		if ( code < 20 || code >= 0x7f )
+		{
+			continue;
+		}
+		if ( ( code == 0x20 ) ||
+			 ( code == 0x22 ) ||
+			 ( code == 0x25 ) ||
+			 ( code == 0x3c ) ||
+			 ( code == 0x3e ) ||
+			 ( code == 0x5c ) ||
+			 ( code == 0x5e ) ||
+			 ( code == 0x60 ) ||
+			 ( code == 0x7b ) ||
+			 ( code == 0x7c ) ||
+			 ( code == 0x7d ) )
+		{
+			m_url.url += getHexaCharString( code );
+			continue;
+		}
+		m_url.url += code;
+	}
+	while ( str_i < end );
+}
+
 const DString & DURL::getURL() const
 {
 	return m_url.url;
@@ -356,4 +404,3 @@ int DURL::getPortByService( const DString & servicename, const DString & protoco
 	servfile.close();
 	return 0;
 }
-

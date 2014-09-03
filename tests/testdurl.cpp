@@ -174,16 +174,49 @@ void TestDURL::get_error_test()
 void TestDURL::to_string_test()
 {
 	DURL url;
+	DString reference;
 
 	url.setURL( "ssh://didier.home/ip" );
-	TEST_ASSERT_MSG( url.toString() == "( hostname = \"didier.home\", IP address = \"\", Service = \"ssh\", Port = \"22\", Path = \"/ip\")", "Url to string failed" )
+	reference = "( hostname = \"didier.home\", IP address = \"\", Service = \"ssh\", Port = \"22\", Path = \"/ip\")";	
+	TEST_ASSERT_MSG( url.toString() == reference, "Url to string failed" )
 
 	url.setURL( "ssh://localhost:2222/svn/dlibs/" );
-	TEST_ASSERT_MSG( url.toString() == "( hostname = \"localhost\", IP address = \"127.0.0.1\", Service = \"ssh\", Port = \"2222\", Path = \"/svn/dlibs\")", "Url to string failed" )
-	
-	std::cout << std::endl;
-	std::cout << "\"" << url.toString() << "\"" << std::endl;
+	reference = "( hostname = \"localhost\", IP address = \"127.0.0.1\", Service = \"ssh\", Port = \"2222\", Path = \"/svn/dlibs\")";
+	TEST_ASSERT_MSG( url.toString() == reference, "Url to string failed" )
+}
 
+void TestDURL::stream_test()
+{
+	DURL url;
+	std::streambuf *backup;
+	std::ostringstream stream;
+	DString buffer, reference;
+
+	url.setURL( "ssh://didier.home/ip" );
+	reference = "( hostname = \"didier.home\", IP address = \"\", Service = \"ssh\", Port = \"22\", Path = \"/ip\")";
+	
+	// Redirect stdout to buffer
+	backup = std::cout.rdbuf();
+	std::cout.rdbuf( stream.rdbuf() );
+	
+	std::cout << url;
+	
+	// Get stream and restore stdout
+	std::cout.rdbuf(backup);
+	buffer = stream.str();
+	TEST_ASSERT_MSG( buffer == reference, "Wrong stream output" )
+}
+
+void TestDURL::encode_test()
+{
+	DURL url;
+	url.setURL( "http://localhost:12345/My Documents/My Music/ABBA - 1974/" );
+	TEST_ASSERT_MSG( url.getLastErrno() == 0, "Url with port and protocol set failed" )
+	TEST_ASSERT_MSG( url.getIPAddress() == "127.0.0.1", "Url doesn't report good IP" )
+	TEST_ASSERT_MSG( url.getHost().section( '.', 0, 0 ) == "localhost", "Url doesn't report good hostname" )
+	TEST_ASSERT_MSG( url.getPort() == 12345, "Url doesn't report good port" )
+	TEST_ASSERT_MSG( url.getServiceName() == "http", "Url doesn't report good service" )
+	TEST_ASSERT_MSG( url.getPath() == "/My%20Documents/My%20Music/ABBA%20-%201974", "Url doesn't report good path" )
 }
 
 int main( int argc, char** argv )

@@ -52,6 +52,8 @@ public:
 		TEST_ADD( TestDURL::get_url_test )
 		TEST_ADD( TestDURL::get_error_test )
 		TEST_ADD( TestDURL::to_string_test )
+		TEST_ADD( TestDURL::stream_test )
+		TEST_ADD( TestDURL::encode_test )
 	}
 
 private:
@@ -61,6 +63,8 @@ private:
 	void get_url_test();
 	void get_error_test();
 	void to_string_test();
+	void stream_test();
+	void encode_test();
 };
 
 #endif // _TESTDURL_H

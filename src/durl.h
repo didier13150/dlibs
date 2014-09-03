@@ -35,6 +35,7 @@
 #define DURL_H
 
 #include "dstring.h"
+#include <stdint.h>
  
 /**
  * Class to manage network address
@@ -207,7 +208,21 @@ private:
 	/// The last error string.
 	DString m_error;
 	
+	/**
+	 * Check if URL is an IP address.
+	 * @return true if URL is an IP address. False otherwise.
+	 */
 	bool isIP( const DString & address );
+	
+	/**
+	 * Encode URL
+	 */
+	void encode();
+	
+	/**
+	 * Get string representation about hexadecimal char code
+	 */
+	inline DString getHexaCharString( uint32_t code );
 };
 
 
