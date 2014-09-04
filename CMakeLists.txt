@@ -27,10 +27,12 @@ include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(CheckCXXSourceCompiles)
 
+SET( BUILD_FLAGS "-Wall -Wextra -fno-common -fstack-protector --param=ssp-buffer-size=4" )
+
 if(WITH_EXCEPTIONS)
-  add_definitions(-Wall -Wextra -fexceptions)
+  add_definitions(${BUILD_FLAGS} -fexceptions)
 else(WITH_EXCEPTIONS)
-  add_definitions(-Wall -Wextra)
+  add_definitions(${BUILD_FLAGS})
 endif(WITH_EXCEPTIONS)
 
 
