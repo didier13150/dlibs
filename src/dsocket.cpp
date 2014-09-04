@@ -151,7 +151,7 @@ int DClientSock::openSock ( const DString & host, int port )
 	}
 
 	// Connect socket to host
-	memset ( ( char * ) &serv_addr, 0x00, sizeof ( struct sockaddr_in ) );
+	memset ( reinterpret_cast<char *> ( &serv_addr ), 0x00, sizeof ( struct sockaddr_in ) );
 	serv_addr.sin_family = AF_INET;
 
 	host_addr = gethostbyname(host.c_str());
@@ -166,7 +166,7 @@ int DClientSock::openSock ( const DString & host, int port )
 	//serv_addr.sin_addr.s_addr =  inet_addr ( host.c_str() );
 	serv_addr.sin_port = htons ( port );
 
-	if ( connect ( m_hSocket, ( struct sockaddr * ) &serv_addr,
+	if ( connect ( m_hSocket, reinterpret_cast<struct sockaddr *> ( &serv_addr ),
 	               sizeof ( serv_addr ) ) < 0 )
 	{
 		m_lastError = "Cannot connect to host " + host + ", ";
@@ -409,14 +409,14 @@ int DServerSock::openSock ( int port )
 	}
 
 	// Connect socket to host
-	memset ( ( char * ) &serv_addr, 0x00, sizeof ( struct sockaddr_in ) );
+	memset ( reinterpret_cast<char *>( &serv_addr ), 0x00, sizeof ( struct sockaddr_in ) );
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr =  htonl ( INADDR_ANY );
 	serv_addr.sin_port = htons ( port );
 
 
 	// bind the socket
-	if ( bind ( m_hSocket, ( struct sockaddr* ) &serv_addr, sizeof ( serv_addr ) ) < 0 )
+	if ( bind ( m_hSocket, reinterpret_cast<struct sockaddr*> ( &serv_addr ), sizeof ( serv_addr ) ) < 0 )
 	{
 		close ( m_hSocket );
 		m_lastError = "Cannot bind the socket, ";
@@ -480,8 +480,8 @@ int DServerSock::openConnection ( int & hSock )
 	// waiting for client connection
 	clilen = sizeof ( cli_addr );
 	hSock = accept ( m_hSocket,
-	                 ( struct sockaddr* ) &cli_addr,
-	                 ( socklen_t* ) &clilen );
+	                 reinterpret_cast<struct sockaddr*> ( &cli_addr ),
+	                 reinterpret_cast<socklen_t*> ( &clilen ) );
 	if ( hSock < 0 )
 	{
 		m_lastError = "Cannot accept client, ";
@@ -534,7 +534,6 @@ int DServerSock::sendPacket ( int hSock, const DString & packet, bool checkSock 
 	DString buffer;
 	long int timeout;
 
-
 	if ( checkSock )
 	{
 		// check if socket is opened
@@ -564,7 +563,7 @@ int DServerSock::sendPacket ( int hSock, const DString & packet, bool checkSock 
 			  ( FD_ISSET ( hSock, &stFdSet ) ) )
 	{
 		numberChar = send ( hSock, packet.c_str(), packet.length(), 0 );
-		if ( numberChar == (ssize_t) packet.length() )
+		if ( numberChar == static_cast<ssize_t> ( packet.length() ) )
 		{
 			m_lastError = "";
 			m_status = SUCCESS;

@@ -89,19 +89,19 @@ public:
 	 * Start thread
 	 * @brief start thread
 	 */
-	virtual void start();
+	void start();
 
 	/**
 	 * Stop thread
 	 * @brief stop thread
 	 */
-	virtual void stop();
+	void stop();
 
 	/**
 	 * Force thread to stop by cancel it before join.
 	 * @brief Force thread to stop
 	 */
-	virtual void forcestop();
+	void forcestop();
 
 	/**
 	 * Threaded process

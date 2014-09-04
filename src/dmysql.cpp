@@ -296,13 +296,13 @@ DDatabaseResult & DMySQL::exec ( const DString & query )
 	}
 	// Get the last AUTO_INCREMENT
 	llu = mysql_insert_id ( m_mysql );
-	m_result.last_auto_increment = ( long long unsigned int ) llu;
+	m_result.last_auto_increment = static_cast<long long unsigned int> ( llu );
 
 	// Get the number of affected rows
 	llu = mysql_affected_rows ( m_mysql );
 	if ( llu != static_cast<my_ulonglong>(-1) )
 	{
-		m_result.affected_row = ( long long unsigned int ) llu;
+		m_result.affected_row = static_cast<long long unsigned int> ( llu );
 	}
 
 	// Get info

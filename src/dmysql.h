@@ -174,15 +174,6 @@ public:
 	DDatabaseResult & exec ( const DString & query );
 
 private:
-	/// MySQL connect parameters : Host, User, Password, Database and Port.
-	DDatabaseParams m_params;
-
-	/// The results of the last query.
-	DDatabaseResult m_result;
-
-	/// The connection options : connect timeout, read timeout, write timeout.
-	DDatabaseOptions m_opt;
-
 	/// The MySQL object.
 	st_mysql * m_mysql;
 

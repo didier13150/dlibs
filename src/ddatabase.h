@@ -271,6 +271,9 @@ class DDatabase : public DSkeleton, public DPrototype<DDatabase>
 		/// The results of the last query.
 		DDatabaseResult m_result;
 
+		/// The connection options : connect timeout, read timeout, write timeout.
+		DDatabaseOptions m_opt;
+
 	private:
 		void internal_init();
 };

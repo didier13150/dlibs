@@ -69,6 +69,8 @@ void DSQLite::setParams ( const DDatabaseParams & params )
 
 void DSQLite::setOptions ( const DDatabaseOptions & opt )
 {
+	m_opt = opt;
+	m_opt.initialized = true;
 }
 
 DDatabaseResult & DSQLite::open()
@@ -173,10 +175,10 @@ DDatabaseResult & DSQLite::exec ( const DString & query )
 			have_result = true;
 			for ( int i = 0 ; i < num_row ; ++i )
 			{
-				ptr = ( char* ) sqlite3_column_name ( statement, i );
+				ptr = const_cast<char*> ( sqlite3_column_name ( statement, i ) );
 				if ( !ptr ) continue;
 				else key = ptr;
-				ptr = ( char* ) sqlite3_column_text ( statement, i );
+				ptr = const_cast<char*> ( reinterpret_cast<const char*> ( sqlite3_column_text ( statement, i ) ) );
 				if ( !ptr ) value = "NULL";
 				else value = ptr;
 				row_result[key] = value;
@@ -199,15 +201,12 @@ DDatabaseResult & DSQLite::exec ( const DString & query )
 		}
 		
 		// Get the last AUTO_INCREMENT
-		llu = ( long long unsigned int ) sqlite3_last_insert_rowid ( m_sqlite );
+		llu = static_cast<long long unsigned int> ( sqlite3_last_insert_rowid ( m_sqlite ) );
 		m_result.last_auto_increment = llu;
 
 		// Get the number of affected rows
-		llu = ( long long unsigned int ) sqlite3_changes ( m_sqlite );
-		if ( llu >= 0 )
-		{
-			m_result.affected_row = llu;
-		}
+		llu = static_cast<long long unsigned int> ( sqlite3_changes ( m_sqlite ) );
+		m_result.affected_row = llu;
 	}
 	else
 	{
