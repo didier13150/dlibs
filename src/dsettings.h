@@ -213,7 +213,7 @@ private:
     /**
      * Read the entry matching xpath
      */
-    void read ( const DString & xpath, bool onlyone = true );
+    void read ( const DString & xpath );
 };
 
 #endif // DSETTINGS_H

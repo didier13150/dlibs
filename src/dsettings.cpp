@@ -177,7 +177,7 @@ int DSettings::readEntry ( const DString & xpath, DString & value )
 	return m_error;
 }
 
-void DSettings::read ( const DString & xpath, bool onlyone )
+void DSettings::read ( const DString & xpath )
 {
 	m_values.clear();
 	
