@@ -662,7 +662,7 @@ std::list<DString> DString::splitConstantSize ( const DString & sep, unsigned in
 	DString buffer;
 	bool reached = false;
 
-	tmplist = split ( " " );
+	tmplist = split ( sep );
 	ite = tmplist.begin();
 	while ( ite != tmplist.end() )
 	{
