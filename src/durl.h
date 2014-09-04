@@ -113,7 +113,7 @@ public:
 	/**
 	* Get the port of the URL
 	*/
-	const int getPort() const;
+	int getPort() const;
 	
 	/**
 	* Get the protocol of the URL

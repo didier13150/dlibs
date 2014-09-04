@@ -275,7 +275,7 @@ const DString &  DURL::getIPAddress() const
 	return m_url.ip;
 }
 
-const int DURL::getPort() const
+int DURL::getPort() const
 {
 	return m_url.port;
 }
