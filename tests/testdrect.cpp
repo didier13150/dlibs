@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdrect.h"
+#include "drect.h"
 #include "test.h"
 #include "dpoint.h"
 

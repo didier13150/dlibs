@@ -37,6 +37,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include "dappcmdline.h"
 #include "testdappcmdline.h"
 #include "test.h"
 

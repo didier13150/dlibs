@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdsettings.h"
+#include "dsettings.h"
 #include "test.h"
 
 #define CONF_FILE "dsettings.xml"

@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdprocess.h"
+#include "dprocess.h"
 #include "test.h"
 
 void TestDProcess::simple_test()

@@ -37,6 +37,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include "denv.h"
 #include "testdenv.h"
 #include "test.h"
 

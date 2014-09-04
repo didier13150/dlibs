@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdsocket.h"
+#include "dsocket.h"
 #include "test.h"
 
 #define PORT 12345

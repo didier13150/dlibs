@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dexception.h"
-
 class TestDException : public Test::Suite
 {
 public:

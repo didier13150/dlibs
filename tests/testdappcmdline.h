@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dappcmdline.h"
-
 class TestDAppCmdLine : public Test::Suite
 {
 public:

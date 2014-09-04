@@ -37,10 +37,7 @@
 #ifndef _TESTDSTRING_H
 #define _TESTDSTRING_H
 
-#include <stdio.h>
 #include <cpptest.h>
-
-#include "dstring.h"
 
 class TestDString : public Test::Suite
 {

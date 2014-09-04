@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdpgsql.h"
+#include "dpgsql.h"
 #include "test.h"
 
 void TestDPgSQL::constructor_test()

@@ -38,7 +38,23 @@
 #include <iostream>
 #include <fstream>
 #include "testdthread.h"
+#include "dthread.h"
 #include "test.h"
+
+class Foo : public DThread
+{
+public:
+	Foo() : DThread(), nb( 0 ) {}
+
+	void run()
+	{
+		nb++;
+	}
+	void clear() { nb = 0; }
+	int getNb() { return nb; }
+private:
+	int nb;
+};
 
 void TestDThread::single_loop_test()
 {

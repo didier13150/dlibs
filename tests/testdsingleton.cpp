@@ -38,7 +38,34 @@
 #include <iostream>
 #include <fstream>
 #include "testdsingleton.h"
+#include "dsingleton.h"
 #include "test.h"
+
+class Foo : public DSingleton<Foo>
+{
+	// To let DSingleton have access to Foo protected constructor
+	friend class DSingleton<Foo>;
+	
+protected:
+	// Protected constructor
+	Foo() : nb( 0 ) {}
+	
+public:
+	int getVal()
+	{
+		return nb;
+	}
+	void increment()
+	{
+		nb++;
+	}
+	void reset()
+	{
+		nb = 0;
+	}
+private:
+	int nb;
+};
 
 void TestDSingleton::singleton_test()
 {

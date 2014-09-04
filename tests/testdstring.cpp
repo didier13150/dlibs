@@ -34,9 +34,11 @@
  *                                                                            *
  ******************************************************************************/
 #include <cstdlib>
+#include <stdio.h>
 #include <iostream>
 #include <map>
 #include "testdstring.h"
+#include "dstring.h"
 #include "test.h"
 
 void TestDString::constructor_test()

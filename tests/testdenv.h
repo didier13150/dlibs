@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "denv.h"
-
 class TestDEnv : public Test::Suite
 {
 public:

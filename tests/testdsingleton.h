@@ -39,33 +39,6 @@
 #define TESTDSINGLETON_H
 
 #include <cpptest.h>
-#include "dsingleton.h"
-
-class Foo : public DSingleton<Foo>
-{
-	// To let DSingleton have access to Foo protected constructor
-	friend class DSingleton<Foo>;
-	
-protected:
-	// Protected constructor
-	Foo() : nb( 0 ) {}
-	
-public:
-	int getVal()
-	{
-		return nb;
-	}
-	void increment()
-	{
-		nb++;
-	}
-	void reset()
-	{
-		nb = 0;
-	}
-private:
-	int nb;
-};
 
 class TestDSingleton : public Test::Suite
 {

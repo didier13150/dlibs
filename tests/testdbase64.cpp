@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "dstring.h"
+#include "dbase64.h"
 #include "testdbase64.h"
 #include "test.h"
 

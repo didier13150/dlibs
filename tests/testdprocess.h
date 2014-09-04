@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dprocess.h"
-
 class TestDProcess : public Test::Suite
 {
 public:

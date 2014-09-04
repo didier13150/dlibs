@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dfactory.h"
-
 class TestDFactory : public Test::Suite
 {
 public:
@@ -53,56 +51,6 @@ public:
 private:
 	void basic_test();
 	void ddatabase_test();
-};
-
-class Object
-{
-public:
-	Object()
-	{
-	}
-	virtual ~Object()
-	{
-	}
-	const DString & what()
-	{
-		return _what;
-	}
-	virtual Object* Clone() const = 0 ;
-protected:
-	DString _what;
-};
-
-class Square : public Object
-{
-public:
-	Square()
-	{
-		_what = "Square";
-	}
-	virtual ~Square()
-	{
-	}
-	Object* Clone() const
-	{
-		return new Square ( *this );
-	}
-};
-
-class Round : public Object
-{
-public:
-	Round()
-	{
-		_what = "Round";
-	}
-	virtual ~Round()
-	{
-	}
-	Object* Clone() const
-	{
-		return new Round ( *this );
-	}
 };
 
 #endif // _TESTDFACTORY_H

@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdsqlite.h"
+#include "dsqlite.h"
 #include "test.h"
 
 #define DBFILE "testdsqlite.db"

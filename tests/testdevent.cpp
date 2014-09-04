@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdevent.h"
+#include "devent.h"
 #include "test.h"
 
 void TestDEvent::constructor_test()

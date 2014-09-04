@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dsocket.h"
-
 class TestDSocket : public Test::Suite
 {
 public:

@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dpoint.h"
-
 class TestDPoint : public Test::Suite
 {
 public:

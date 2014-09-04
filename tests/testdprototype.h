@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dprototype.h"
-
 class TestDPrototype : public Test::Suite
 {
 public:

@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdprototype.h"
+#include "dprototype.h"
 #include "test.h"
 
 void TestDPrototype::constructor_test()

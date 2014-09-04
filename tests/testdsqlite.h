@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dsqlite.h"
-
 class TestDSqlite : public Test::Suite
 {
 public:

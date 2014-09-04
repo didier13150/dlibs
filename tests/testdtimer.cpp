@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdtimer.h"
+#include "dtimer.h"
 #include "test.h"
 
 void TestDTimer::start_precision_test()

@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dsmtp.h"
-
 class TestDSMTP : public Test::Suite
 {
 public:

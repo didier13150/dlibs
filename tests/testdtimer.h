@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dtimer.h"
-
 class TestDTimer : public Test::Suite
 {
 public:

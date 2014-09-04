@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dpgsql.h"
-
 class TestDPgSQL : public Test::Suite
 {
 public:

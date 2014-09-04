@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdurl.h"
+#include "durl.h"
 #include "test.h"
 
 void TestDURL::constructor_test()

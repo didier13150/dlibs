@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdsmtp.h"
+#include "dsmtp.h"
 #include "test.h"
 
 #define TESTFILE CMAKE_SOURCE_DIR"/tux.png"

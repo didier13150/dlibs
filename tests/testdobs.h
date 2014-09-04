@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dobs.h"
-
 class TestDObs : public Test::Suite
 {
 public:
@@ -51,92 +49,6 @@ public:
 
 private:
 	void constructor_test();
-};
-
-class Barometer : public DObservable
-{
-private:
-	int presure;
-
-public:
-	void setValue( int value )
-	{
-		presure = value;
-		notify();
-	}
-	
-	const DBasicEvent & getEvent( void )
-	{
-		static DBasicEvent event;
-		DString buffer;
-
-		buffer.setNum( presure );
-		buffer.prepend( "Presure = " );
-		buffer.append( " mBars." );
-		event.setEvent( buffer );
-		return event;
-	}
-};
-
-class Thermometer : public DObservable
-{
-private:
-	int temperature;
-
-public:
-	void setValue( int value )
-	{
-		temperature = value;
-		notify();
-	}
-	
-	const DBasicEvent & getEvent( void )
-	{
-		static DBasicEvent event;
-		DString buffer;
-
-		buffer.setNum( temperature );
-		buffer.prepend( "Temperature = " );
-		buffer.append( " degrees." );
-		event.setEvent( buffer );
-		return event;
-	}
-};
-
-class WeatherStation : public DObserver
-{
-public:
-	WeatherStation() : DObserver() {}
-	~WeatherStation() {}
-	
-	const std::list<DString> & getEventList() const
-	{
-		return eventlist;
-	}
-	
-	DString popFirstEvent()
-	{
-		DString event;
-		std::list<DString>::const_iterator it;
-		it = eventlist.begin();
-		if ( it != eventlist.end() ) {
-			event = *it;
-			eventlist.pop_back();
-		}
-		return event;
-	}
-	
-	void onEvent( DObservable * observable )
-	{
-		eventlist.push_back( observable->getEvent().what() );
-	}
-	
-	void clearEvent()
-	{
-		eventlist.clear();
-	}
-private:
-	std::list<DString> eventlist;
 };
 
 #endif // _TESTDOBS_H

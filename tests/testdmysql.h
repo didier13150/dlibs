@@ -38,9 +38,7 @@
 #define _TESTDMYSQL_H
 
 #include <cpptest.h>
-
-#include "dmysql.h"
-#include "dfactory.h"
+#include "dstring.h"
 
 class TestDMySQL : public Test::Suite
 {

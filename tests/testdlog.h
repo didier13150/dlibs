@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dlog.h"
-
 class TestDLog : public Test::Suite
 {
 public:

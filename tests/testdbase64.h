@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dbase64.h"
-
 class TestDBase64 : public Test::Suite
 {
 public:

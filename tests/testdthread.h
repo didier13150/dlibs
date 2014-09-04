@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dthread.h"
-
 class TestDThread : public Test::Suite
 {
 public:
@@ -57,21 +55,6 @@ private:
 	void multi_loop_test();
 	void just_stop_test();
 	void multi_stop_test();
-};
-
-class Foo : public DThread
-{
-public:
-	Foo() : DThread(), nb( 0 ) {}
-
-	void run()
-	{
-		nb++;
-	}
-	void clear() { nb = 0; }
-	int getNb() { return nb; }
-private:
-	int nb;
 };
 
 #endif // _TESTDTHREAD_H

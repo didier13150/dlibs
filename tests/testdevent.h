@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "devent.h"
-
 class TestDEvent : public Test::Suite
 {
 public:

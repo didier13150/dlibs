@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "dsettings.h"
-
 class TestDSettings : public Test::Suite
 {
 public:

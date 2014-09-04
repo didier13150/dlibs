@@ -39,6 +39,7 @@
 #include <fstream>
 #include "config.h"
 #include "testdfactory.h"
+#include "dfactory.h"
 #include "test.h"
 
 #ifdef DLIBS_HAVE_MYSQL
@@ -49,6 +50,56 @@
 #endif
 #include "dsqlite.h"
 
+
+class Object
+{
+public:
+	Object()
+	{
+	}
+	virtual ~Object()
+	{
+	}
+	const DString & what()
+	{
+		return _what;
+	}
+	virtual Object* Clone() const = 0 ;
+protected:
+	DString _what;
+};
+
+class Square : public Object
+{
+public:
+	Square()
+	{
+		_what = "Square";
+	}
+	virtual ~Square()
+	{
+	}
+	Object* Clone() const
+	{
+		return new Square ( *this );
+	}
+};
+
+class Round : public Object
+{
+public:
+	Round()
+	{
+		_what = "Round";
+	}
+	virtual ~Round()
+	{
+	}
+	Object* Clone() const
+	{
+		return new Round ( *this );
+	}
+};
 
 void TestDFactory::basic_test()
 {

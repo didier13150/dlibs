@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdpoint.h"
+#include "dpoint.h"
 #include "test.h"
 
 typedef DPoint<unsigned int> UPoint;

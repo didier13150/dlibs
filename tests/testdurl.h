@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "durl.h"
-
 class TestDURL : public Test::Suite
 {
 public:

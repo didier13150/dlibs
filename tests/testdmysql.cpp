@@ -38,7 +38,9 @@
 #include <iostream>
 #include <fstream>
 #include "testdmysql.h"
+#include "dmysql.h"
 #include "test.h"
+#include "dfactory.h"
 #include "config.h"
 #include "dsettings.h"
 

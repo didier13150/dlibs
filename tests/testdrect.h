@@ -39,8 +39,6 @@
 
 #include <cpptest.h>
 
-#include "drect.h"
-
 class TestDRect : public Test::Suite
 {
 public:

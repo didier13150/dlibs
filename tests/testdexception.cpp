@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include "testdexception.h"
+#include "dexception.h"
 #include "test.h"
 
 void TestDException::simul_exception()
