@@ -675,6 +675,7 @@ DLogEngineSyslog::DLogEngineSyslog ( const DString & app_name )
 {
 	m_type = SYSLOG;
 	m_app_name = app_name;
+	m_facility = LOG_USER;
 }
 
 DLogEngineSyslog::~DLogEngineSyslog ( void )
@@ -691,9 +692,14 @@ void DLogEngineSyslog::setAppName( const DString & app_name )
 	}
 }
 
+void DLogEngineSyslog::setFacility( int facility )
+{
+	m_facility = facility;
+}
+
 bool DLogEngineSyslog::open()
 {
-	openlog ( m_app_name.c_str(), LOG_PID|LOG_CONS, LOG_USER );
+	openlog ( m_app_name.c_str(), LOG_PID|LOG_CONS, m_facility );
 	return true;
 }
 
@@ -772,7 +778,7 @@ void DLogEngineSyslog::insert ( const DString & text, Level loglevel )
 	message.append( DLogParams::toString( loglevel ) );
 	message.append( "] " );
 	message.append( text );
-	syslog ( sysloglevel, message.c_str() );
+	syslog ( sysloglevel, "%s", message.c_str() );
 	if ( m_mode == DLogShared::OPENCLOSE )
 	{
 		close();
@@ -783,6 +789,7 @@ void DLogEngineSyslog::setParam ( DLogParams & params )
 {
 	DLogEngine::setParam ( params );
 	setAppName ( params.specific["appname"] );
+	setFacility( params.specific["facility"].toInt() );
 }
 
 /******************************************************************************

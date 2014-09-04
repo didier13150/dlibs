@@ -445,6 +445,11 @@ public:
     void setAppName( const DString & app_name );
 
     /**
+     * Set the application facility
+     */
+    void setFacility( int facility );
+
+    /**
      * Open the log file
      */
     bool open();
@@ -473,6 +478,7 @@ public:
 
 private:
     DString m_app_name;
+	int m_facility;
 };
 
 /**

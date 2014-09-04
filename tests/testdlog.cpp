@@ -37,8 +37,10 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <syslog.h>
 #include "config.h"
 #include "testdlog.h"
+#include "dlog.h"
 #include "test.h"
 #include "dsqlite.h"
 #include "dsettings.h"
@@ -217,17 +219,26 @@ void TestDLog::syslog_test()
 	DLogger * log = 0;
 	DLogParams params;
 	DLogEngine * syslog = 0;
+	DString buffer;
 
 	log = DLogger::getInstance();
 	TEST_ASSERT_MSG( log != 0, "Can not get logger instance" )
+	params.mode = DLogShared::PERSISTANT;
 	params.specific["appname"] = "DLog Syslog Test";
+	buffer.setNum( LOG_USER );
+	params.specific["facility"] = "buffer";
 	params.minlevel = DLogShared::INFO;
 
 	syslog = log->addLogEngine ( DLogEngine::SYSLOG, params );
 	TEST_ASSERT_MSG( syslog != 0, "Can not add syslog engine" )
-
-	log->insertMessage ( "Debug message", DLogShared::DEBUG );
-	log->insertMessage ( "Info message", DLogShared::INFO );
+	
+	log->debug( "Debug message" );
+	log->verbose( "Verbose message" );
+	log->info( "Info message" );
+	log->signal( "Signal message" );
+	log->warning( "Warning message" );
+	log->error( "Error message" );
+	log->critical( "Critical message" );
 
 	log->removeLogEngine ( syslog );
 	log->close();
