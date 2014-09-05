@@ -363,9 +363,9 @@ void DSettings::insertNodeValueByXPath ( const DString & xpath,
 	xpathRes = xmlXPathEvalExpression ( buffer, m_context );
 	xmlFree( buffer );
 	buffer = 0;
-	if ( ( xpathRes != NULL ) &&
-	     ( xpathRes->type == XPATH_NODESET ) &&
-	     ( xpathRes->nodesetval->nodeNr > 0 ) )
+	if( ( xpathRes != NULL ) &&
+		( xpathRes->type && xpathRes->type == XPATH_NODESET ) &&
+		( xpathRes->nodesetval && xpathRes->nodesetval->nodeNr && xpathRes->nodesetval->nodeNr > 0 ) )
 	{
 		node = xpathRes->nodesetval->nodeTab[0];
 		if ( node != NULL )
@@ -437,9 +437,9 @@ void DSettings::updateNodeValueByXPath ( const DString & xpath,
 	xpathRes = xmlXPathEvalExpression ( val, m_context );
 	xmlFree( val );
 	val = 0;
-	if ( ( xpathRes != NULL ) &&
-	     ( xpathRes->type == XPATH_NODESET ) &&
-	     ( xpathRes->nodesetval->nodeNr > 0 ) )
+	if( ( xpathRes != NULL ) &&
+		( xpathRes->type && xpathRes->type == XPATH_NODESET ) &&
+		( xpathRes->nodesetval && xpathRes->nodesetval->nodeNr && xpathRes->nodesetval->nodeNr > 0 ) )
 	{
 		node = xpathRes->nodesetval->nodeTab[0];
 		if ( node != NULL )
@@ -485,9 +485,9 @@ void DSettings::getNodeValuesByXPath ( const DString & xpath )
 	xpathRes = xmlXPathEvalExpression ( val, m_context );
 	xmlFree( val );
 	val = 0;
-	if ( ( xpathRes != NULL ) &&
-	     ( xpathRes->type == XPATH_NODESET ) &&
-	     ( xpathRes->nodesetval->nodeNr > 0 ) )
+	if( ( xpathRes != NULL ) &&
+		( xpathRes->type && xpathRes->type == XPATH_NODESET ) &&
+		( xpathRes->nodesetval && xpathRes->nodesetval->nodeNr && xpathRes->nodesetval->nodeNr > 0 ) )
 	{
 		m_error = SUCCESS;
 		for ( int i = 0 ; i < xpathRes->nodesetval->nodeNr ; ++i )
