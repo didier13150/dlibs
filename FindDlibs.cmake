@@ -6,10 +6,9 @@
 #  DLIBS_FOUND       - True if DLibs found.
 ################################################################################
 
-
-find_library( DLIBS_dlibs_LIBRARY
+find_library( DLIBS_LIBRARY
               NAMES dlibs
-              PATH /usr/lib /usr/local/lib
+              PATH /usr/lib /usr/local/lib /usr/lib64 /usr/local/lib64
 )
              
 find_path( DLIBS_INCLUDE_DIR
@@ -21,11 +20,11 @@ find_path( DLIBS_INCLUDE_DIR
 )
           
 include( ${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake )
-FIND_PACKAGE_HANDLE_STANDARD_ARGS( DLIBS REQUIRED_VARS DLIBS_dlibs_LIBRARY DLIBS_INCLUDE_DIR )
+FIND_PACKAGE_HANDLE_STANDARD_ARGS( DLIBS REQUIRED_VARS DLIBS_LIBRARY DLIBS_INCLUDE_DIR )
 
-if (DLIBS_FOUND)
+if( DLIBS_FOUND )
   set( DLIBS_LIBRARIES
-       ${DLIBS_dlibs_LIBRARY}
+       ${DLIBS_LIBRARY}
   )
   set( DLIBS_LIBRARY
        ${DLIBS_LIBRARIES}
@@ -33,9 +32,9 @@ if (DLIBS_FOUND)
   set( DLIBS_INCLUDE_DIR
        ${DLIBS_INCLUDE_DIR}
   )
-endif (DLIBS_FOUND)
+endif( DLIBS_FOUND )
 
 mark_as_advanced(
   DLIBS_LIBRARY
   DLIBS_INCLUDE_DIR
-  )
+)

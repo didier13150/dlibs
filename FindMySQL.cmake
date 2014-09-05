@@ -1,47 +1,44 @@
+################################################################################
 # - Find mysqlclient
 # Find the native MySQL includes and library
 #
 #  MYSQL_INCLUDE_DIR - where to find mysql.h, etc.
 #  MYSQL_LIBRARIES   - List of libraries when using MySQL.
 #  MYSQL_FOUND       - True if MySQL found.
+################################################################################
 
-IF (MYSQL_INCLUDE_DIR)
-# Already in cache, be silent
-  SET(MYSQL_FIND_QUIETLY TRUE)
-ENDIF (MYSQL_INCLUDE_DIR)
-
-FIND_PATH(MYSQL_INCLUDE_DIR mysql.h
-  /usr/local/include/mysql
-  /usr/include/mysql
+SET( MYSQL_LIB_NAMES mysqlclient mysqlclient_r )
+find_library( MYSQL_LIBRARY
+              NAMES ${MYSQL_LIB_NAMES}
+              PATH /usr/lib /usr/local/lib /usr/lib64 /usr/local/lib64 /opt/mysql/lib /opt/mysql/lib64
 )
-
-SET(MYSQL_NAMES mysqlclient mysqlclient_r)
-FIND_LIBRARY(MYSQL_LIBRARY
-  NAMES ${MYSQL_NAMES}
-  PATHS /usr/lib /usr/local/lib
-  PATH_SUFFIXES mysql
+             
+find_path( MYSQL_INCLUDE_DIR
+           mysql.h
+           /usr/include
+           /usr/include/mysql
+           /usr/local/include
+           /usr/local/include/mysql
+           /opt/mysql/include
+           
 )
-
-IF (MYSQL_INCLUDE_DIR AND MYSQL_LIBRARY)
-  SET(MYSQL_FOUND TRUE)
-  SET( MYSQL_LIBRARIES ${MYSQL_LIBRARY} )
-ELSE (MYSQL_INCLUDE_DIR AND MYSQL_LIBRARY)
-  SET(MYSQL_FOUND FALSE)
-  SET( MYSQL_LIBRARIES )
-ENDIF (MYSQL_INCLUDE_DIR AND MYSQL_LIBRARY)
+          
+include( ${CMAKE_ROOT}/Modules/FindPackageHandleStandardArgs.cmake )
+FIND_PACKAGE_HANDLE_STANDARD_ARGS( MYSQL REQUIRED_VARS MYSQL_LIBRARY MYSQL_INCLUDE_DIR )
 
 IF (MYSQL_FOUND)
-  IF (NOT MYSQL_FIND_QUIETLY)
-    MESSAGE(STATUS "Found MySQL: ${MYSQL_LIBRARY}")
-  ENDIF (NOT MYSQL_FIND_QUIETLY)
-ELSE (MYSQL_FOUND)
-  IF (MYSQL_FIND_REQUIRED)
-    MESSAGE(STATUS "Looked for MySQL libraries named ${MYSQL_NAMES}.")
-    MESSAGE(FATAL_ERROR "Could NOT find MySQL library")
-  ENDIF (MYSQL_FIND_REQUIRED)
+  set( MYSQL_LIBRARIES
+       ${MYSQL_LIBRARY}
+  )
+  set( MYSQL_LIBRARY
+       ${MYSQL_LIBRARIES}
+  )
+  set( MYSQL_INCLUDE_DIR
+       ${MYSQL_INCLUDE_DIR}
+  )
 ENDIF (MYSQL_FOUND)
 
 MARK_AS_ADVANCED(
   MYSQL_LIBRARY
   MYSQL_INCLUDE_DIR
-  )
+)
