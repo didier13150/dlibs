@@ -6,40 +6,36 @@
 #  DLIBS_FOUND       - True if DLibs found.
 ################################################################################
 
-IF (DLIBS_INCLUDE_DIR)
-# Already in cache, be silent
-  SET(DLIBS_INCLUDE_DIR TRUE)
-ENDIF (DLIBS_INCLUDE_DIR)
 
-FIND_PATH(DLIBS_INCLUDE_DIR
-          dstring.h
-          /usr/include/dlibs
-          /usr/local/include/dlibs)
+find_library( DLIBS_dlibs_LIBRARY
+              NAMES dlibs
+              PATH /usr/lib /usr/local/lib
+)
+             
+find_path( DLIBS_INCLUDE_DIR
+           dstring.h
+           /usr/include
+           /usr/include/dlibs
+           /usr/local/include
+           /usr/local/include/dlibs
+)
+          
+include( ${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake )
+FIND_PACKAGE_HANDLE_STANDARD_ARGS( DLIBS REQUIRED_VARS DLIBS_dlibs_LIBRARY DLIBS_INCLUDE_DIR )
 
-FIND_LIBRARY(DLIBS_LIBRARY
-             NAMES dlibs
-             PATH /usr/lib /usr/local/lib)
+if (DLIBS_FOUND)
+  set( DLIBS_LIBRARIES
+       ${DLIBS_dlibs_LIBRARY}
+  )
+  set( DLIBS_LIBRARY
+       ${DLIBS_LIBRARIES}
+  )
+  set( DLIBS_INCLUDE_DIR
+       ${DLIBS_INCLUDE_DIR}
+  )
+endif (DLIBS_FOUND)
 
-IF (DLIBS_INCLUDE_DIR AND DLIBS_LIBRARY)
-   SET(DLIBS_FOUND TRUE)
-ELSE (DLIBS_INCLUDE_DIR AND DLIBS_LIBRARY)
-   SET(DLIBS_FOUND FALSE)
-   SET( DLIBS_INCLUDE_DIR )
-   SET( DLIBS_LIBRARY )
-ENDIF (DLIBS_INCLUDE_DIR AND DLIBS_LIBRARY)
-
-
-IF (DLIBS_FOUND)
-   IF (NOT Dlibs_FIND_QUIETLY)
-      MESSAGE(STATUS "Found DLibs: ${DLIBS_LIBRARY}")
-   ENDIF (NOT Dlibs_FIND_QUIETLY)
-ELSE (DLIBS_FOUND)
-   IF (Dlibs_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Could not find DLibs")
-   ENDIF (Dlibs_FIND_REQUIRED)
-ENDIF (DLIBS_FOUND)
-
-MARK_AS_ADVANCED(
+mark_as_advanced(
   DLIBS_LIBRARY
   DLIBS_INCLUDE_DIR
   )
