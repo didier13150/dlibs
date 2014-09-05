@@ -26,4 +26,4 @@ lcov --add-tracefile base.info --add-tracefile test.info --output-file total.inf
 
 lcov --remove total.info '/usr/include/*' '/usr/lib*/*' 'src/sqlite3.*' 'src/dlibspath.cpp' --output-file filtered.info
 
-genhtml --ignore-errors source filtered.info --legend --title "DLibs libraries @DLIBS_VERSION@" --output-directory=@CMAKE_SOURCE_DIR@/lcov
+genhtml --sort --highlight --show-details --quiet --frames --legend --title "DLibs libraries @DLIBS_VERSION@" --output-directory=@CMAKE_SOURCE_DIR@/lcov filtered.info
