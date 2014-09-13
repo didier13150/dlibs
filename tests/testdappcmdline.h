@@ -48,6 +48,12 @@ public:
 		TEST_ADD( TestDAppCmdLine::arg_and_opt_test )
 		TEST_ADD( TestDAppCmdLine::show_help_test )
 		TEST_ADD( TestDAppCmdLine::show_version_test )
+		TEST_ADD( TestDAppCmdLine::app_opt_stream_test )
+		TEST_ADD( TestDAppCmdLine::app_arg_stream_test )
+		TEST_ADD( TestDAppCmdLine::set_args_test )
+		TEST_ADD( TestDAppCmdLine::set_opts_test )
+		TEST_ADD( TestDAppCmdLine::print_app_test )
+		TEST_ADD( TestDAppCmdLine::bad_opts_test )
 	}
 
 private:
@@ -55,6 +61,12 @@ private:
 	void show_help_test();
 	void show_version_test();
 	void arg_and_opt_test();
+	void app_opt_stream_test();
+	void app_arg_stream_test();
+	void set_args_test();
+	void set_opts_test();
+	void print_app_test();
+	void bad_opts_test();
 };
 
 #endif // _TESTDAPPCMDLINE_H
