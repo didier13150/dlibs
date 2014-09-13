@@ -63,7 +63,7 @@ public:
 	/**
 	 * Constructs a rect with two opposite points.
 	 */
-	DRect(DPoint<T> pt1, DPoint<T> pt2)
+	DRect(const DPoint<T> & pt1, const DPoint<T> & pt2)
 	{
 		Ax = pt1.getX();
 		Ay = pt1.getY();
@@ -75,7 +75,7 @@ public:
 	/**
 	 * Constructs a rect with two opposite point coordinates.
 	 */
-	DRect(T ax, T ay, T bx, T by)
+	DRect(const T & ax, const T & ay, const T & bx, const T & by)
 	{
 		Ax = ax;
 		Ay = ay;
@@ -84,12 +84,12 @@ public:
 		formatRect();
 	}
 
-	virtual ~DRect(void) {};
+	virtual ~DRect( void ) {};
 	
 	/**
 	 * Copy all values to rect
 	 */
-	DRect & operator= (const DRect &rect)
+	DRect & operator= ( const DRect & rect )
 	{
 		Ax = rect.Ax;
 		Ay = rect.Ay;
@@ -116,7 +116,7 @@ public:
 		/**
 		 * Constructs rect from values.
 		 */
-		Apex( T vax, T vay, T vbx, T vby )
+		Apex( const T & vax, const T & vay, const T & vbx, const T & vby )
 		{
 			ax = vax;
 			ay = vay;
@@ -154,7 +154,7 @@ public:
 	/**
 	 * Define rect from four point coordinates.
 	 */
-	DRect & setVal( T ax, T ay, T bx, T by )
+	DRect & setVal( const T & ax, const T & ay, const T & bx, const T & by )
 	{
 		Ax = ax;
 		Ay = ay;
@@ -167,7 +167,7 @@ public:
 	/**
 	 * Define rect from two opposite points of the rect
 	 */
-	DRect & setPoints(DPoint<T> pt1, DPoint<T> pt2)
+	DRect & setPoints( const DPoint<T> & pt1, const DPoint<T> & pt2)
 	{
 		Ax = pt1.getX();
 		Ay = pt1.getY();
@@ -180,7 +180,7 @@ public:
 	/**
 	 * Define rect from apex
 	 */
-	DRect & setApex(Apex apex)
+	DRect & setApex(const Apex & apex)
 	{		
 		Ax = apex.ax;
 		Ay = apex.ay;
@@ -220,7 +220,7 @@ public:
 	 * @param pt The point to check
 	 * @param border Specify if border rect is a part of rect. True by default. 
 	 */
-	bool isInside(DPoint<T> pt, bool border = true)
+	bool isInside(DPoint<T> pt, bool border = true) const
 	{
 		if ( border && pt.getX() < Ax ) return false;
 		if ( ! border && pt.getX() <= Ax ) return false;
