@@ -45,7 +45,7 @@
 #define TESTFILE0 CMAKE_SOURCE_DIR"/tests/testdbase64.0.txt"
 #define TESTFILE1 CMAKE_SOURCE_DIR"/tests/testdbase64.1.txt"
 #define TESTFILE2 CMAKE_SOURCE_DIR"/tests/testdbase64.2.txt"
-#define TESTFILE3 CMAKE_SOURCE_DIR"/tests/testdbase64.3.txt"
+
 #define WRAPPING 76
 
 static const char * test0 = "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXow";
@@ -91,7 +91,6 @@ void TestDBase64::decode_test()
 	buffer = base.getEncoded();
 	TEST_ASSERT_MSG( ref == buffer, "Get encoded failed" )
 	//base.decodeToFile( "/tmp/testdbase64.0.txt" );
-	
 }
 
 int main()
