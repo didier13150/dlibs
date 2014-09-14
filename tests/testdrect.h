@@ -48,6 +48,9 @@ public:
 		TEST_ADD( TestDRect::constructor_dpoint_test )
 		TEST_ADD( TestDRect::apex_test )
 		TEST_ADD( TestDRect::inside_test )
+		TEST_ADD( TestDRect::set_val_test )
+		TEST_ADD( TestDRect::stream_test )
+		TEST_ADD( TestDRect::copy_test )
 	}
 
 private:
@@ -55,6 +58,9 @@ private:
 	void constructor_dpoint_test();
 	void apex_test();
 	void inside_test();
+	void set_val_test();
+	void stream_test();
+	void copy_test();
 };
 
 #endif // _TESTDRECT_H

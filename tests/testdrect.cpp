@@ -65,13 +65,37 @@ void TestDRect::constructor_dpoint_test()
 	TEST_ASSERT_MSG( rect1 == rect2, "Construct from DPoint failed" )
 }
 
+void TestDRect::copy_test()
+{
+	
+	Rect ref( -2, -2, 2, 2 ), rect;
+	rect = ref;
+	TEST_ASSERT_MSG( rect == ref, "Rect not equal after copy" )
+}
+
+void TestDRect::set_val_test()
+{
+	Rect rect1;
+	Rect rect2;
+	Point pt1(2,2);
+	Point pt2(-2,-2);
+	Rect ref( -2, -2, 2, 2 );
+	rect1.setVal( -2, -2, 2, 2 );
+	TEST_ASSERT_MSG( rect1 == ref, "set values failed" )
+	rect2.setPoints( pt1, pt2 );
+	TEST_ASSERT_MSG( rect2 == ref, "set points failed" )
+}
+
 void TestDRect::apex_test()
 {
 	Apex apex1, apex2( -2, -2, 2, 2 ) ;
 	Rect rect1( -2, -2, 2, 2 ), rect2;
 	
 	apex1 = rect1.getApex();
-	TEST_ASSERT_MSG( apex1 == apex2, "Getting Apex failed" )
+	TEST_ASSERT_MSG( apex1 == apex2, "Getting Apex failed after init" )
+	
+	apex1 = apex2;
+	TEST_ASSERT_MSG( apex1 == apex2, "Getting Apex failed after copy" )
 	
 	rect2.setApex( Apex( -2, -2, 2, 2 ) );
 	TEST_ASSERT_MSG( rect1 == rect2, "Setting rect from apex failed" )
@@ -89,6 +113,19 @@ void TestDRect::inside_test()
 	TEST_ASSERT_MSG( rect.isInside( pt1, false ) == true, "Check if a point is inside a rect failed" )
 	TEST_ASSERT_MSG( rect.isInside( pt2, false ) == false, "Check if a point is inside a rect failed" )
 	TEST_ASSERT_MSG( rect.isInside( pt3, false ) == false, "Check if a point is inside a rect failed" )
+}
+
+void TestDRect::stream_test()
+{
+	Rect ref( -2, -2, 2, 2 );
+	std::ostringstream stream;
+	DString buffer;
+	
+	buffer = ref.toString();
+	TEST_ASSERT_MSG( buffer == "{-2,-2,2,2}", "Export on DString failed" )
+	
+	stream << ref;
+	TEST_ASSERT_MSG( stream.str() == "{-2,-2,2,2}", "Export on DString failed" )
 }
 
 int main()
