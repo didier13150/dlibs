@@ -266,14 +266,7 @@ DSMTP::ERRNO DSMTP::send()
 	}
 
     // Say hello
-	if ( m_data.host.isIPAddress() )
-	{
-		buffer = "HELO " + m_data.host.getIPAddress();
-	}
-	else
-	{
-		buffer = "HELO " + m_data.host.getHost();
-	}
+	buffer = "HELO " + m_data.host.getHost();
 	m_serverlog.push_back(buffer);
 	if (sock.writeMessage(buffer) != DSock::SUCCESS)
 	{
