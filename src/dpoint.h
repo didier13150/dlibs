@@ -88,23 +88,23 @@ public:
      * Gets the X-coordinate and the Y-coordinate of the DPoint.
      * @see setPoint (x, y)
      */
-    void getPoint(T &x, T &y) { x = X; y = Y; };
+    void getPoint(T &x, T &y) const { x = X; y = Y; };
     /**
      * Returns the X-coordinate of the DPoint.
      * @see setX (x)
      */
-    T getX(void) { return X; };
+    T getX(void) const { return X; };
     /**
      * Returns the Y-coordinate of the DPoint.
      * @see setY (y)
      */
-    T getY(void) { return Y; };
+    T getY(void) const { return Y; };
 
     /**
      * Returns the sum of the absolute values of X and Y from the origin to the
      * point
      */
-    T getLength(void) { return (sqrt(pow(X,2)+pow(Y,2))); }
+    T getLength(void) const { return (sqrt(pow(X,2)+pow(Y,2))); }
 
     /**
      * Sets the X and Y values of the DPoint to 0
@@ -114,7 +114,7 @@ public:
      * Returns TRUE if both the X value and the Y value are null; otherwise
      * returns FALSE.
      */
-    bool isNull(void)
+    bool isNull(void) const
     {
         if(X && Y) return false;
         return true;
@@ -483,7 +483,7 @@ public:
      * Return true if X is sup than pt.X ; false otherwise.
      * @deprecated Please use (pt1.getX() > pt2.getX()) instead.
      */
-    bool isX_Sup(DPoint pt)
+    bool isX_Sup(DPoint pt) const
     {
         if (X > pt.X)
         {
@@ -496,7 +496,7 @@ public:
      * Return true if X is equal or sup than pt.X ; false otherwise.
      * @deprecated Please use (pt1.getX() >= pt2.getX()) instead.
      */
-    bool isX_ESup(DPoint pt)
+    bool isX_ESup(DPoint pt) const
     {
         if (X >= pt.X)
         {
@@ -509,7 +509,7 @@ public:
      * Return true if Y is sup than pt.Y ; false otherwise.
      * @deprecated Please use (pt1.getY() < pt2.getY()) instead.
      */
-    bool isY_Sup(DPoint pt)
+    bool isY_Sup(DPoint pt) const
     {
         if (Y > pt.Y)
         {
@@ -522,7 +522,7 @@ public:
      * Return true if Y is equal or sup than pt.Y ; false otherwise.
      * @deprecated Please use (pt1.getY() <= pt2.getY()) instead.
      */
-    bool isY_ESup(DPoint pt)
+    bool isY_ESup(DPoint pt) const
     {
         if (Y >= pt.Y)
         {
@@ -581,7 +581,7 @@ public:
         return s;
     }
 	
-	std::string toString(void)
+	std::string toString(void) const
 	{
 		std::ostringstream oss;
 		
