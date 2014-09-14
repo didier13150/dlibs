@@ -42,17 +42,7 @@
 class TestDURL : public Test::Suite
 {
 public:
-	TestDURL()
-	{
-		TEST_ADD( TestDURL::constructor_test )
-		TEST_ADD( TestDURL::url_test )
-		TEST_ADD( TestDURL::port_test )
-		TEST_ADD( TestDURL::get_url_test )
-		TEST_ADD( TestDURL::get_error_test )
-		TEST_ADD( TestDURL::to_string_test )
-		TEST_ADD( TestDURL::stream_test )
-		TEST_ADD( TestDURL::encode_test )
-	}
+	TestDURL();
 
 private:
 	void constructor_test();
@@ -63,6 +53,7 @@ private:
 	void to_string_test();
 	void stream_test();
 	void encode_test();
+	void bad_ip_test();
 };
 
 #endif // _TESTDURL_H

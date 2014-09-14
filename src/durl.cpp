@@ -108,10 +108,9 @@ int DURL::setURL( const DString & address )
 	m_error = "";
 	m_errno = SUCCESS;
 	
-	if ( isIP( m_url.ip ) )
+	m_type = checkType( m_url.ip );
+	if ( m_type == DURL::IPV4_ADDR )
 	{
-		m_isIPAddress = true;
-		
 		char host[1024];
 		char service[20];
 		memset( &addr, 0, sizeof( addr ) );
@@ -130,27 +129,35 @@ int DURL::setURL( const DString & address )
 			m_url.hostname = host;
 		}
 		else {
-			m_url.hostname.clear();
+			m_url.hostname = m_url.ip;
 			m_error = "Cannot get hostname by address";
 			m_errno = NO_HOST_BY_ADDR;
 		}
 	}
-
+	else if ( m_type == DURL::IPV6_ADDR )
+	{
+		//TODO IPv6 part is not implemented yet
+	}
 	else
 	{
-		m_isIPAddress = false;		
+		m_url.ip.clear();
 		host_addr = gethostbyname( m_url.hostname.c_str() );
 
-		if ( !host_addr )
+		if ( ! host_addr )
 		{
 			m_error = "Cannot get address by hostname";
 			m_errno = NO_HOST_BY_NAME;
-			m_url.ip.clear();
 		}
 		else
 		{
 			addr.sin_addr.s_addr = reinterpret_cast<struct in_addr*> ( host_addr->h_addr )->s_addr;
 			m_url.ip = inet_ntoa( addr.sin_addr );
+			if ( checkType( m_url.ip ) == DURL::HOSTNAME )
+			{
+				m_error = "IP Address is out of range";
+				m_errno = IP_OUT_OF_RANGE;
+				m_url.ip.clear();
+			}
 		}
 	}
 
@@ -168,29 +175,29 @@ int DURL::setURL( const DString & address )
 	return m_errno;
 }
 
-bool DURL::isIP( const DString & address )
+DURL::Type DURL::checkType( const DString & address )
 {
 	unsigned short int val, place = 0;
 	DString segment;
-	bool isIP = false;
+	DURL::Type type = DURL::HOSTNAME;
 	DStringList segments;
 	DStringList::iterator it;
 	
-	// Check if it's an IP address
+	// Check if it's an IPv4 address
 	if ( address.contains( "." ) == 3 )
 	{
-		isIP = true;
+		type = DURL::IPV4_ADDR;
 		segments = address.split( "." );
 		place = 0;
 		for ( it = segments.begin() ; it != segments.end() ; ++it )
 		{
 			segment = *it;
 			val = segment.toUShort();
+			
 			// if segment is greater than 255, it's not an valid IPv4 address
-
 			if ( val > 255 )
 			{
-				isIP = false;
+				type = DURL::HOSTNAME;
 				break;
 			}
 
@@ -198,21 +205,27 @@ bool DURL::isIP( const DString & address )
 			// it's not an IP address
 			if ( ( val == 0 ) && ! ( segment == "0" || segment == "00" || segment == "000" ) )
 			{
-				isIP = false;
+				type = DURL::HOSTNAME;
 				break;
 			}
 
 			// First or last segment cannot be null
 			if ((( place == 0 ) || ( place == 3 ) ) && ( val == 0 ) )
 			{
-				isIP = false;
+				type = DURL::HOSTNAME;
 				break;
 			}
 
 			place++;
 		}
 	}
-	return isIP;
+	// Check if it's an IPv6 address
+	else if ( address.contains( ":" ) >= 2 )
+	{
+		//TODO not implemented yet
+		//type = DURL::IPV6_ADDR;
+	}
+	return type;
 }
 
 DString DURL::getHexaCharString( uint32_t code )
@@ -290,16 +303,6 @@ const DString & DURL::getPath() const
 	return m_url.path;
 }
 
-bool DURL::isIPAddress() const
-{
-	return m_isIPAddress;
-}
-
-bool DURL::isHostname() const
-{
-	return ( not m_isIPAddress );
-}
-
 const DString & DURL::getLastError() const
 {
 	return m_error;
@@ -310,9 +313,14 @@ int DURL::getLastErrno()
 	return m_errno;
 }
 
+const DURL::Type & DURL::getType() const
+{
+	return m_type;
+}
+
 void DURL::clear()
 {
-	m_isIPAddress = false;
+	m_type = DURL::HOSTNAME;
 	m_url.clear();
 	m_error.clear();
 }
@@ -379,28 +387,22 @@ int DURL::getPortByService( const DString & servicename, const DString & protoco
 		{
 			items = buffer.simplifyWhiteSpace().split( " " );
 			it = items.begin();
-			if ( it == items.end() )
-			{
-				return 0;
-			}
 			if ( *it == servicename )
 			{
 				++it;
 				// no more data on this line
-				if ( it == items.end() )
+				if ( it != items.end() )
 				{
-					return 0;
-				}
-				buffer = it->section( "/", 1 );
-				if ( buffer == protocol )
-				{
-					port = it->section( "/", 0, 0 ).toInt();
-					return port;
+					buffer = it->section( "/", 1 );
+					if ( buffer == protocol )
+					{
+						port = it->section( "/", 0, 0 ).toInt();
+					}
 				}
 			}
 		}
 	}
 	
 	servfile.close();
-	return 0;
+	return port;
 }

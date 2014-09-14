@@ -63,20 +63,24 @@ public:
 	DURL(DString url);
 
 	/**
-	* All URL type
-	*/
-	enum URLType
+     * @typedef Type
+	 * Defining All URL type
+	 */
+	typedef enum type
 	{
 		/// The URL is a hostname.
 		HOSTNAME,
-		/// The URL is a IP address.
-		IP_ADDR,
-	};
+		/// The URL is a IPv4 address.
+		IPV4_ADDR,
+		/// The URL is a IPv6 address.
+		IPV6_ADDR,
+	} Type;
 
 	/**
-	* All error messages
-	*/
-	enum Error
+     * @typedef Error
+	 * Defining All error messages
+	 */
+	typedef enum error
 	{
 		/// No error
 		SUCCESS,
@@ -86,7 +90,9 @@ public:
 		NO_HOST_BY_NAME,
 		/// Cannot get service name
 		NO_SERVICE,
-	};
+		/// IP address is out of range
+		IP_OUT_OF_RANGE,
+	} Error;
 	
 	/**
 	* Set the URL (host name or IP address).
@@ -126,14 +132,10 @@ public:
 	const DString & getPath() const;
 
 	/**
-	* Return true if the URL contains an IP address, false otherwise.
+	* Return URL type.
+	* 
 	*/
-	bool isIPAddress() const;
-	
-	/**
-	* Return true if the URL contains a host name, false otherwise.
-	*/
-	bool isHostname() const;
+	const Type & getType() const;
 
 	/**
 	* Get the last error string.
@@ -170,7 +172,7 @@ public:
 	static int getPortByService( const DString & service,
 								 const DString & protocol = "tcp" );
 
-private:
+protected:
 
 	class DURLData
 	{
@@ -201,8 +203,8 @@ private:
 	
 	/// The URL
 	DURLData m_url;
-	/// IP address only flag
-	bool m_isIPAddress;
+	/// URL type
+	Type m_type;
 	/// The last error number
 	int m_errno;
 	/// The last error string.
@@ -212,7 +214,7 @@ private:
 	 * Check if URL is an IP address.
 	 * @return true if URL is an IP address. False otherwise.
 	 */
-	bool isIP( const DString & address );
+	Type checkType( const DString & address );
 	
 	/**
 	 * Encode URL
