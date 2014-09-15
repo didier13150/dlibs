@@ -451,13 +451,25 @@ void TestDString::time_test()
 	DString str;
 	str = DString::timeToString ( 1404831621, "%Y-%m-%d %H-%M-%S" );
 	TEST_ASSERT_MSG( str == "2014-07-08 17-00-21", "Get Date-Time failed" )
+	
 	str = DString::timeToString ( 1404831621, DString::ISO_DATETIME_T );
 	TEST_ASSERT_MSG( str == "2014-07-08T17:00:21", "Get Date-Time failed" )
+	
 	str.convertTime ( "%Y-%m-%dT%H-%M-%S", "%Y-%m-%d" );
 	TEST_ASSERT_MSG( str == "2014-07-08", "Convert Date-Time to Date failed" )
+	
 	str = DString::timeToString ( 1404831621, "%Y-%m-%dT%H-%M-%S" );
 	str.convertTime ( "%Y-%m-%dT%H-%M-%S", "%H:%M:%S" );
 	TEST_ASSERT_MSG( str == "17:00:21", "Convert Date-Time to Time failed" )
+	
+	str = DString::timeToString ( 1404831621, DString::ISO_DATETIME );
+	TEST_ASSERT_MSG( str == "2014-07-08 17:00:21", "Get Date-Time failed" )
+	
+	str = DString::timeToString ( 1404831621, DString::ISO_DATE );
+	TEST_ASSERT_MSG( str == "2014-07-08", "Get Date failed" )
+	
+	str = DString::timeToString ( 1404831621,  DString::ISO_TIME );
+	TEST_ASSERT_MSG( str == "17:00:21", "Get Time failed" )
 }
 
 void TestDString::map_key_test()
@@ -568,6 +580,110 @@ void TestDString::html_test()
 	
 	str = "UTF-8 ¡ ¢ £ € ¥ Š § š © ª « ¬ ® ¯";
 	TEST_ASSERT_MSG( str.toHTML() == "UTF&#45;8 &#161; &#162; &#163; &#8364; &#165; &#352; &#167; &#353; &#169; &#170; &#171; &#172; &#174; &#175;", "Bad encodage" )
+}
+
+void TestDString::replace_escape_test()
+{
+	DString str, ref;
+	
+	str = static_cast<char> ( 0x00 );
+	ref = "<NUL>";
+
+	str += 0x01;
+	ref += "<SOH>";
+
+	str += 0x02;
+	ref += "<STX>";
+
+	str += 0x03;
+	ref += "<ETX>";
+
+	str += 0x04;
+	ref += "<EOT>";
+
+	str += 0x05;
+	ref += "<ENQ>";
+
+	str += 0x06;
+	ref += "<ACK>";
+
+	str += 0x07;
+	ref += "<BEL>";
+
+	str += 0x08;
+	ref += "<BS>";
+
+	str += 0x09;
+	ref += "<HT>";
+
+	str += 0x0A;
+	ref += "<LF>";
+
+	str += 0x0B;
+	ref += "<VT>";
+
+	str += 0x0C;
+	ref += "<FF>";
+
+	str += 0x0D;
+	ref += "<CR>";
+
+	str += 0x0E;
+	ref += "<SO>";
+
+	str += 0x0F;
+	ref += "<SI>";
+
+	str += 0x10;
+	ref += "<DLE>";
+
+	str += 0x11;
+	ref += "<DC1>";
+
+	str += 0x12;
+	ref += "<DC2>";
+
+	str += 0x13;
+	ref += "<DC3>";
+
+	str += 0x14;
+	ref += "<DC4>";
+
+	str += 0x15;
+	ref += "<NAK>";
+
+	str += 0x16;
+	ref += "<SYN>";
+
+	str += 0x17;
+	ref += "<ETB>";
+
+	str += 0x18;
+	ref += "<CAN>";
+
+	str += 0x19;
+	ref += "<EM>";
+
+	str += 0x1A;
+	ref += "<SUB>";
+
+	str += 0x1B;
+	ref += "<ESC>";
+
+	str += 0x1C;
+	ref += "<FS>";
+
+	str += 0x1D;
+	ref += "<GS>";
+
+	str += 0x1E;
+	ref += "<RS>";
+
+	str += 0x1F;
+	ref += "<US>";
+	
+	TEST_ASSERT_MSG( str.replaceEscapeSequence() == ref, "Escape sequences are not replaced correctly" ) 
+	
 }
 
 int main()
