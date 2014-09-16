@@ -489,7 +489,7 @@ std::istream& operator >> ( std::istream& s, DString & str )
 
 DString DString::left ( unsigned int len ) const
 {
-	std::string str;
+	std::string str = "";
 
 	if ( len >= m_str.length() )
 	{
@@ -500,36 +500,28 @@ DString DString::left ( unsigned int len ) const
 	{
 		str = m_str.substr ( 0, len );
 	}
-	else
-	{
-		str = "";
-	}
 	return str;
 }
 
 DString DString::right ( unsigned int len ) const
 {
-	std::string str;
+	std::string str = "";
 
 	if ( len >= m_str.length() )
 	{
 		str = m_str;
 		return str;
 	}
-	if ( !isEmpty() )
+	if ( ! isEmpty() )
 	{
 		str = m_str.substr ( ( m_str.length() - len ), len );
-	}
-	else
-	{
-		str = "";
 	}
 	return str;
 }
 
 DString DString::mid ( unsigned int index, unsigned int len ) const
 {
-	std::string str;
+	std::string str = "";
 
 	if ( ( index + len ) >= m_str.length() )
 	{
@@ -537,19 +529,11 @@ DString DString::mid ( unsigned int index, unsigned int len ) const
 		{
 			str = m_str.substr ( index, ( m_str.length() - index ) );
 		}
-		else
-		{
-			str = "";
-		}
 		return str;
 	}
-	if ( ( !isEmpty() ) && ( index < m_str.length() ) )
+	if ( ( ! isEmpty() ) && ( index < m_str.length() ) )
 	{
 		str = m_str.substr ( ( 0 + index ), len );
-	}
-	else
-	{
-		str = "";
 	}
 	return str;
 }
@@ -872,8 +856,8 @@ int DString::contains ( const DString &str, bool cs ) const
 
 	if ( !cs )
 	{
-		buffer.lower();
-		occur.lower();
+		buffer.toLower();
+		occur.toLower();
 	}
 
 	if ( buffer.left( occur.length() ) == occur )
@@ -1709,7 +1693,7 @@ bool DString::containsOnlyLegalChar ( const std::list<char> & legalChar ) const
 
 bool DString::containsOnlyLegalChar ( BaseFlag base, CaseFlag caseflag ) const
 {
-	bool legal;
+	bool legal = false;
 
 	switch ( base )
 	{
@@ -1732,10 +1716,6 @@ bool DString::containsOnlyLegalChar ( BaseFlag base, CaseFlag caseflag ) const
 		{
 			legal = containsOnlyLegalChar ( onlyHexa ( caseflag ) );
 			break;
-		}
-		default:
-		{
-			return false;
 		}
 	}
 	return legal;

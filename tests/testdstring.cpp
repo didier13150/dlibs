@@ -65,14 +65,29 @@ void TestDString::add_test()
 {
 	DString str = "UTF-8 &éèêàâç";
 	std::string str2 = "Add";
-
-	str += str2;
-	TEST_ASSERT_MSG( str == "UTF-8 &éèêàâçAdd", "Add 2 DStrings failed" )
 	char c = 0x41; // A
+
+	TEST_ASSERT_MSG( str + str2 == "UTF-8 &éèêàâçAdd", "Add std::string to DStrings failed (operator +)" )
+	TEST_ASSERT_MSG( str2 + str == "AddUTF-8 &éèêàâç", "Add DStrings to std::string failed (operator +)" )
+	TEST_ASSERT_MSG( str + c == "UTF-8 &éèêàâçA", "Add char to DStrings failed (operator +)" )
+	TEST_ASSERT_MSG( c + str == "AUTF-8 &éèêàâç", "Add DStrings to char failed (operator +)" )
+	str += str2;
+	TEST_ASSERT_MSG( str == "UTF-8 &éèêàâçAdd", "Add std::string to DStrings failed (operator +=)" )
 	str += c;
 	TEST_ASSERT_MSG( str == "UTF-8 &éèêàâçAddA", "Add char failed (operator +=)" )
 	str = str + 0x24; // $
 	TEST_ASSERT_MSG( str == "UTF-8 &éèêàâçAddA$", "Add char failed (operator +)" )
+	
+	str = "UTF-8 &éèêàâç";
+	str2 = "Add";
+	c = 0x41; // A
+	TEST_ASSERT_MSG( str.append( str2 ) == "UTF-8 &éèêàâçAdd", "Append std::string to DStrings failed" )
+	str = "UTF-8 &éèêàâç";
+	TEST_ASSERT_MSG( str.append( c ) == "UTF-8 &éèêàâçA", "Append std::string to DStrings failed" )
+	str = "UTF-8 &éèêàâç";
+	TEST_ASSERT_MSG( str.prepend( str2 ) == "AddUTF-8 &éèêàâç", "Prepend std::string to DStrings failed" )
+	str = "UTF-8 &éèêàâç";
+	TEST_ASSERT_MSG( str.prepend( c ) == "AUTF-8 &éèêàâç", "Prepend std::string to DStrings failed" )
 }
 
 void TestDString::compare_test()
@@ -81,9 +96,30 @@ void TestDString::compare_test()
 	TEST_ASSERT_MSG( str == "U", "Compare DString with const char * failed" )
 	TEST_ASSERT_MSG( str == std::string("U"), "Compare DString with std string failed" )
 	TEST_ASSERT_MSG( str == 'U', "Compare DString with char failed" )
+	TEST_ASSERT_MSG( "U" == str, "Compare DString with const char * failed" )
+	TEST_ASSERT_MSG( std::string("U") == str, "Compare DString with std string failed" )
+	TEST_ASSERT_MSG( 'U' == str, "Compare DString with char failed" )
+	
+	TEST_ASSERT_MSG( ! ( str == "V" ), "Compare DString with const char * failed" )
+	TEST_ASSERT_MSG( ! ( str == std::string("V") ), "Compare DString with std string failed" )
+	TEST_ASSERT_MSG( ! ( str == 'V' ), "Compare DString with char failed" )
+	TEST_ASSERT_MSG( ! ( "V" == str ), "Compare DString with const char * failed" )
+	TEST_ASSERT_MSG( ! ( std::string("V") == str ), "Compare DString with std string failed" )
+	TEST_ASSERT_MSG( ! ( 'V' == str ), "Compare DString with char failed" )
+	
 	TEST_ASSERT_MSG( str != "u", "Compare DString with const char * failed" )
 	TEST_ASSERT_MSG( str != std::string("u"), "Compare DString with std string failed" )
 	TEST_ASSERT_MSG( str != 'u', "Compare DString with char failed" )
+	TEST_ASSERT_MSG( "u" != str, "Compare DString with const char * failed" )
+	TEST_ASSERT_MSG( std::string("u") != str, "Compare DString with std string failed" )
+	TEST_ASSERT_MSG( 'u' != str, "Compare DString with char failed" )
+	
+	TEST_ASSERT_MSG( ! ( str != "U" ), "Compare DString with const char * failed" )
+	TEST_ASSERT_MSG( ! ( str != std::string("U") ), "Compare DString with std string failed" )
+	TEST_ASSERT_MSG( ! ( str != 'U' ), "Compare DString with char failed" )
+	TEST_ASSERT_MSG( ! ( "U" != str ), "Compare DString with const char * failed" )
+	TEST_ASSERT_MSG( ! ( std::string("U") != str ), "Compare DString with std string failed" )
+	TEST_ASSERT_MSG( ! ( 'U' != str ), "Compare DString with char failed" )
 }
 
 void TestDString::others_operators_test()
@@ -539,6 +575,10 @@ void TestDString::contains_test()
 	TEST_ASSERT_MSG( str.contains( 'a' ) == 13, "Contains char failed" )
 	TEST_ASSERT_MSG( str.contains( "aa" ) == 10, "Contains string failed" )
 	TEST_ASSERT_MSG( str.contains( std::string( "aaa" ) ) == 7, "Contains string failed" )
+	TEST_ASSERT_MSG( str.contains( 'A', false ) == 13, "Contains char failed, case insensitive" )
+	TEST_ASSERT_MSG( str.contains( "AA", false ) == 10, "Contains string failed" )
+	TEST_ASSERT_MSG( str.contains( std::string( "AAA" ), false ) == 7, "Contains string failed" )
+	//std::cout << std::endl << str.contains( 'A', false ) << std::endl;
 
 }
 
