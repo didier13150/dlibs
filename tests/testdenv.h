@@ -47,12 +47,14 @@ public:
 		TEST_ADD( TestDEnv::constructor_test )
 		TEST_ADD( TestDEnv::setenv_test )
 		TEST_ADD( TestDEnv::getenv_test )
+		TEST_ADD( TestDEnv::stream_test )
 	}
 
 private:
 	void constructor_test();
 	void setenv_test();
 	void getenv_test();
+	void stream_test();
 };
 
 #endif // _TESTDENV_H

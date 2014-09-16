@@ -89,7 +89,8 @@ std::ostream & operator << ( std::ostream& s, const DEnv & env )
 
 	for ( it = env.m_vars.begin() ; it != env.m_vars.end() ; ++it )
 	{
-		s << it->first << " => " << it->second << std::endl;
+		if ( it->first != "void" )
+			s << it->first << " => " << it->second << std::endl;
 	}
 	return s;
 }

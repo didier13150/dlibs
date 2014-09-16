@@ -76,6 +76,22 @@ void TestDEnv::getenv_test()
 	DEnv::deleteInstance();
 }
 
+void TestDEnv::stream_test()
+{
+	std::ostringstream stream;
+	DString buffer;
+	
+	DEnv * env = DEnv::getInstance();
+	env->setVar( "toto95123", "env1" );
+	env->setVar( "toto95124", "env2" );
+	
+	stream << *env;
+	buffer = stream.str();
+	TEST_ASSERT_MSG( buffer  == "", "" )
+	std::cout << std::endl << buffer << std::endl;
+	
+}
+
 int main()
 {
 	TestDEnv ets;
