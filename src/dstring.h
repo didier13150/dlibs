@@ -110,13 +110,13 @@ template<class T> std::string valueToStr ( T & Value, int base = 10, int prec = 
 	}
 	if ( prec > 0 )
 	{
-		oss.precision ( prec );
+		oss.precision ( prec + 1 );
 	}
 	// Write value in flux
 	oss << Value;
 	// Return string
 	str = oss.str();
-	if ( prec >= 0 )
+	/*if ( prec >= 0 )
 	{
 		pos = str.find ( "." );
 		if ( pos != std::string::npos )
@@ -126,7 +126,7 @@ template<class T> std::string valueToStr ( T & Value, int base = 10, int prec = 
 				str = str.substr ( 0, ( pos + prec + 1 ) );
 			}
 		}
-	}
+	}*/
 	return str;
 }
 

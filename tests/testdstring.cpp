@@ -216,7 +216,7 @@ void TestDString::number_test()
 	str.clear();
 	TEST_ASSERT_MSG( str == DString::empty(), "clear failed" )
 	str.setNum( f, 6 );
-	TEST_ASSERT_MSG( str == "3.14159", "Convert float to DString failed" )
+	TEST_ASSERT_MSG( str == "3.141593", "Convert float to DString failed" )
 
 	str = "3.1415927";
 	double d = str.toDouble();
@@ -224,7 +224,7 @@ void TestDString::number_test()
 	str.clear();
 	TEST_ASSERT_MSG( str == DString::empty(), "clear failed" )
 	str.setNum( d, 6 );
-	TEST_ASSERT_MSG( str == "3.14159", "Convert double to DString failed" )
+	TEST_ASSERT_MSG( str == "3.141593", "Convert double to DString failed" )
 
 	str = "-3.1415927";
 	long double ld = str.toLongDouble();
@@ -232,7 +232,7 @@ void TestDString::number_test()
 	str.clear();
 	TEST_ASSERT_MSG( str == DString::empty(), "clear failed" )
 	str.setNum( ld, 6 );
-	TEST_ASSERT_MSG( str == "-3.14159", "Convert long double to DString failed" )
+	TEST_ASSERT_MSG( str == "-3.141593", "Convert long double to DString failed" )
 }
 
 void TestDString::binary_test()
@@ -338,11 +338,22 @@ void TestDString::substr_test()
 	TEST_ASSERT_MSG( str.section( " ", 1, 1 ) == "01234;56789", "Extract section failed" )
 	TEST_ASSERT_MSG( str.section( " ", 1, 2 ) == "01234;56789 abc;def", "Extract section from beginning failed" )
 	TEST_ASSERT_MSG( str.section( ";", -1, -2 ) == "56789 abc;def", "Extract section from end failed" )
-	str = "ABC;DEF 01234;56789 abc;def";
-	TEST_ASSERT_MSG( str.remove( ";" ).remove( ' ' ) == "ABCDEF0123456789abcdef", "Remove string or char failed" )
+	TEST_ASSERT_MSG( str.section( ";", -4, -6 ) == "ABC", "Extract section from end failed" )
+	TEST_ASSERT_MSG( str.section( ";", -5, -6 ) == DString::empty(), "Extract section from end failed" )
+	
+	str = "ABC;DEF 012*34;56789 abc;def*";
+	TEST_ASSERT_MSG( str.remove( ";" ).remove( ' ' ).remove( std::string( "*" ) ) == "ABCDEF0123456789abcdef", "Remove string or char failed" )
+	str = "ABCDEF0123456789abcdef";
+	TEST_ASSERT_MSG( str.remove( "ABC", false ) == "DEF0123456789def", "Remove string or char failed" )
 	str = "ABCDEF0123456789abcdef";
 	str.remove( 16, 4 );
 	TEST_ASSERT_MSG( str == "ABCDEF0123456789ef", "Remove by place failed" )
+	str = "ABCDEFabcdef";
+	str.remove( 16, 4 );
+	TEST_ASSERT_MSG( str == "ABCDEFabcdef", "Remove by place failed" )
+	str.remove( 10, 8 );
+	TEST_ASSERT_MSG( str == "ABCDEFabcd", "Remove by place failed" )
+	
 	str = "ABCDEF0123456789abcdef";
 	str.replace( "a", ",", false );
 	TEST_ASSERT_MSG( str == ",BCDEF0123456789,bcdef", "Replace string or char failed" )
@@ -351,10 +362,33 @@ void TestDString::substr_test()
 	TEST_ASSERT_MSG( str == "ABCDEF0123456789,bcdef", "Replace string or char failed" )
 	str = "ABCDEF0123456789abcdef";
 	str.replace( 6, 10, "--" );
-	TEST_ASSERT_MSG( str == "ABCDEF--abcdef", "Replace by place failed" )
+	TEST_ASSERT_MSG( str == "ABCDEF--abcdef", "Replace by place failed (const char*)" )
+	str = "ABCDEF0123456789abcdef";
+	str.replace( 6, 10, std::string( "--" ) );
+	TEST_ASSERT_MSG( str == "ABCDEF--abcdef", "Replace by place failed (std::string)" )
+	str = "ABCDEF0123456789abcdef";
+	str.replace( 6, 10, '-' );
+	TEST_ASSERT_MSG( str == "ABCDEF-abcdef", "Replace by place failed (char)" )
+	str = "ABCDEF";
+	str.replace( 8, 10, '-' );
+	TEST_ASSERT_MSG( str == "ABCDEF  -", "Replace by place failed (char)" )
+	str = "ABCDEF";
+	str.replace( 8, 2, '-' );
+	TEST_ASSERT_MSG( str == "ABCDEF  -", "Replace by place failed (char)" )
+	
 	str = "ABCDEFabcdef";
 	str.insert( 6, "0123456789" );
 	TEST_ASSERT_MSG( str == "ABCDEF0123456789abcdef", "Insert by place failed" )
+	str = "ABCDEFabcdef";
+	str.insert( 14, "0123456789" );
+	TEST_ASSERT_MSG( str == "ABCDEFabcdef  0123456789", "Insert by place failed" )
+	str = "ABCDEFabcdef";
+	str.insert( 6, std::string( "0123456789" ) );
+	TEST_ASSERT_MSG( str == "ABCDEF0123456789abcdef", "Insert by place failed" )
+	str = "ABCDEFabcdef";
+	str.insert( 6, '0' );
+	TEST_ASSERT_MSG( str == "ABCDEF0abcdef", "Insert by place failed" )
+	
 	str = "ABCDEF0123456789abcdef";
 	TEST_ASSERT_MSG( str.find( "abc" ) == 16, "Find substring failed (case sensitive)" )
 	TEST_ASSERT_MSG( str.find( "abc", -1 ) == 16, "Find substring failed (case sensitive)" )
@@ -364,6 +398,24 @@ void TestDString::substr_test()
 	TEST_ASSERT_MSG( str.find( "ABC", -1, false ) == 16, "Reverse find substring failed (case insensitive)" )
 	TEST_ASSERT_MSG( str.find( "abc", 0, false ) == 0, "Find substring failed (case insensitive)" )
 	TEST_ASSERT_MSG( str.find( "ABC", 0, false ) == 0, "Find substring failed (case insensitive)" )
+	
+	TEST_ASSERT_MSG( str.find( std::string( "abc" ) ) == 16, "Find substring failed (case sensitive)" )
+	TEST_ASSERT_MSG( str.find( std::string( "abc" ), -1 ) == 16, "Find substring failed (case sensitive)" )
+	TEST_ASSERT_MSG( str.find( std::string( "ABC" ) ) == 0, "Find substring failed (case sensitive)" )
+	TEST_ASSERT_MSG( str.find( std::string( "ABC" ), 0 ) == 0, "Find substring failed (case sensitive)" )
+	TEST_ASSERT_MSG( str.find( std::string( "abc" ), -1, false ) == 16, "Reverse find substring failed (case insensitive)" )
+	TEST_ASSERT_MSG( str.find( std::string( "ABC" ), -1, false ) == 16, "Reverse find substring failed (case insensitive)" )
+	TEST_ASSERT_MSG( str.find( std::string( "abc" ), 0, false ) == 0, "Find substring failed (case insensitive)" )
+	TEST_ASSERT_MSG( str.find( std::string( "ABC" ), 0, false ) == 0, "Find substring failed (case insensitive)" )
+	
+	TEST_ASSERT_MSG( str.find( 'a' ) == 16, "Find substring failed (case sensitive)" )
+	TEST_ASSERT_MSG( str.find( 'a', -1 ) == 16, "Find substring failed (case sensitive)" )
+	TEST_ASSERT_MSG( str.find( 'A' ) == 0, "Find substring failed (case sensitive)" )
+	TEST_ASSERT_MSG( str.find( 'A', 0 ) == 0, "Find substring failed (case sensitive)" )
+	TEST_ASSERT_MSG( str.find( 'a', -1, false ) == 16, "Reverse find substring failed (case insensitive)" )
+	TEST_ASSERT_MSG( str.find( 'A', -1, false ) == 16, "Reverse find substring failed (case insensitive)" )
+	TEST_ASSERT_MSG( str.find( 'a', 0, false ) == 0, "Find substring failed (case insensitive)" )
+	TEST_ASSERT_MSG( str.find( 'A', 0, false ) == 0, "Find substring failed (case insensitive)" )
 }
 
 void TestDString::legal_char_test()
@@ -451,7 +503,7 @@ void TestDString::split_test()
 	DString sub;
 	DStringList strl = str.split ( "\n" );
 	TEST_ASSERT_MSG( strl.size() == 4, "Split with wrong number of substr" )
-
+	
 	DStringList::iterator it = strl.begin();
 	TEST_ASSERT_MSG( it != strl.end(), "Split with wrong number of substr" )
 	unsigned short int i = 1;
@@ -463,10 +515,43 @@ void TestDString::split_test()
 		++it;
 		i++;
 	}
+	
+	strl.clear();
+	strl = str.split ( "\n", true );
+	TEST_ASSERT_MSG( strl.size() == 6, "Split with wrong number of substr" )
+	it = strl.begin();
+	TEST_ASSERT_MSG( it != strl.end(), "Split with wrong number of substr" )
+	i = 0;
+	while ( it != strl.end() ) {
+		sub.clear();
+		sub.setNum( i );
+		sub.prepend( "text" );
+		if ( ! i || i == 5 ) sub.clear();
+		TEST_ASSERT_MSG( *it == sub, "Substr is wrong" )
+		++it;
+		i++;
+	}
+	
 	// Must be separated by space
 	str = " text1 text2 text3 text4 ";
 	strl.clear();
 	strl = str.splitConstantSize( " ", 6 );
+	TEST_ASSERT_MSG( strl.size() == 4, "Split with wrong number of substr" )
+
+	it = strl.begin();
+	TEST_ASSERT_MSG( it != strl.end(), "Split with wrong number of substr" )
+	i = 1;
+	while ( it != strl.end() ) {
+		sub.clear();
+		sub.setNum( i );
+		sub.prepend( "text" );
+		TEST_ASSERT_MSG( *it == sub, "Substr is wrong" )
+		++it;
+		i++;
+	}
+	
+	strl.clear();
+	strl = str.splitConstantSize( " ", 3 );
 	TEST_ASSERT_MSG( strl.size() == 4, "Split with wrong number of substr" )
 
 	it = strl.begin();
@@ -506,6 +591,12 @@ void TestDString::time_test()
 	
 	str = DString::timeToString ( 1404831621,  DString::ISO_TIME );
 	TEST_ASSERT_MSG( str == "17:00:21", "Get Time failed" )
+	
+	str = DString::Now( DString::ISO_DATETIME_T );
+	TEST_ASSERT_MSG( str == DString::timeToString ( time( 0 ), DString::ISO_DATETIME_T ), "Now is not current date-time" )
+	
+	str = DString::Now( "%Y-%m-%d %H-%M-%S" );
+	TEST_ASSERT_MSG( str == DString::timeToString ( time( 0 ), "%Y-%m-%d %H-%M-%S" ), "Now is not current date-time" )
 }
 
 void TestDString::map_key_test()
@@ -722,7 +813,46 @@ void TestDString::replace_escape_test()
 	str += 0x1F;
 	ref += "<US>";
 	
-	TEST_ASSERT_MSG( str.replaceEscapeSequence() == ref, "Escape sequences are not replaced correctly" ) 
+	TEST_ASSERT_MSG( str.replaceEscapeSequence() == ref, "Escape sequences are not replaced correctly" )
+}
+
+void TestDString::related_function_test()
+{
+	int i = 0;
+
+	//Decimal
+	strToValue( i, "123456789", 10 );
+	TEST_ASSERT_MSG( i == 123456789, "String to value failed (base 10)" )
+	
+	i = 0;
+	strToValue( i, "123456789" );
+	TEST_ASSERT_MSG( i == 123456789, "String to value failed (base 10)" )
+	
+	// Hexa
+	i = 0;
+	strToValue( i, "75bcd15", 16 );
+	TEST_ASSERT_MSG( i == 123456789, "String to value failed (base 16)" )
+	i = 0;
+	strToValue( i, "0x75bcd15" );
+	TEST_ASSERT_MSG( i == 123456789, "String to value failed (base 16)" )
+	
+	// Octal
+	i = 0;
+	strToValue( i, "361100", 8 );
+	TEST_ASSERT_MSG( i == 123456, "String to value failed (base 8)" )
+	i = 0;
+	strToValue( i, "0361100" );
+	TEST_ASSERT_MSG( i == 123456, "String to value failed (base 8)" )
+	
+	i = 123456789;
+	TEST_ASSERT_MSG( valueToStr( i ) == std::string( "123456789" ), "Value to string failed (base 10)" )
+	TEST_ASSERT_MSG( valueToStr( i, 16 ) == std::string( "75bcd15" ), "Value to string failed (base 16)" )
+	i = 123456;
+	TEST_ASSERT_MSG( valueToStr( i, 8 ) == std::string( "361100" ), "Value to string failed (base 8)" )
+	
+	double d = 3.14159265359;
+	TEST_ASSERT_MSG( valueToStr( d, 10, 11 ) == std::string( "3.14159265359" ), "float to string failed (base 10)" )
+	TEST_ASSERT_MSG( valueToStr( d, 10, 2 ) == std::string( "3.14" ), "float to string failed (base 10)" )
 	
 }
 

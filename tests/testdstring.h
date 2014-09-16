@@ -64,6 +64,7 @@ public:
 		TEST_ADD( TestDString::quoted_printable_test )
 		TEST_ADD( TestDString::html_test )
 		TEST_ADD( TestDString::replace_escape_test )
+		TEST_ADD( TestDString::related_function_test )
 	}
     
 private:
@@ -87,6 +88,7 @@ private:
 	void quoted_printable_test();
 	void html_test();
 	void replace_escape_test();
+	void related_function_test();
 };
 
 #endif // _TESTDSTRING_H

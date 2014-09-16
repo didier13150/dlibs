@@ -1102,7 +1102,7 @@ DString & DString::remove ( const DString & str, bool cs )
 
 	if ( !cs )
 	{
-		buffer.lower();
+		buffer.toLower();
 	}
 
 	do
@@ -1143,7 +1143,7 @@ DString DString::section ( const DString sep, int start, int end ) const
 	DStringList liststr;
 	DStringList::iterator ite;
 	std::list<DString>::reverse_iterator rite;
-	DString buffer;
+	DString buffer = "";
 	int i = 0;
 
 	liststr = split ( sep );
@@ -1152,18 +1152,13 @@ DString DString::section ( const DString sep, int start, int end ) const
 	if ( ( start >= 0 ) && ( end >= start ) )
 	{
 		ite = liststr.begin();
-		if ( ite == liststr.end() )
-		{
-			buffer = "";
-		}
-		else
+		if ( ite != liststr.end() )
 		{
 			for ( i = 0 ; i < start ; i++ )
 			{
 				ite++;
 				if ( ite == liststr.end() )
 				{
-					buffer = "";
 					break;
 				}
 			}
@@ -1183,18 +1178,13 @@ DString DString::section ( const DString sep, int start, int end ) const
 	else if ( ( start < 0 ) && ( ( end <= start ) || ( end == 0xFFFFFFF ) ) )
 	{
 		rite = liststr.rbegin();
-		if ( rite == liststr.rend() )
-		{
-			buffer = "";
-		}
-		else
+		if ( rite != liststr.rend() )
 		{
 			for ( i = 1 ; i < static_cast<int> ( std::abs ( static_cast<double> ( start ) ) ) ; i++ )
 			{
 				rite++;
 				if ( rite == liststr.rend() )
 				{
-					buffer = "";
 					break;
 				}
 			}
@@ -1210,10 +1200,6 @@ DString DString::section ( const DString sep, int start, int end ) const
 			}
 		}
 	}
-	else
-	{
-		buffer = "";
-	}
 
 	return buffer;
 }
@@ -1228,11 +1214,8 @@ DString DString::timeToString ( const time_t & t, DString format )
 	stm = localtime ( &t );
 	if ( ! stm ) return date;
 	mktime( stm );
-	//translate format's time and writting on file
-	if ( ! strftime ( buffer, sizeof( buffer ), format.c_str(), stm ) )
-	{
-		return DString::empty();
-	}
+	//translate format's time and writting on buffer
+	strftime ( buffer, sizeof( buffer ), format.c_str(), stm );
 	date = buffer;
 	
 	return date;
