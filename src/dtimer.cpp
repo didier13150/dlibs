@@ -32,6 +32,7 @@
  ******************************************************************************/
 
 #include "dtimer.h"
+#include <time.h>
 
 using namespace std;
 
@@ -108,7 +109,7 @@ long unsigned int DTimer::timeToTimeout()
 	long double timestamp;
 
 	// always return 0 if timer is not started
-	if ( !isRunning() )
+	if ( ! isRunning() )
 	{
 		return 0.0;
 	}

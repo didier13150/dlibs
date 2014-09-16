@@ -44,7 +44,9 @@
 void TestDTimer::start_precision_test()
 {
 	DTimer timer;
-	timer.start(1500);
+	
+	TEST_ASSERT_MSG( timer.timeToTimeout() == 0, "Timer musn't be started at this point" )
+	timer.start( 1500 );
 	sleep( 1 );
 	TEST_ASSERT_MSG( timer.timeToTimeout() > 0, "No timeout" )
 	TEST_ASSERT_MSG( timer.isStarted() == true, "Timer not started" )
@@ -56,17 +58,26 @@ void TestDTimer::start_precision_test()
 	TEST_ASSERT_MSG( timer.isStarted() == true, "Timer not restarted" )
 	timer.stop();
 	TEST_ASSERT_MSG( timer.isStarted() == false, "Timer not stopped" )
+	TEST_ASSERT_MSG( timer.timeToTimeout() == 0, "Timeout not reached" )
+	timer.restart();
+	TEST_ASSERT_MSG( timer.timeToTimeout() > 0, "No timeout" )
+	TEST_ASSERT_MSG( timer.isStarted() == true, "Timer not started" )
 }
 void TestDTimer::start_rounded_test()
 {
 	DTimer timer;
-	timer.start(2800);
+	
+	TEST_ASSERT_MSG( timer.timeToTimeout() == 0, "Timer musn't be started at this point" )
+	timer.start( 2800 );
 	sleep( 1 );
 	TEST_ASSERT_MSG( timer.timeToTimeout() > 0, "No timeout" )
 	TEST_ASSERT_MSG( timer.isStarted() == true, "Timer not started" )
 	sleep( 2 );
 	TEST_ASSERT_MSG( timer.timeToTimeout() == 0, "Timeout not reached" )
 	TEST_ASSERT_MSG( timer.isStarted() == false, "Timer not stopped" )
+	timer.restart( 500 );
+	TEST_ASSERT_MSG( timer.timeToTimeout() > 0, "No timeout" )
+	TEST_ASSERT_MSG( timer.isStarted() == true, "Timer not started" )
 }
 
 int main()
