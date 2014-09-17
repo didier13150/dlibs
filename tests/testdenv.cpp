@@ -79,7 +79,7 @@ void TestDEnv::getenv_test()
 void TestDEnv::stream_test()
 {
 	std::ostringstream stream;
-	DString buffer;
+	DString buffer, ref;
 	
 	DEnv * env = DEnv::getInstance();
 	env->setVar( "toto95123", "env1" );
@@ -87,8 +87,10 @@ void TestDEnv::stream_test()
 	
 	stream << *env;
 	buffer = stream.str();
-	TEST_ASSERT_MSG( buffer  == "", "" )
-	std::cout << std::endl << buffer << std::endl;
+	ref = "HOME => ";
+	ref += env->getVar( "HOME" );
+	ref += "\ntoto95123 => env1\ntoto95124 => env2\n";
+	TEST_ASSERT_MSG( buffer  == ref, "Print env on stream failed" )
 	
 }
 
