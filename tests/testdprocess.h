@@ -47,12 +47,14 @@ public:
 		TEST_ADD( TestDProcess::simple_test )
 		TEST_ADD( TestDProcess::block_test )
 		TEST_ADD( TestDProcess::nonblock_test )
+		TEST_ADD( TestDProcess::get_test )
 	}
 
 private:
 	void simple_test();
 	void block_test();
 	void nonblock_test();
+	void get_test();
 };
 
 #endif // _TESTDPROCESS_H

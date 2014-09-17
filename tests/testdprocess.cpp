@@ -97,6 +97,38 @@ void TestDProcess::nonblock_test()
 	process.stop();
 }
 
+void TestDProcess::get_test()
+{
+	DProcess process;
+	DStringList args, getargs;
+	DStringList::iterator it;
+	
+	process.setExecutable( "ls" );
+	args.push_back( "-l" );
+	args.push_back( "/tmp" );
+	args.push_back( "1>/dev/null" );
+	args.push_back( "2>&1" );
+	process.setArgs( args );
+	process.setComMode( DProcess::WRITE_ONLY );
+	TEST_ASSERT_MSG( process.getComMode() == DProcess::WRITE_ONLY, "Bad Communication mode by default" )
+	TEST_ASSERT_MSG( process.getExeMode() == DProcess::NOBLOCK, "Bad Execution mode by default" )
+	
+	getargs = process.getArgs();
+	TEST_ASSERT_MSG( args == getargs, "Arguments set to process are not the same as reported by it" )
+	TEST_ASSERT_MSG( process.getExecutable() == "ls", "Executable set to process is not the same as reported by it" )
+	
+	process.start();
+	while ( process.isRunning() )
+	{
+		usleep( 100000 );
+	}
+	process.stop();
+	process.clearArgs();
+	getargs = process.getArgs();
+	TEST_ASSERT_MSG( getargs.size() == 0, "Argument list is not cleared" )
+	TEST_ASSERT_MSG( process.getOutput().isEmpty(), "No empty output on WRITE_ONLY process" )
+}
+
 int main()
 {
 	TestDProcess ets;

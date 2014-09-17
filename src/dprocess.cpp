@@ -108,13 +108,16 @@ void DProcess::run()
 		return;
 	}
 	
-	buf = new char[ bufsize ];
-
-	while ( fgets( buf, bufsize, m_file ) != 0 )
+	if ( m_com_mode == READ_ONLY)
 	{
-		addOutput( buf );
+		buf = new char[ bufsize ];
+
+		while ( fgets( buf, bufsize, m_file ) != 0 )
+		{
+			addOutput( buf );
+		}
+		delete[]( buf );
 	}
-	delete[]( buf );
 	
 	pclose( m_file );
 
