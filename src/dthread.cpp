@@ -107,24 +107,16 @@ void DThread::start()
 	pthread_create ( &m_handle, m_attr, &DThread::entryPoint, this );
 }
 
-void DThread::stop()
+void DThread::stop( bool force )
 {
 	m_continue = false;
+	usleep( m_sleeptime * 2 ); // Let thread a chance to finish himself before cancel it.
 	if ( m_handle )
 	{
-		m_return = pthread_join ( m_handle, NULL );
-		m_handle = 0;
-		m_status = DThread::STOPPED;
-	}
-}
-
-void DThread::forcestop()
-{
-	m_continue = false;
-	usleep( m_sleeptime ); // Let thread a chance to finish himself before cancel it.
-	if ( m_handle )
-	{
-		pthread_cancel( m_handle );
+		if ( force )
+		{
+			pthread_cancel( m_handle );
+		}
 		m_return = pthread_join ( m_handle, NULL );
 		m_handle = 0;
 		m_status = DThread::STOPPED;
@@ -135,12 +127,7 @@ void * DThread::entryPoint( void * pthis )
 {
 	DThread * th = reinterpret_cast<DThread *> ( pthis );
 	
-	if ( pthread_setcancelstate( PTHREAD_CANCEL_ENABLE, NULL ) != 0 )
-	{
-		th->m_status = DThread::STOPPED;
-		th->m_return = 127;
-		pthread_exit( NULL );
-	}
+	pthread_setcancelstate( PTHREAD_CANCEL_ENABLE, NULL );
 	
 	th->m_status = DThread::RUNNING;
 	do

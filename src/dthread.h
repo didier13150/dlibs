@@ -94,14 +94,9 @@ public:
 	/**
 	 * Stop thread
 	 * @brief stop thread
+	 * @param force Cancel thread before waiting for termination
 	 */
-	void stop();
-
-	/**
-	 * Force thread to stop by cancel it before join.
-	 * @brief Force thread to stop
-	 */
-	void forcestop();
+	void stop( bool force = false );
 
 	/**
 	 * Threaded process

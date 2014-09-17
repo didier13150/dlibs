@@ -79,6 +79,7 @@ void TestDThread::multi_loop_test()
 	sleep( 1 );
 	TEST_ASSERT_MSG( foo.isRunning() == true, "Multi loop thread not running" )
 	TEST_ASSERT_MSG( foo.getNb() >= 1, "Multi loop thread make more than one loop" )
+	TEST_ASSERT_MSG( foo.getReturn() == 255, "Multi loop thread return bad status when running" )
 	foo.stop();
 	TEST_ASSERT_MSG( foo.isRunning() == false, "Multi loop thread still running after stop" )
 	TEST_ASSERT_MSG( foo.getReturn() == 0, "Multi loop thread return none zero value" )
@@ -108,6 +109,23 @@ void TestDThread::just_stop_test()
 	Foo foo;
 	foo.stop();
 	foo.stop();
+}
+
+void TestDThread::force_stop_test()
+{
+	Foo foo;
+
+	foo.setRunMode( DThread::MULTI_LOOP );
+	foo.setSleep( 100000 );
+	foo.start();
+	sleep( 1 );
+	TEST_ASSERT_MSG( foo.isRunning() == true, "Multi loop thread not running" )
+	TEST_ASSERT_MSG( foo.getNb() >= 1, "Multi loop thread make more than one loop" )
+	foo.stop( true );
+	TEST_ASSERT_MSG( foo.isRunning() == false, "Multi loop thread still running after stop" )
+	TEST_ASSERT_MSG( foo.getReturn() == 0, "Multi loop thread return none zero value" )
+	
+	
 }
 
 int main()

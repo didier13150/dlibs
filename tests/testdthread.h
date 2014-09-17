@@ -48,6 +48,7 @@ public:
 		TEST_ADD( TestDThread::multi_loop_test )
 		TEST_ADD( TestDThread::just_stop_test )
 		TEST_ADD( TestDThread::multi_stop_test )
+		TEST_ADD( TestDThread::force_stop_test )
 	}
 
 private:
@@ -55,6 +56,7 @@ private:
 	void multi_loop_test();
 	void just_stop_test();
 	void multi_stop_test();
+	void force_stop_test();
 };
 
 #endif // _TESTDTHREAD_H
