@@ -18,88 +18,45 @@ include_directories (.
                      ${LIBXML2_INCLUDE_DIR}
                      ${MYSQL_INCLUDE_DIR}
                      ${POSTGRESQL_INCLUDE_DIR}
-                    ) 
+                    )
                     
-add_executable(testdstring testdstring.cpp)
-add_executable(testdsingleton testdsingleton.cpp)
-add_executable(testdenv testdenv.cpp)
-add_executable(testdappcmdline testdappcmdline.cpp)
-add_executable(testdevent testdevent.cpp)
-add_executable(testdprototype testdprototype.cpp)
-add_executable(testdfactory testdfactory.cpp)
-add_executable(testdobs testdobs.cpp)
-add_executable(testdpoint testdpoint.cpp)
-add_executable(testdprocess testdprocess.cpp)
-add_executable(testdrect testdrect.cpp)
-add_executable(testdthread testdthread.cpp)
-add_executable(testdtimer testdtimer.cpp)
-add_executable(testdurl testdurl.cpp)
-add_executable(testdsocket testdsocket.cpp)
-add_executable(testdsmtp testdsmtp.cpp)
-add_executable(testdsqlite testdsqlite.cpp)
-add_executable(testdexception testdexception.cpp)
+set( ALL_TEST_PARTS
+     dstring
+     dsingleton
+     denv
+     dappcmdline
+     devent
+     dprototype
+     dfactory
+     dobs
+     dpoint
+     dprocess
+     drect
+     dthread
+     dtimer
+     durl
+     dsocket
+     dsmtp
+     dsqlite
+     dexception
+     dsettings
+     dlog
+     dbase64
+   )
+
+FOREACH( PART ${ALL_TEST_PARTS} )
+    add_executable( "test${PART}" "test${PART}.cpp" )
+    target_link_libraries( "test${PART}" dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
+    add_test(${PART} "${CMAKE_CURRENT_BINARY_DIR}/test${PART}" )
+ENDFOREACH( PART )
+
 if(MYSQL_FOUND)
   add_executable(testdmysql testdmysql.cpp)
-endif(MYSQL_FOUND)
-if(POSTGRESQL_FOUND)
-  add_executable(testdpgsql testdpgsql.cpp)
-endif(POSTGRESQL_FOUND)
-add_executable(testdsettings testdsettings.cpp)
-add_executable(testdlog testdlog.cpp)
-add_executable(testdbase64 testdbase64.cpp)
-
-target_link_libraries(testdstring dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdsingleton dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdenv dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdappcmdline dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdevent dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdobs dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdpoint dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdprocess dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdprototype dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdfactory dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdrect dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdurl dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdsocket dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdsmtp dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdtimer dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdthread dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdsqlite dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-if(MYSQL_FOUND)
   target_link_libraries(testdmysql dlibs ${CPPTEST_LIBRARY} ${MYSQL_LIBRARIES} ${REALTIME_LIBRARY})
-endif(MYSQL_FOUND)
-if(POSTGRESQL_FOUND)
-  target_link_libraries(testdpgsql dlibs ${CPPTEST_LIBRARY} ${POSTGRESQL_LIBRARIES} ${REALTIME_LIBRARY})
-endif(POSTGRESQL_FOUND)
-target_link_libraries(testdlog dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdsettings dlibs ${CPPTEST_LIBRARY} ${LIBXML2_LIBRARIES} ${REALTIME_LIBRARY})
-target_link_libraries(testdexception dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-target_link_libraries(testdbase64 dlibs ${CPPTEST_LIBRARY} ${REALTIME_LIBRARY})
-
-add_test(dstring ${CMAKE_CURRENT_BINARY_DIR}/testdstring)
-add_test(dsingleton ${CMAKE_CURRENT_BINARY_DIR}/testdsingleton)
-add_test(dappcmdline ${CMAKE_CURRENT_BINARY_DIR}/testdappcmdline)
-add_test(devent ${CMAKE_CURRENT_BINARY_DIR}/testdevent)
-add_test(denv ${CMAKE_CURRENT_BINARY_DIR}/testdenv)
-add_test(dfactory ${CMAKE_CURRENT_BINARY_DIR}/testdfactory)
-add_test(dlog ${CMAKE_CURRENT_BINARY_DIR}/testdlog)
-add_test(dobs ${CMAKE_CURRENT_BINARY_DIR}/testdobs)
-add_test(dpoint ${CMAKE_CURRENT_BINARY_DIR}/testdpoint)
-add_test(dprocess ${CMAKE_CURRENT_BINARY_DIR}/testdprocess)
-add_test(dprototype ${CMAKE_CURRENT_BINARY_DIR}/testdprototype)
-add_test(drect ${CMAKE_CURRENT_BINARY_DIR}/testdrect)
-add_test(dsettings ${CMAKE_CURRENT_BINARY_DIR}/testdsettings)
-add_test(dsmtp ${CMAKE_CURRENT_BINARY_DIR}/testdsmtp)
-add_test(dsocket ${CMAKE_CURRENT_BINARY_DIR}/testdsocket)
-add_test(dtimer ${CMAKE_CURRENT_BINARY_DIR}/testdtimer)
-add_test(dthread ${CMAKE_CURRENT_BINARY_DIR}/testdthread)
-add_test(durl ${CMAKE_CURRENT_BINARY_DIR}/testdurl)
-add_test(dsqlite ${CMAKE_CURRENT_BINARY_DIR}/testdsqlite)
-if(MYSQL_FOUND)
   add_test(dmysql ${CMAKE_CURRENT_BINARY_DIR}/testdmysql)
 endif(MYSQL_FOUND)
 if(POSTGRESQL_FOUND)
+  add_executable(testdpgsql testdpgsql.cpp)
+  target_link_libraries(testdpgsql dlibs ${CPPTEST_LIBRARY} ${POSTGRESQL_LIBRARIES} ${REALTIME_LIBRARY})
   add_test(dpgsql ${CMAKE_CURRENT_BINARY_DIR}/testdpgsql)
 endif(POSTGRESQL_FOUND)
-add_test(dexception ${CMAKE_CURRENT_BINARY_DIR}/testdexception)
-add_test(dbase64 ${CMAKE_CURRENT_BINARY_DIR}/testdbase64)

@@ -28,7 +28,7 @@ include(CheckCXXCompilerFlag)
 include(CheckCXXSourceCompiles)
 
 if(WITH_EXCEPTIONS)
-  add_definitions(-fexceptions)
+  add_definitions( -fexceptions )
 endif(WITH_EXCEPTIONS)
 
 
@@ -85,24 +85,24 @@ add_custom_target(changelog
                  )
 
 if(WITH_LCOV)
-    find_program(LCOV_EXECUTABLE lcov PATH)
-    add_custom_target(lcov
-                      /bin/bash lcov.sh
-                      COMMENT "Generate code coverage report" VERBATIM
-                     )
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O0 -fprofile-arcs -ftest-coverage --coverage -fno-elide-constructors")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -fprofile-arcs -ftest-coverage --coverage -fno-elide-constructors")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -fprofile-arcs -ftest-coverage --coverage -fno-elide-constructors")
-else(WITH_LCOV)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O2")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
+    include(CodeCoverage)  
+    set( CMAKE_BUILD_TYPE "Debug" )
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -O0 --coverage")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 --coverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 --coverage")
+    SETUP_TARGET_FOR_COVERAGE( lcov test ../lcov )
+    message(STATUS "Build with code coverage")
+else()
+    if( NOT CMAKE_BUILD_TYPE )
+        set( CMAKE_BUILD_TYPE "RelWithDebInfo" )
+    endif()
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O2" )
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2" )
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2" )
+    message(STATUS "Build with lcov")
 endif(WITH_LCOV)
                  
 # project options
-if( NOT CMAKE_BUILD_TYPE )
-  set( CMAKE_BUILD_TYPE "RelWithDebInfo" )
-endif()
 
 if(MYSQL_FOUND)
    message(STATUS "MySQL found")
