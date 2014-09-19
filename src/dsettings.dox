@@ -18,21 +18,14 @@ int main( int argc, char **argv )
 		cout << "Error on setFileName process : " << sets.getLastError() << endl;
 		return -1;
 	}
-
-	// Get log config
-	if ( sets.setGroup ( "user1", false ) != DSettings::SUCCESS )
-	{
-		cout << "Error on setGroup process : " << sets.getLastError() << endl;
-		return -1;
-	}
-	if ( sets.readEntry ( "name", buffer ) != DSettings::SUCCESS )
+	
+	if ( sets.readEntry ( "/settings/user1/name", buffer ) != DSettings::SUCCESS )
 	{
 		cout << "Error on readEntry process : " << sets.getLastError() << endl;
 		return -1;
 	}
 
-	DSettings::getSettings( sets, "user1", "surname", &buffer );
-	cout << "user1 surname is " << buffer << endl;
+	cout << "user1 name is " << sets.getEntry( "/settings/user1/name" ) << endl;
 	
 	return 0;
 }
