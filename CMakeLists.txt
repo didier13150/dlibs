@@ -21,7 +21,7 @@ option(WITH_TESTS "Enable building of unit tests" ON)
 option(WITH_CXX11 "Build with the C++ 11 standard" ON)
 option(WITH_EXCEPTIONS "Build with exceptions enabled" ON)
 option( BUILD_SHARED_LIBS "Set to OFF to build static libraries" ON )
-option( WITH_LCOV "Set to ON to build with code coverage" OFF )
+option( WITH_LCOV "Set to ON to build with code coverage (implies Debug build type)" OFF )
 
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
@@ -85,13 +85,13 @@ add_custom_target(changelog
                  )
 
 if(WITH_LCOV)
-    include(CodeCoverage)  
     set( CMAKE_BUILD_TYPE "Debug" )
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -O0 --coverage")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 --coverage")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 --coverage")
+    include(CodeCoverage)  
     SETUP_TARGET_FOR_COVERAGE( lcov test ../lcov )
-    message(STATUS "Build with code coverage")
+    message(STATUS "Build with code coverage feature (Debug)")
 else()
     if( NOT CMAKE_BUILD_TYPE )
         set( CMAKE_BUILD_TYPE "RelWithDebInfo" )
@@ -105,7 +105,7 @@ endif(WITH_LCOV)
 # project options
 
 if(MYSQL_FOUND)
-   message(STATUS "MySQL found")
+   message(STATUS "MySQL headers and libraries found")
    set( DMYSQL_SRCS dmysql.cpp )
    set( DMYSQL_HEADERS_INSTALL dmysql.h )
    set( DMYSQL_TEST_SRCS testdmysql.cpp )
@@ -122,7 +122,7 @@ else(MYSQL_FOUND)
 endif(MYSQL_FOUND)
 
 if(POSTGRESQL_FOUND)
-   message(STATUS "DPgSQL found")
+   message(STATUS "DPgSQL headers and libraries found")
    set( DPGSQL_SRCS dpgsql.cpp )
    set( DPGSQL_HEADERS_INSTALL dpgsql.h )
    set( DPGSQL_TEST_SRCS testdpgsql.cpp )
@@ -144,11 +144,6 @@ configure_file(${Dlibs_SOURCE_DIR}/Doxyfile.cmake
 
 configure_file(test-settings.xml.cmake
                ${Dlibs_BINARY_DIR}/tests/test-settings.xml
-               @ONLY
-              )
-
-configure_file(lcov.sh.cmake
-               ${Dlibs_BINARY_DIR}/lcov.sh
                @ONLY
               )
 
