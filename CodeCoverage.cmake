@@ -20,10 +20,6 @@ IF(NOT CMAKE_COMPILER_IS_GNUCXX)
 	ENDIF()
 ENDIF(NOT CMAKE_COMPILER_IS_GNUCXX)
 
-SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -O0 --coverage")
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 --coverage")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 --coverage")
-
 IF ( NOT (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "Coverage"))
   MESSAGE( WARNING "Code coverage results with an optimized (non-Debug) build may be misleading" )
 ENDIF()
@@ -34,6 +30,11 @@ ENDIF()
 # Param _output_path         lcov output is generated on _output_path directory
 FUNCTION(SETUP_TARGET_FOR_COVERAGE _coverage_target _test_target _output_path)
 
+
+	SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -O0 --coverage")
+	SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 --coverage")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 --coverage")
+	
 	IF(NOT LCOV_PATH)
 		MESSAGE(FATAL_ERROR "lcov not found! Aborting...")
 	ENDIF(NOT LCOV_PATH) 
@@ -44,6 +45,12 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _coverage_target _test_target _output_path)
 
 	# Setup target
 	ADD_CUSTOM_TARGET(${_coverage_target}
+		
+		# Cleanup and rebuild
+		COMMAND /usr/bin/make clean
+		COMMAND /usr/bin/find . -name '*.gcno' -delete
+		COMMAND /usr/bin/find . -name '*.gcda' -delete
+		COMMAND /usr/bin/make
 		
 		# Cleanup lcov
 		COMMAND ${LCOV_PATH} --directory . --zerocounters
