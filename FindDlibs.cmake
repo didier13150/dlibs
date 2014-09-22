@@ -6,17 +6,30 @@
 #  DLIBS_FOUND       - True if DLibs found.
 ################################################################################
 
+set( DLIBS_LIB_PATHS
+     /usr/lib
+     /usr/local/lib
+     /opt/lib
+     /opt/dlibs/lib
+)
+
+set( DLIBS_INCLUDE_PATHS
+     /usr/include
+     /usr/local/include
+     /opt/include
+     /opt/mysql/include
+)
+
 find_library( DLIBS_LIBRARY
               NAMES dlibs
-              PATH /usr/lib /usr/local/lib /usr/lib64 /usr/local/lib64
+              PATHS ${DLIBS_LIB_PATHS}
+              PATH_SUFFIXES dlibs
 )
              
 find_path( DLIBS_INCLUDE_DIR
-           dstring.h
-           /usr/include
-           /usr/include/dlibs
-           /usr/local/include
-           /usr/local/include/dlibs
+           NAMES dlibs.h
+           PATHS ${DLIBS_INCLUDE_PATHS}
+           PATH_SUFFIXES dlibs
 )
           
 include( ${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake )

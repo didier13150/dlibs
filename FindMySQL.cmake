@@ -7,33 +7,36 @@
 #  MYSQL_FOUND       - True if MySQL found.
 ################################################################################
 
-SET( MYSQL_LIB_PATHS
-     /usr/lib
-     /usr/lib64
-     /usr/lib/mysql
-     /usr/lib64/mysql
-     /usr/local/lib
-     /usr/local/lib64
-     /usr/local/lib/mysql
-     /usr/local/lib64/mysql
-     /opt/mysql/lib
-     /opt/mysql/lib64
+set ( MYSQL_LIBRARIES_NAMES
+      mysqlclient
+      mysqlclient_r
 )
 
-SET( MYSQL_INCLUDE_PATHS
+set( MYSQL_LIB_PATHS
+     /usr/lib
+     /usr/local/lib
+     /opt/lib
+     /opt/mysql/lib
+)
+
+set( MYSQL_INCLUDE_PATHS
      /usr/include
-     /usr/include/mysql
      /usr/local/include
-     /usr/local/include/mysql
+     /opt/include
      /opt/mysql/include
 )
 
-find_library( MYSQL_LIBRARY mysqlclient ${MYSQL_LIB_PATHS} )
-if( NOT MYSQL_LIBRARY )
-    find_library( MYSQL_LIBRARY mysqlclient_r ${MYSQL_LIB_PATHS} )
-endif( NOT MYSQL_LIBRARY )
+find_library( MYSQL_LIBRARY
+              NAMES ${MYSQL_LIBRARIES_NAMES}
+              PATHS ${MYSQL_LIB_PATHS}
+              PATH_SUFFIXES mysql
+)
 
-find_path( MYSQL_INCLUDE_DIR mysql.h ${MYSQL_INCLUDE_PATHS} )
+find_path( MYSQL_INCLUDE_DIR
+           NAMES mysql.h
+           PATHS ${MYSQL_INCLUDE_PATHS}
+           PATH_SUFFIXES mysql
+)
 
 include( ${CMAKE_ROOT}/Modules/FindPackageHandleStandardArgs.cmake )
 FIND_PACKAGE_HANDLE_STANDARD_ARGS( MYSQL REQUIRED_VARS MYSQL_LIBRARY MYSQL_INCLUDE_DIR )
