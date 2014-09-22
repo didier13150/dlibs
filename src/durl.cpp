@@ -404,5 +404,6 @@ const DString & DURL::getServiceByPort( const int port, const DString & protocol
 	{
 		service = serv->s_name;
 	}
+	endservent();
 	return service;
 }
