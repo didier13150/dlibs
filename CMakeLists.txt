@@ -86,9 +86,6 @@ add_custom_target(changelog
 
 if(WITH_LCOV)
     set( CMAKE_BUILD_TYPE "Debug" )
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -O0 --coverage")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 --coverage")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 --coverage")
     include(CodeCoverage)  
     SETUP_TARGET_FOR_COVERAGE( lcov test ../lcov )
     message(STATUS "Build with code coverage feature (Debug)")
@@ -99,7 +96,7 @@ else()
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O2" )
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2" )
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2" )
-    message(STATUS "Build with lcov")
+    message(STATUS "Build without code coverage")
 endif(WITH_LCOV)
                  
 # project options
