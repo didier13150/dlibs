@@ -163,14 +163,22 @@ public:
 	friend std::ostream & operator << ( std::ostream& s, const DURL & url );
 
 	/**
-	 * Get the port number by protocol.
-	 * This function search in /etc/services the port according to the protocol name.
+	 * Get the port number by service and protocol.
 	 * @param service The service name ( http, ftp, ssh, etc... )
 	 * @param protocol The protocol ( tcp, udp )
-	 * @return the port affected to the service or 0 if nothing was found
+	 * @return the port related to the service or 0 if nothing was found
 	 */
 	static int getPortByService( const DString & service,
 								 const DString & protocol = "tcp" );
+	
+	/**
+	 * Get the service name by port and protocol.
+	 * @param port The service port number
+	 * @param protocol The protocol ( tcp, udp )
+	 * @return the service name related to the port or an empty DString if nothing was found.
+	 */
+	static const DString & getServiceByPort( const int port,
+											 const DString & protocol = "tcp" );
 
 protected:
 

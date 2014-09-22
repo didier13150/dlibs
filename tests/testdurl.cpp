@@ -46,6 +46,7 @@ TestDURL::TestDURL()
 	TEST_ADD( TestDURL::constructor_test )
 	TEST_ADD( TestDURL::url_test )
 	TEST_ADD( TestDURL::port_test )
+	TEST_ADD( TestDURL::service_test )
 	TEST_ADD( TestDURL::get_url_test )
 	TEST_ADD( TestDURL::get_error_test )
 	TEST_ADD( TestDURL::to_string_test )
@@ -143,6 +144,15 @@ void TestDURL::url_test()
 	TEST_ASSERT_MSG( url.getServiceName() == "ssh", "Url doesn't report good service" )
 	TEST_ASSERT_MSG( url.getPath() == "/ip", "Url doesn't report good path" )
 	TEST_ASSERT_MSG( url.getType() == DURL::HOSTNAME, "Url not reported as an hostname" )
+	
+	url.setURL( "didier.home:443/ip" );
+	TEST_ASSERT_MSG( url.getLastErrno() == DURL::NO_HOST_BY_NAME, "Url with unknown hostname set successfully" )
+	TEST_ASSERT_MSG( url.getIPAddress() == DString::empty(), "Url doesn't report empty IP" )
+	TEST_ASSERT_MSG( url.getHost() == "didier.home", "Url report wrong hostname" )
+	TEST_ASSERT_MSG( url.getPort() == 443, "Url doesn't report good port" )
+	TEST_ASSERT_MSG( url.getServiceName() == "https", "Url doesn't report good service" )
+	TEST_ASSERT_MSG( url.getPath() == "/ip", "Url doesn't report good path" )
+	TEST_ASSERT_MSG( url.getType() == DURL::HOSTNAME, "Url not reported as an hostname" )
 }
 
 void TestDURL::port_test()
@@ -152,6 +162,15 @@ void TestDURL::port_test()
 	TEST_ASSERT_MSG( DURL::getPortByService( "http", "tcp" ) == 80, "HTTP url report bad port number" )
 	TEST_ASSERT_MSG( DURL::getPortByService( "https", "tcp" ) == 443, "HTTPS url report bad port number" )
 	TEST_ASSERT_MSG( DURL::getPortByService( "nfs", "tcp" ) == 2049, "NFS url report bad port number" )
+}
+
+void TestDURL::service_test()
+{
+	TEST_ASSERT_MSG( DURL::getServiceByPort( 21, "tcp" ) == "ftp", "FTP url report bad service name" )
+	TEST_ASSERT_MSG( DURL::getServiceByPort( 22, "tcp" ) == "ssh", " url report bad service name" )
+	TEST_ASSERT_MSG( DURL::getServiceByPort( 80, "tcp" ) == "http", " url report bad service name" )
+	TEST_ASSERT_MSG( DURL::getServiceByPort( 443, "tcp" ) == "https", " url report bad service name" )
+	TEST_ASSERT_MSG( DURL::getServiceByPort( 2049, "tcp" ) == "nfs", " url report bad service name" )
 }
 
 void TestDURL::get_url_test()

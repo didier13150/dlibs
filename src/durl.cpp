@@ -171,6 +171,15 @@ int DURL::setURL( const DString & address )
 			if ( m_errno == SUCCESS ) m_errno = NO_SERVICE;
 		}
 	}
+	if ( m_url.service.isEmpty() && m_url.port )
+	{
+		m_url.service = getServiceByPort( m_url.port );
+		if ( m_url.service.isEmpty() )
+		{
+			m_error = "Cannot get service by port name";
+			if ( m_errno == SUCCESS ) m_errno = NO_SERVICE;
+		}
+	}
 	
 	return m_errno;
 }
@@ -373,36 +382,27 @@ void DURL::DURLData::clear()
 
 int DURL::getPortByService( const DString & servicename, const DString & protocol )
 {
-	std::ifstream servfile;
-	DStringList items;
-	DStringList::iterator it;
-	DString buffer;
 	int port = 0;
+	struct servent *serv = 0;
 	
-	
-	servfile.open( "/etc/services" );
-	while( getline( servfile, buffer, '\n' ) )
+	serv = getservbyname( servicename.c_str(), protocol.c_str() );
+	if ( serv )
 	{
-		if (buffer.contains( servicename ) )
-		{
-			items = buffer.simplifyWhiteSpace().split( " " );
-			it = items.begin();
-			if ( *it == servicename )
-			{
-				++it;
-				// no more data on this line
-				if ( it != items.end() )
-				{
-					buffer = it->section( "/", 1 );
-					if ( buffer == protocol )
-					{
-						port = it->section( "/", 0, 0 ).toInt();
-					}
-				}
-			}
-		}
+		port = ntohs( serv->s_port );
 	}
-	
-	servfile.close();
+	endservent();
 	return port;
+}
+
+const DString & DURL::getServiceByPort( const int port, const DString & protocol )
+{
+	static DString service;
+	struct servent *serv = 0;
+	
+	serv = getservbyport( htons( port ), protocol.c_str() );
+	if ( serv )
+	{
+		service = serv->s_name;
+	}
+	return service;
 }

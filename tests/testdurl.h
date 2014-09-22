@@ -48,6 +48,7 @@ private:
 	void constructor_test();
 	void url_test();
 	void port_test();
+	void service_test();
 	void get_url_test();
 	void get_error_test();
 	void to_string_test();
