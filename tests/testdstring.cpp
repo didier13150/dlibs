@@ -326,7 +326,9 @@ void TestDString::substr_test()
 {
 	DString str = "abcdefghijklmnopqrstuvwxyz0123456789";
 	TEST_ASSERT_MSG( str.left( 26 ) == "abcdefghijklmnopqrstuvwxyz", "Extract substring from the left failed" )
+	TEST_ASSERT_MSG( str.left( 50 ) == str, "Extract substring from the left failed" )
 	TEST_ASSERT_MSG( str.right( 10 ) == "0123456789", "Extract substring from the right failed" )
+	TEST_ASSERT_MSG( str.right( 50 ) == str, "Extract substring from the right failed" )
 	TEST_ASSERT_MSG( str.mid ( 26, 5 ) == "01234", "Extract substring from the middle failed" )
 	TEST_ASSERT_MSG( str.mid ( 0, 50 ) == str, "Extract substring from the middle failed" )
 	TEST_ASSERT_MSG( str.at( 3 ) == DString('d'), "Extract char from the middle failed" )
@@ -670,6 +672,9 @@ void TestDString::contains_test()
 	TEST_ASSERT_MSG( str.contains( "AA", false ) == 10, "Contains string failed" )
 	TEST_ASSERT_MSG( str.contains( std::string( "AAA" ), false ) == 7, "Contains string failed" )
 	//std::cout << std::endl << str.contains( 'A', false ) << std::endl;
+	str.clear();
+	TEST_ASSERT_MSG( str.contains( 'a' ) == 0, "Empty string contains char" )
+	
 
 }
 
