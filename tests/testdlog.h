@@ -45,24 +45,36 @@ public:
 	TestDLog()
 	{
 		TEST_ADD( TestDLog::socket_test )
+		TEST_ADD( TestDLog::socket2_test )
 		TEST_ADD( TestDLog::logfile_test )
 		TEST_ADD( TestDLog::stream_test )
 		TEST_ADD( TestDLog::syslog_test )
 		TEST_ADD( TestDLog::sqlite_test )
+		TEST_ADD( TestDLog::sqlite2_test )
 		TEST_ADD( TestDLog::mysql_test )
 		TEST_ADD( TestDLog::pgsql_test )
 		TEST_ADD( TestDLog::unintialized_test )
+		TEST_ADD( TestDLog::params_test )
+		TEST_ADD( TestDLog::no_close_test )
+		TEST_ADD( TestDLog::logger_test )
+		TEST_ADD( TestDLog::engine_test )
 	}
 
 private:
 	void logfile_test();
 	void stream_test();
 	void socket_test();
+	void socket2_test();
 	void syslog_test();
 	void sqlite_test();
+	void sqlite2_test();
 	void mysql_test();
 	void pgsql_test();
 	void unintialized_test();
+	void params_test();
+	void no_close_test();
+	void logger_test();
+	void engine_test();
 };
 
 #endif // _TESTDLOG_H

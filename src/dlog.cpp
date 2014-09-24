@@ -33,6 +33,7 @@
 
 #include <stdio.h>
 #include <syslog.h>
+#include <time.h>
 #include "dlog.h"
 #include "dsqlite.h"
 #include "config.h"
@@ -75,7 +76,7 @@ std::ostream& operator << ( std::ostream& s, const DLogParams & params )
 {
 	std::map<DString, DString>::const_iterator it;
 
-	s << "DLogParams :" << std::endl;
+	s << "DLogParams:" << std::endl;
 	for ( it = params.optionnal.begin() ; it != params.optionnal.end() ; ++it )
 	{
 		s << "\toptionnal[" << it->first << "] = " << it->second << std::endl;
@@ -340,15 +341,13 @@ const DString & DLogger::prepare ( const DString & message,
 	DString date, type;
 	std::map<DString, DString>::iterator it;
 
-	// Get current time
-	date = DString::timeToString ( time ( NULL ), dateformat.c_str() );
-
 	switch ( loglevel )
 	{
 
 		case DLogShared::NONE:
 		{
-			return message;
+			m_prepare = message;
+			break;
 		}
 
 		case DLogShared::DEBUG:
@@ -392,12 +391,10 @@ const DString & DLogger::prepare ( const DString & message,
 			type = "CRITL";
 			break;
 		}
-
-		default:
-		{
-			type.clear();
-		}
 	}
+	
+	// Get current time
+	date = DString::timeToString ( time ( NULL ), dateformat.c_str() );
 
 	if ( !type.isEmpty() )
 	{
@@ -504,6 +501,7 @@ DLogEngineFile::DLogEngineFile ( void )
 }
 
 DLogEngineFile::DLogEngineFile ( const DString & fileName, Mode mode )
+		: DLogEngine(), m_file ( 0 )
 {
 	m_type = FILE;
 	setFileName ( fileName, mode );
@@ -602,14 +600,7 @@ void DLogEngineFile::insert ( const DString & text, Level loglevel )
 		open();
 	}
 	
-	if ( loglevel == DLogShared::NONE )
-	{
-		message = text;
-	}
-	else
-	{
-		message = DLogger::getInstance()->prepare ( text, m_dateFormat, m_pattern, loglevel );
-	}
+	message = DLogger::getInstance()->prepare ( text, m_dateFormat, m_pattern, loglevel );
 	
 	*m_file << message << endl;
 	
@@ -668,6 +659,8 @@ DLogEngineSyslog::DLogEngineSyslog ( void )
 	m_type = SYSLOG;
 	m_app_name = "dlibs";
 	m_valid = true;
+	m_facility = LOG_USER;
+	m_mode = DLogShared::PERSISTANT;
 }
 
 DLogEngineSyslog::DLogEngineSyslog ( const DString & app_name )
@@ -675,7 +668,9 @@ DLogEngineSyslog::DLogEngineSyslog ( const DString & app_name )
 {
 	m_type = SYSLOG;
 	m_app_name = app_name;
+	m_valid = true;
 	m_facility = LOG_USER;
+	m_mode = DLogShared::PERSISTANT;
 }
 
 DLogEngineSyslog::~DLogEngineSyslog ( void )
@@ -686,10 +681,6 @@ DLogEngineSyslog::~DLogEngineSyslog ( void )
 void DLogEngineSyslog::setAppName( const DString & app_name )
 {
 	m_app_name = app_name;
-	if ( m_mode == DLogShared::PERSISTANT )
-	{
-		open();
-	}
 }
 
 void DLogEngineSyslog::setFacility( int facility )
@@ -720,18 +711,9 @@ void DLogEngineSyslog::insert ( const DString & text, Level loglevel )
 		return;
 	}
 
-	if ( m_mode == DLogShared::OPENCLOSE )
-	{
-		open();
-	}
 	switch ( loglevel )
 	{
-
 		case DLogShared::NONE:
-		{
-			return;
-		}
-
 		case DLogShared::DEBUG:
 		{
 			sysloglevel = LOG_DEBUG;
@@ -779,10 +761,6 @@ void DLogEngineSyslog::insert ( const DString & text, Level loglevel )
 	message.append( "] " );
 	message.append( text );
 	syslog ( sysloglevel, "%s", message.c_str() );
-	if ( m_mode == DLogShared::OPENCLOSE )
-	{
-		close();
-	}
 }
 
 void DLogEngineSyslog::setParam ( DLogParams & params )
@@ -790,6 +768,7 @@ void DLogEngineSyslog::setParam ( DLogParams & params )
 	DLogEngine::setParam ( params );
 	setAppName ( params.specific["appname"] );
 	setFacility( params.specific["facility"].toInt() );
+	open();
 }
 
 /******************************************************************************
@@ -973,6 +952,10 @@ void DLogEngineDatabase::setParam ( DLogParams & params )
 	{
 		m_create_query = params.specific["dbcreate"];
 	}
+	else
+	{
+		m_create_query = "CREATE TABLE applog (date, level, message);";
+	}
 	
 	open();
 }
@@ -986,6 +969,7 @@ DLogEngineSocket::DLogEngineSocket ( void )
 	m_type = SOCKET;
 	m_bufsize = 0;
 	m_valid = true;
+	m_mode = DLogShared::PERSISTANT;
 }
 
 DLogEngineSocket::~DLogEngineSocket ( void )
@@ -996,19 +980,10 @@ DLogEngineSocket::~DLogEngineSocket ( void )
 void DLogEngineSocket::setSocket ( const DURL & host )
 {
 	m_host = host;
-	
-	if ( m_mode == DLogShared::PERSISTANT )
-	{
-		open();
-	}
-}
-
-bool DLogEngineSocket::open()
-{
 	if ( m_client.openSock ( m_host ) != DSock::SUCCESS )
 	{
 		m_valid = false;
-		return false;
+		return;
 	}
 
 	m_client.setTimeout ( 2000 );
@@ -1018,7 +993,11 @@ bool DLogEngineSocket::open()
 	}
 
 	m_valid = true;
-	return true;
+}
+
+bool DLogEngineSocket::open()
+{
+	return m_valid;
 }
 
 void DLogEngineSocket::close()
@@ -1034,15 +1013,7 @@ void DLogEngineSocket::insert ( const DString & text, Level loglevel )
 	{
 		return;
 	}
-	if ( m_mode == DLogShared::OPENCLOSE )
-	{
-		open();
-	}
 	m_client.writeMessage ( DLogger::getInstance()->prepare ( text, m_dateFormat, m_pattern, loglevel ) );
-	if ( m_mode == DLogShared::OPENCLOSE )
-	{
-		close();
-	}
 }
 
 void DLogEngineSocket::setParam ( DLogParams & params )
