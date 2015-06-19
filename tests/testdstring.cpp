@@ -501,7 +501,7 @@ void TestDString::legal_char_test()
 }
 void TestDString::split_test()
 {
-	DString str = "\ntext1\ntext2\ntext3\ntext4\n";
+	DString str = "\ntext1\ntext2\n\ntext3\ntext4\n";
 	DString sub;
 	DStringList strl = str.split ( "\n" );
 	TEST_ASSERT_MSG( strl.size() == 4, "Split with wrong number of substr" )
@@ -518,9 +518,10 @@ void TestDString::split_test()
 		i++;
 	}
 	
+	str = "\ntext1\ntext2\n\ntext4\ntext5\n";
 	strl.clear();
 	strl = str.split ( "\n", true );
-	TEST_ASSERT_MSG( strl.size() == 6, "Split with wrong number of substr" )
+	TEST_ASSERT_MSG( strl.size() == 7, "Split with wrong number of substr" )
 	it = strl.begin();
 	TEST_ASSERT_MSG( it != strl.end(), "Split with wrong number of substr" )
 	i = 0;
@@ -528,7 +529,7 @@ void TestDString::split_test()
 		sub.clear();
 		sub.setNum( i );
 		sub.prepend( "text" );
-		if ( ! i || i == 5 ) sub.clear();
+		if ( i == 0 || i == 3 || i == 6 ) sub.clear();
 		TEST_ASSERT_MSG( *it == sub, "Substr is wrong" )
 		++it;
 		i++;
@@ -567,6 +568,38 @@ void TestDString::split_test()
 		++it;
 		i++;
 	}
+	
+	str = "----=_Part_-334043873_446072484.1432304244319\n";
+	str += "line1\n";
+	str += "line2\n";
+	str += "line3\n";
+	str += "\n";
+	str += "line4\n";
+	str += "line5\n";
+	str += "----=_Part_-334043873_446072484.1432304244319\n";
+	str += "line1\n";
+	str += "line2\n";
+	str += "line3\n";
+	str += "\n";
+	str += "line4\n";
+	str += "line5\n";
+	str += "----=_Part_-334043873_446072484.1432304244319\n";
+	strl.clear();
+	strl = str.split ( "----=_Part_-334043873_446072484.1432304244319\n", false );
+	
+	sub = "line1\n";
+	sub += "line2\n";
+	sub += "line3\n";
+	sub += "\n";
+	sub += "line4\n";
+	sub += "line5\n";
+	
+	it = strl.begin();
+	while ( it != strl.end() ) {
+		TEST_ASSERT_MSG( *it == sub, "Substr is wrong with boundary" )
+		++it;
+	}
+	
 }
 
 void TestDString::time_test()
