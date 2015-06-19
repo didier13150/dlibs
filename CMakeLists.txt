@@ -56,6 +56,7 @@ find_package (LibXml2 REQUIRED)
 find_package (MySQL QUIET)
 #find_package (PostgreSQL QUIET)
 find_package(Threads REQUIRED)
+find_package(Libcurl REQUIRED)
 find_library(REALTIME_LIBRARY NAMES rt PATH /usr/lib /usr/local/lib REQUIRED)
 
 message(STATUS "Looking for utf8cpp")

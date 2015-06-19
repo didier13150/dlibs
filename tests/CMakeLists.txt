@@ -42,6 +42,8 @@ set( ALL_TEST_PARTS
      dsettings
      dlog
      dbase64
+     dimap
+     dmail
    )
 
 FOREACH( PART ${ALL_TEST_PARTS} )

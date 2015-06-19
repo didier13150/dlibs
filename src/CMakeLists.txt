@@ -17,6 +17,8 @@ set(Dlibs_LIBRARY_SRCS
     denv.cpp
     dprocess.cpp
     dbase64.cpp
+    dimap.cpp
+    dmail.cpp
     ${DMYSQL_SRCS}
     ${DPGSQL_SRCS}
    )
@@ -45,6 +47,8 @@ set(Dlibs_HEADERS_INSTALL
     denv.h
     dprocess.h
     dbase64.h
+    dimap.h
+    dmail.h
     ${DMYSQL_HEADERS_INSTALL}
     ${DPGSQL_HEADERS_INSTALL}
    )
@@ -67,6 +71,7 @@ configure_file(config.h.cmake
 include_directories (${Dlibs_BINARY_DIR}
                      ${CMAKE_SOURCE_DIR}/src
                      ${LIBXML2_INCLUDE_DIR}
+                     ${LIBCURL_INCLUDE_DIR}
                      ${MYSQL_INCLUDE_DIR}
                      ${POSTGRESQL_INCLUDE_DIR}
                      ${UTF8CPP_INCLUDE_DIR}
@@ -83,36 +88,12 @@ add_executable(dlibspath ${DLIBSPATH_EXE_SRCS})
 target_link_libraries(dlibs
                       ${REALTIME_LIBRARY}
                       ${LIBXML2_LIBRARIES}
+                      ${LIBCURL_LIBRARIES}
                       ${POSTGRESQL_LIBRARIES}
                       ${MYSQL_LIBRARIES}
 )
 target_link_libraries(dlibspath dlibs)
    
-set(DLIBSTEST_EXE_SRCS
-    dlibstest.cpp
-    testdstring.cpp
-    testdtimer.cpp
-    testdurl.cpp
-    testdsockserver.cpp
-    testdsockclient.cpp
-    testdlog.cpp
-    testdsmtp.cpp
-    testdsettings.cpp
-    testdexception.cpp
-    testdsingleton.cpp
-    testdthread.cpp
-    testdsqlite.cpp
-    testdfactory.cpp
-    testdobs.cpp
-    testdappcmdline.cpp
-    testdpoint.cpp
-    testdrect.cpp
-    testdenv.cpp
-    testdprocess.cpp
-    ${DMYSQL_TEST_SRCS}
-    ${DPGSQL_TEST_SRCS}
-   )
-
 #add an install target here
 install( FILES ${Dlibs_HEADERS_INSTALL} ${Dlibs_BINARY_DIR}/dlibs.h DESTINATION include/dlibs)
 install( TARGETS dlibs DESTINATION lib )
