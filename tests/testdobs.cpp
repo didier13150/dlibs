@@ -128,11 +128,30 @@ private:
 	std::list<DString> eventlist;
 };
 
-void TestDObs::constructor_test()
+class MinimalStation : public DObserver
+{
+public:
+	MinimalStation() : DObserver() {}
+	~MinimalStation() {}
+	
+	void onEvent( DObservable * observable )
+	{
+		std::cout << observable->getEvent().what() << std::endl;
+	}
+};
+
+TestDObs::TestDObs()
+{
+	TEST_ADD( TestDObs::basic_test )
+	TEST_ADD( TestDObs::remove_observer_test )
+	TEST_ADD( TestDObs::remove_observable_test )
+	TEST_ADD( TestDObs::minimal_observer_test )
+}
+
+void TestDObs::basic_test()
 {
 	Barometer barometer;
 	Thermometer thermometer;
-	std::ostringstream stream;
 
 	{ // To limit WeatherStation range to this block
 		WeatherStation station;
@@ -147,6 +166,72 @@ void TestDObs::constructor_test()
 	}
 
 	barometer.setValue( 1020 );
+}
+
+void TestDObs::remove_observer_test()
+{
+	Barometer barometer;
+	Thermometer thermometer;
+
+	{ // To limit WeatherStation range to this block
+		WeatherStation station;
+
+		thermometer.addObserver( &station );
+		barometer.addObserver( &station );
+
+		thermometer.setValue( 22 );
+		TEST_ASSERT_MSG( station.popFirstEvent() == "Temperature = 22 degrees.", "Wrong event (#1)" )
+		barometer.setValue( 1024 );
+		TEST_ASSERT_MSG( station.popFirstEvent() == "Presure = 1024 mBars.", "Wrong event (#2)" )
+		
+		thermometer.removeObserver( &station );
+	}
+
+	barometer.setValue( 1020 );
+}
+
+void TestDObs::remove_observable_test()
+{
+	WeatherStation station;
+	std::ostringstream stream;
+
+	{ // To limit class range to this block
+		Barometer barometer;
+		Thermometer thermometer;
+
+		station.addObservable( &barometer );
+		station.addObservable( &thermometer );
+
+		thermometer.setValue( 22 );
+		TEST_ASSERT_MSG( station.popFirstEvent() == "Temperature = 22 degrees.", "Wrong event (#1)" )
+		barometer.setValue( 1024 );
+		TEST_ASSERT_MSG( station.popFirstEvent() == "Presure = 1024 mBars.", "Wrong event (#2)" )
+		
+		station.removeObservable( &barometer );
+	}
+}
+
+void TestDObs::minimal_observer_test()
+{
+	MinimalStation station;
+	Barometer barometer;
+	Thermometer thermometer;
+	std::ostringstream stream;
+	std::streambuf *backup;
+	
+	// Redirect stdout to buffer
+	backup = std::cout.rdbuf();
+	std::cout.rdbuf( stream.rdbuf() );
+
+	thermometer.addObserver( &station );
+	barometer.addObserver( &station );
+	thermometer.setValue( 22 );
+	barometer.setValue( 1024 );
+	
+	// Get stream and restore stdout
+	std::cout.rdbuf(backup);
+	TEST_ASSERT_MSG( stream.str() == "Temperature = 22 degrees.\nPresure = 1024 mBars.\n",
+					 "Wrong events reported by parent function" )
 }
 
 int main()

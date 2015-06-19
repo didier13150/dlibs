@@ -42,13 +42,13 @@
 class TestDObs : public Test::Suite
 {
 public:
-	TestDObs()
-	{
-		TEST_ADD( TestDObs::constructor_test )
-	}
+	TestDObs();
 
 private:
-	void constructor_test();
+	void basic_test();
+	void remove_observer_test();
+	void remove_observable_test();
+	void minimal_observer_test();
 };
 
 #endif // _TESTDOBS_H
