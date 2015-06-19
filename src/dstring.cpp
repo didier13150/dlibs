@@ -694,7 +694,7 @@ DStringList DString::split ( const DString & sep, bool allowNull ) const
 		{
 			if ( allowNull )
 			{
-				liststr.push_back ( buffer );
+				liststr.push_back ( "" );
 			}
 		}
 		else
@@ -709,7 +709,7 @@ DStringList DString::split ( const DString & sep, bool allowNull ) const
 			{
 				if ( pos2 != std::string::npos )
 				{
-					buffer = m_str.substr ( pos1 + sep.length(), pos2 - pos1 - 1 );
+					buffer = m_str.substr ( pos1 + sep.length(), pos2 - pos1 - sep.length() );
 				}
 				else
 				{
@@ -721,7 +721,7 @@ DStringList DString::split ( const DString & sep, bool allowNull ) const
 				{
 					if ( allowNull )
 					{
-						liststr.push_back ( buffer );
+						liststr.push_back ( "" );
 					}
 				}
 				else
