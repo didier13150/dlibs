@@ -1,0 +1,28 @@
+/******************************************************************************
+ * Unit Test for DIMAP class                                               *
+ ******************************************************************************/
+
+#include <iostream>
+#include <cstdlib>
+
+#include "dlibs.h"
+
+using namespace std;
+
+int main( int argc, char ** argv )
+{
+	DIMAP imap;
+	DString content;
+	
+	imap.setHostname( IMAP_HOST );
+	imap.setLogin( IMAP_USER, IMAP_PASSWD );
+	imap.setDir( "INBOX" );
+	
+	content = imap.getMessage();
+	while ( ! content.isEmpty() ) {
+		imap.next();
+		content = imap.getMessage();
+	}
+	
+	return 0;
+}

@@ -44,11 +44,13 @@ class TestDIMAP : public Test::Suite
 public:
 	TestDIMAP()
 	{
-		TEST_ADD( TestDIMAP::constructor_test )
+		TEST_ADD( TestDIMAP::basic_test )
+		TEST_ADD( TestDIMAP::fetch_some_mails_test )
 	}
 
 private:
-	void constructor_test();
+	void basic_test();
+	void fetch_some_mails_test();
 };
 
 #endif // _TESTDIMAP_H

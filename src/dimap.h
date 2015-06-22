@@ -35,16 +35,33 @@
 
 #include <dstring.h>
 
-
-/**
-* @short IMAP utilities.
-* @author Didier FABERT <didier.fabert@gmail.com>
+/**  
+ * Download mail by IMAP
+ * @short IMAP utilities.
+ * @author Didier FABERT <didier.fabert@gmail.com>
+ * @include dimap.dox
 */
 class DIMAP
 {
 public:
     DIMAP();
     ~DIMAP();
+    
+    typedef enum Flag
+    {
+	   /// Message is marked as deleted for later removal with expunge or close command.
+	   DELETED  = 0x01,
+	   /// Message has been read
+	   SEEN     = 0x02,
+	   /// Message has been answered
+	   ANSWERED = 0x03,
+	   /// Message is flagged for urgent/special attention
+	   FLAGGED  = 0x04,
+	   /// Message is in draft format; in other words, not complete
+	   DRAFT    = 0x05,
+	   /// Message recently arrived in this mailbox. This flag cannot be set by client.
+	   RECENT   = 0x06 
+    } DIMAPFlag;
     
     /**
      * Set IMAP hostname
@@ -71,11 +88,33 @@ public:
     void setDir( const DString & dir );
     
     /**
-     * Get Message from IMAP server. A new message was sent at each call.
+     * Get Message from IMAP server
      * @return Next message or an empty string if no more message was available.
      */
-    const DString & getNextMessage();
+    const DString & getMessage();
+    
+    /**
+     * Set flag to current message.
+     * Flag can be Deleted, Seen, Answered, Flagged, Draft and Recent
+     * @see DIMAPFlag
+     */
+    bool setFlag( DIMAPFlag flag);
+    
+    /**
+     * Delete current message.
+     */
+    bool erase();
+    
+    /**
+     * Mark current message as read
+     */
+    bool read();
 
+    /**
+     * Go to next message
+     */
+    void next();
+    
     /**
      * Get last error message
      * @return Last error message.

@@ -41,8 +41,37 @@
 #include "dimap.h"
 #include "test.h"
 
-void TestDIMAP::constructor_test()
+void TestDIMAP::basic_test()
 {
+	DIMAP imap;
+	DString content;
+	
+	imap.setHostname( IMAP_HOST );
+	imap.setLogin( IMAP_USER, IMAP_PASSWD );
+	imap.setDir( "INBOX" );
+	
+	content = imap.getMessage();	
+	TEST_ASSERT_MSG( ! content.isEmpty(), "No message downloaded" )
+}
+
+void TestDIMAP::fetch_some_mails_test()
+{
+	DIMAP imap;
+	DString content;
+	unsigned int uid = 0;
+	
+	imap.setHostname( IMAP_HOST );
+	imap.setLogin( IMAP_USER, IMAP_PASSWD );
+	imap.setDir( "INBOX" );
+	
+	content = imap.getMessage();
+	while ( ! content.isEmpty() ) {
+		uid++;
+		imap.next();
+		if ( uid > 2 ) break;
+		content = imap.getMessage();
+	}
+	TEST_ASSERT_MSG( uid != 0, "No message downloaded" )
 }
 
 int main()

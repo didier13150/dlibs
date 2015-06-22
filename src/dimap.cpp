@@ -37,7 +37,7 @@
 #include <curl/curl.h>
 
 DIMAP::DIMAP():
-	m_uid ( 1 ), m_timeout( 30 ), m_dir( "INBOX" )
+	m_dir( "INBOX" ), m_timeout( 30 ), m_uid ( 1 )
 {
 }
 
@@ -58,6 +58,7 @@ void DIMAP::setLogin( const DString & user, const DString & password )
 
 void DIMAP::setDir( const DString & dir )
 {
+	clear();
 	m_dir = dir;
 }
 
@@ -73,7 +74,7 @@ void DIMAP::clear()
 	m_err.clear();
 }
 
-const DString & DIMAP::getNextMessage()
+const DString & DIMAP::getMessage()
 {
 	CURL* curl = 0;
 	DString buffer;
@@ -137,7 +138,6 @@ const DString & DIMAP::getNextMessage()
 	}
 	
 	buffer.setNum( m_uid );
-	m_uid++;
 	buffer.prepend( "imap://" + m_host + "/" + m_dir + "/;UID=" );
 	curl_easy_setopt( curl, CURLOPT_URL, buffer.c_str() );
 	
@@ -153,6 +153,146 @@ const DString & DIMAP::getNextMessage()
 	m_current_message = stream.str();
 	
 	return m_current_message;
+}
+
+bool DIMAP::setFlag( DIMAP::DIMAPFlag flag)
+{
+	DString action, buffer;
+	CURL* curl = 0;
+	CURLcode res = CURLE_OK;
+	std::ostringstream stream;
+	
+	switch( flag )
+	{
+		case DIMAP::DELETED:
+		{
+			action = "Deleted";
+			break;
+		}
+		case DIMAP::SEEN:
+		{
+			action = "Seen";
+			break;
+		}
+		case DIMAP::ANSWERED:
+		{
+			action = "Answered";
+			break;
+		}
+		case DIMAP::FLAGGED:
+		{
+			action = "Flagged";
+			break;
+		}
+		case DIMAP::DRAFT:
+		{
+			action = "Draft";
+			break;
+		}
+		case DIMAP::RECENT:
+		{
+			action = "Recent";
+			break;
+		}
+	}
+		
+	curl = curl_easy_init();
+	if( ! curl ) {
+		m_err = "curl_easy_init() failed: ";
+		m_err += curl_easy_strerror( CURLE_FAILED_INIT );
+		return false;
+	}
+	
+	// Set username and password
+	curl_easy_setopt( curl, CURLOPT_USERNAME, m_user.c_str() );
+	curl_easy_setopt( curl, CURLOPT_PASSWORD, m_password.c_str() );
+	
+	res = curl_easy_setopt( curl, CURLOPT_WRITEFUNCTION, &data_write );
+	if( res != CURLE_OK ) {
+		m_err = "curl_easy_setopt(CURLOPT_WRITEFUNCTION) failed: ";
+		m_err += curl_easy_strerror( res );
+		return false;
+	}
+	res = curl_easy_setopt( curl, CURLOPT_NOPROGRESS, 1L );
+	if( res != CURLE_OK ) {
+		m_err = "curl_easy_setopt(CURLOPT_NOPROGRESS) failed: ";
+		m_err += curl_easy_strerror( res );
+		return false;
+	}
+	res = curl_easy_setopt( curl, CURLOPT_FOLLOWLOCATION, 1L );
+	if( res != CURLE_OK ) {
+		m_err = "curl_easy_setopt(CURLOPT_FOLLOWLOCATION) failed: ";
+		m_err += curl_easy_strerror( res );
+		return false;
+	}
+	res = curl_easy_setopt( curl, CURLOPT_FILE, &stream );
+	if( res != CURLE_OK ) {
+		m_err = "curl_easy_setopt(CURLOPT_FILE) failed: ";
+		m_err += curl_easy_strerror( res );
+		return false;
+	}
+	res = curl_easy_setopt( curl, CURLOPT_TIMEOUT, m_timeout );
+	if( res != CURLE_OK ) {
+		m_err = "curl_easy_setopt(CURLOPT_TIMEOUT) failed: ";
+		m_err += curl_easy_strerror( res );
+		return false;
+	}
+	buffer = "imap://" + m_host;
+	res = curl_easy_setopt( curl, CURLOPT_URL, buffer.c_str() );
+	if( res != CURLE_OK ) {
+		m_err = "curl_easy_setopt(" + buffer + ") failed: ";
+		m_err += curl_easy_strerror( res );
+		return false;
+	}
+	
+	buffer.setNum( m_uid );
+	buffer.prepend( "imap://" + m_host + "/" + m_dir );
+	curl_easy_setopt( curl, CURLOPT_URL, buffer.c_str() );
+	res = curl_easy_perform( curl );
+	if( res != CURLE_OK ) {
+		m_err = "curl_easy_perform() failed: ";
+		m_err += curl_easy_strerror( res );
+		return false;
+	}
+	
+	buffer.setNum( m_uid );
+	buffer.prepend( "STORE ");
+	buffer.append( " +Flags \\" + action );
+	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, buffer);
+	res = curl_easy_perform( curl );
+	if( res != CURLE_OK ) {
+		m_err = "curl_easy_perform() failed: ";
+		m_err += curl_easy_strerror( res );
+		return false;
+	}
+	
+	if ( flag == DIMAP::DELETED ) {
+		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "EXPUNGE");
+		res = curl_easy_perform( curl );
+		if( res != CURLE_OK ) {
+			m_err = "curl_easy_perform() failed: ";
+			m_err += curl_easy_strerror( res );
+			return false;
+		}
+	}
+	
+	curl_easy_cleanup( curl );
+	return true;
+}
+
+bool DIMAP::erase()
+{
+	return setFlag( DIMAP::DELETED );
+}
+
+bool DIMAP::read()
+{
+	return setFlag( DIMAP::SEEN );
+}
+
+void DIMAP::next()
+{
+	m_uid++;
 }
 
 const DString & DIMAP::getLastError()
