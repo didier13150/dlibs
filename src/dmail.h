@@ -47,8 +47,14 @@ public:
 		   const DString & transfert_encoding = "7bits"
   		 );
 	
+	enum{
+		SUCCESS   = 0x00,
+		MULTIPART = 0x01,
+		ERROR     = 0x02
+	};
+	
 	~DMailPart();
-	bool setPart( const DString & part );
+	int setPart( const DString & part );
 	const DString & getPart();
 	
 	void setType( const DString & type );
@@ -62,7 +68,9 @@ public:
 	
 	void setRawPart( const DString & part );
 	const DString & getRawPart();
-		
+	
+	const DString & getBoundary();
+	
 	void clear();
 	
 protected:
@@ -71,6 +79,7 @@ protected:
 	DString m_transfert_encoding;
 	DString m_rawpart;
 	DString m_part;
+	DString m_boundary;
 };
 
 typedef std::map<DString, DString> DMailHeader;

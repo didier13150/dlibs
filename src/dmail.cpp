@@ -103,8 +103,23 @@ bool DMail::setMail( const DString & email )
 		mail_parts = value.split( "--" + m_boundary + "\n", false );
 		
 		for( DStringList::iterator it = mail_parts.begin() ; it != mail_parts.end() ; ++it ) {
-			part.setPart( *it );
-			m_content_part.push_back( part );
+			int ret = part.setPart( *it );
+			if ( ret == DMailPart::MULTIPART )
+			{
+				DString boundary = part.getBoundary();
+				DMailPart part2;
+				buffer = *it;
+				buffer.remove( "--" + boundary + "--" );
+				DStringList mail_parts_second = buffer.split( "--" + boundary + "\n", false );
+				for( DStringList::iterator it2 = mail_parts_second.begin() ; it2 != mail_parts_second.end() ; ++it2 ) {
+					part2.setPart( *it2 );
+					m_content_part.push_back( part2 );
+					part2.clear();
+				}
+			}
+			else {
+				m_content_part.push_back( part );
+			}
 			part.clear();
 		}
 	}
@@ -246,6 +261,7 @@ void DMailPart::clear()
 	m_transfert_encoding.clear();
 	m_rawpart.clear();
 	m_part.clear();
+	m_boundary.clear();
 }
 
 void DMailPart::setType( const DString & type )
@@ -288,19 +304,30 @@ const DString & DMailPart::getRawPart()
 	return m_rawpart;
 }
 
-bool DMailPart::setPart( const DString & part )
+int DMailPart::setPart( const DString & part )
 {
 	DStringList lines = part.split( '\n', true );
 	DString line;
 	bool is_header = true;
 	
+	clear();
 	for( DStringList::iterator it = lines.begin() ; it != lines.end() ; ++it ) {
-		line = it->simplifyWhiteSpace();
-		if ( is_header && line.left( 12 ) == "Content-Type" ) {
+		line = *it;
+		if ( is_header && line.left( 12 ).lower() == "content-type" ) {
 			m_type = line.section( ';', 0, 0 ).section( ':', 1).toLower().simplifyWhiteSpace();
 			m_charset = line.section( ';', 1 ).section( '=', 1).simplifyWhiteSpace();
+			if ( m_type.contains( "multipart") ) {
+				if ( line.contains( "boundary" ) ) {
+					m_boundary = line.section( "=", 1).remove( "\"" );
+					return DMailPart::MULTIPART;
+				}
+			}
 		}
-		else if ( is_header && line.left( 25 ) == "Content-Transfer-Encoding" ) {
+		else if ( is_header && line.contains( "boundary" ) ) {
+			m_boundary = line.section( "=", 1).remove( "\"" );
+			return DMailPart::MULTIPART;
+		}
+		else if ( is_header && line.left( 25 ).lower() == "content-transfer-encoding" ) {
 			m_transfert_encoding = line.section( ':', 1).simplifyWhiteSpace();
 		}
 		else if ( is_header && line == "" ) {
@@ -309,9 +336,8 @@ bool DMailPart::setPart( const DString & part )
 		else {
 			m_rawpart += line + "\n";
 		}
-		
 	}
-	return true;
+	return DMailPart::SUCCESS;
 }
 
 const DString & DMailPart::getPart()
@@ -324,6 +350,11 @@ const DString & DMailPart::getPart()
 	}
 	m_part += m_rawpart;
 	return m_part;
+}
+
+const DString & DMailPart::getBoundary()
+{
+	return m_boundary;
 }
 
 /******************************************************************************/

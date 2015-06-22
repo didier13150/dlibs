@@ -41,8 +41,96 @@
 #include "dmail.h"
 #include "test.h"
 
+static const char * mail1 = 
+"Return-Path: toto@example.com\n"
+"Received: from smtp.example.com (LHLO smtp.example.com) (192.168.0.69) by\n"
+" smtp.example.com with LMTP; Tue, 26 May 2015 13:13:13 +0200 (CEST)\n"
+"Received: from localhost (localhost.localdomain [127.0.0.1])\n"
+"	by smtp.example.com (Postfix) with ESMTP id CFF517E00C4\n"
+"	for <noreply@example.com>; Tue, 26 May 2015 13:13:13 +0200 (CEST)\n"
+"X-Virus-Scanned: amavisd-new at example.com\n"
+"X-Spam-Flag: NO\n"
+"X-Spam-Score: 1.0\n"
+"X-Spam-Level: ***\n"
+"X-Spam-Status: NO, score=1.0 tagged_above=-10 required=6.6\n"
+"	tests=[BAYES_50=0.8, DEAR_SOMETHING=1.973, DNS_FROM_AHBL_RHSBL=2.699,\n"
+"	HTML_FONT_LOW_CONTRAST=0.001, HTML_MESSAGE=0.001,\n"
+"	MIME_BASE64_TEXT=1.741, RCVD_IN_BRBL_LASTEXT=1.449, RCVD_IN_PBL=3.335,\n"
+"	RCVD_IN_SORBS_DUL=0.001, RCVD_IN_XBL=0.375, RDNS_NONE=0.793]\n"
+"	autolearn=no\n"
+"Received: from smtp.example.com ([127.0.0.1])\n"
+"	by localhost (smtp.example.com [127.0.0.1]) (amavisd-new, port 10024)\n"
+"	with ESMTP id aPirvKaebWHp for <noreply@example.com>;\n"
+"	Tue, 26 May 2015 13:13:09 +0200 (CEST)\n"
+"Received: from [192.168.0.69] (unknown [192.168.0.69])\n"
+"	by smtp.example.com (Postfix) with ESMTP id 480EA7E00A2\n"
+"	for <noreply@example.com>; Tue, 26 May 2015 13:13:08 +0200 (CEST)\n"
+"MIME-Version: 1.0\n"
+"From: <toto@example.com>\n"
+"To: noreply@example.com\n"
+"Date: Tue, 26 May 2015 18:13:05 +0700\n"
+"Subject: Test (ref: 001) from example.com\n"
+"Content-Type: multipart/mixed;\n"
+"	boundary=\"--boundary_652_df201e59-c0ab-40cd-a16f-94d02c05ead0\"\n"
+"Message-ID: <ae321c14-ff48-49ce-8272-8d7bcff81947@example.com>\n"
+"\n"
+"----boundary_652_df201e59-c0ab-40cd-a16f-94d02c05ead0\n"
+"Content-Type: multipart/alternative;\n"
+"	boundary=\"--boundary_651_39f42539-b48b-435f-a4c5-202a52933fdb\"\n"
+"\n"
+"----boundary_651_39f42539-b48b-435f-a4c5-202a52933fdb\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=\"us-ascii\"\n"
+"Content-Transfer-Encoding: 7bits\n"
+"\n"
+"Hello world !\n"
+"\n"
+"----boundary_651_39f42539-b48b-435f-a4c5-202a52933fdb\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/html; charset=\"us-ascii\"\n"
+"Content-Transfer-Encoding: 7bits\n"
+"\n"
+"<html><body>Hello world !</body></html>\n"
+"\n"
+"----boundary_651_39f42539-b48b-435f-a4c5-202a52933fdb--\n"
+"\n"
+"----boundary_652_df201e59-c0ab-40cd-a16f-94d02c05ead0\n"
+"Content-Type: multipart/mixed;\n"
+"	boundary=\"--boundary_653_7327e01c-6c7b-419e-aa3d-283d0c0828a2\"\n"
+"\n"
+"----boundary_653_7327e01c-6c7b-419e-aa3d-283d0c0828a2\n"
+"Content-Type: application/msword; name=\"file.txt\"\n"
+"Content-Transfer-Encoding: base64\n"
+"Content-Disposition: attachment\n"
+"\n"
+"SGVsbG8gd29ybGQgIQo=\n"
+"\n"
+"----boundary_653_7327e01c-6c7b-419e-aa3d-283d0c0828a2\n"
+"Content-Type: application/msword; name=\"file2.txt\"\n"
+"Content-Transfer-Encoding: base64\n"
+"Content-Disposition: attachment\n"
+"\n"
+"SGVsbG8gWW91IGJhc2U2NCBmaWxlLnR4dCAhCg==\n"
+"\n"
+"----boundary_653_7327e01c-6c7b-419e-aa3d-283d0c0828a2\n"
+"\n"
+"----boundary_653_7327e01c-6c7b-419e-aa3d-283d0c0828a2--\n"
+"\n"
+"------boundary_652_df201e59-c0ab-40cd-a16f-94d02c05ead0--\n";
+
 void TestDMail::constructor_test()
 {
+	DMail mail;
+	DMailPartList partlist;
+	//DMailPart part;
+	std::cout << std::endl;
+	mail.setMail( mail1 );
+	partlist = mail.getMailPartList();
+	for( DMailPartList::iterator it = partlist.begin() ; it != partlist.end() ; ++it ) {
+		std::cout << "Type: \"" << it->getType() << "\", ";
+		std::cout << "Encoding: \"" << it->getTransfertEncoding() << "\"";
+		std::cout << std::endl;
+	}
 }
 
 int main()
