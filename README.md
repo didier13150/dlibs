@@ -75,9 +75,11 @@ Dependencies
 ------------
 
 This library depends on several other open source packages.These must be installed before libraries can be installed ( Don't forget the devel packages) :
-* pthread (The lib use threads)
+* pthread
 * libxml2 (XML API)
 * librt (real time)
+* libcurl
+* pcre (Regular expression)
 * libmysql (DB operations) : optionnal
 * libpq (DB operations) : optionnal
 
