@@ -12,20 +12,27 @@ int main( int argc, char **argv )
 {
 	DSettings sets;
 	DString buffer;
-	
+	DStringList names;
+	int err;
+
+	err = sets.setFileName ( CONF_FILE );
 	if ( sets.setFileName ( filename ) != DSettings::SUCCESS )
 	{
 		cout << "Error on setFileName process : " << sets.getLastError() << endl;
 		return -1;
 	}
 	
-	if ( sets.readEntry ( "/settings/user1/name", buffer ) != DSettings::SUCCESS )
-	{
-		cout << "Error on readEntry process : " << sets.getLastError() << endl;
-		return -1;
-	}
+	// Get name on first user entry
+	buffer = getEntry( "/settings/users/user[position()=1]/name" );
 
-	cout << "user1 name is " << sets.getEntry( "/settings/user1/name" ) << endl;
+	cout << "user1 name is " << buffer << endl;
+	
+	// Get all names in list
+	names = getEntries( "/settings/users/user/name" );
+	for ( DStringList::iterator it = names.begin() ; it != names.end() ; ++it )
+	{
+		cout << "user: " << *it << endl;
+	}
 	
 	return 0;
 }
