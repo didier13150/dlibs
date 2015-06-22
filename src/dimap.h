@@ -70,11 +70,38 @@ public:
     void setHostname( const DString & host );
     
     /**
+     * Get configured IMAP host
+     */
+    const DString & getHostname();
+    
+    /**
      * Set mail account and password
      * @param user IMAP account
      * @param password IMAP password
      */
     void setLogin( const DString & user, const DString & password );
+    
+    /**
+     * Set mail user
+     * @param user IMAP account
+     */
+    void setUser( const DString & user );
+    
+    /**
+     * Get configured IMAP user
+     */
+    const DString & getUser();
+    
+    /**
+     * Set mail user password
+     * @param password IMAP password
+     */
+    void setPassword( const DString & password );
+    
+    /**
+     * Get configured IMAP password
+     */
+    const DString & getPassword();
     
     /**
      * Set IMAP connection timeout
@@ -83,9 +110,19 @@ public:
     void setTimeout( unsigned int timeout );
     
     /**
+     * Get IMAP connection timeout
+     */
+    unsigned int getTimeout();
+    
+    /**
      * Change mail Directory (default is INBOX)
      */
     void setDir( const DString & dir );
+    
+    /**
+     * Get directory
+     */
+    const DString & getDir();
     
     /**
      * Get Message from IMAP server

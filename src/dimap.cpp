@@ -50,10 +50,35 @@ void DIMAP::setHostname( const DString & host )
 	m_host = host;
 }
 
+const DString & DIMAP::getHostname()
+{
+	return m_host;
+}
+
 void DIMAP::setLogin( const DString & user, const DString & password )
 {
 	m_user = user;
 	m_password = password;
+}
+    
+void DIMAP::setUser( const DString & user )
+{
+	m_user = user;
+}
+
+const DString & DIMAP::getUser()
+{
+	return m_user;
+}
+
+void DIMAP::setPassword( const DString & password )
+{
+	m_password = password;
+}
+
+const DString & DIMAP::getPassword()
+{
+	return m_password;
 }
 
 void DIMAP::setDir( const DString & dir )
@@ -62,9 +87,19 @@ void DIMAP::setDir( const DString & dir )
 	m_dir = dir;
 }
 
+const DString & DIMAP::getDir()
+{
+	return m_dir;
+}
+
 void DIMAP::setTimeout( unsigned int timeout )
 {
 	m_timeout = timeout;
+}
+
+unsigned int DIMAP::getTimeout()
+{
+	return m_timeout;
 }
 
 void DIMAP::clear()
