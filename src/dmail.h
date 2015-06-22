@@ -41,6 +41,12 @@ class DMailPart
 {
 public:
 	DMailPart();
+	DMailPart( const DString & raw,
+		   const DString & type = "text/plain",
+		   const DString & charset = "UTF8",
+		   const DString & transfert_encoding = "7bits"
+  		 );
+	
 	~DMailPart();
 	bool setPart( const DString & part );
 	const DString & getPart();
@@ -88,7 +94,7 @@ public:
 	 */
 	const DString & getMail();
 	
-	void setHeader( const DString & key, const DString & value );
+	void addHeader( const DString & key, const DString & value );
 	const DString & getHeader( const DString & key );
 	
 	DStringList getHeaderList();

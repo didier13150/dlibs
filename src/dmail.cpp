@@ -151,6 +151,7 @@ const DString & DMail::getMail()
 		// Write last boundary
 		m_mail += "--" + m_boundary + "--\n";
 	}
+	return m_mail;
 }
 
 DStringList DMail::getHeaderList()
@@ -184,7 +185,7 @@ const DString & DMail::getBoundary()
 	return m_boundary;
 }
 
-void DMail::setHeader( const DString & key, const DString & value )
+void DMail::addHeader( const DString & key, const DString & value )
 {
 	m_header[ key.lower() ] = value;
 	m_real_header_name[ key.lower() ] = key;
@@ -223,7 +224,7 @@ DString DMail::getRandomBoundary()
 	boundary += buffer + '.';
 	boundary += DString::Now( "%s" );
 	t = clock();
-	buffer.setNum( (int) t / 10 );
+	buffer.setNum( static_cast<int>( t / 10 ) );
 	boundary += buffer;
 	
 	return boundary;
@@ -310,6 +311,7 @@ bool DMailPart::setPart( const DString & part )
 		}
 		
 	}
+	return true;
 }
 
 const DString & DMailPart::getPart()
