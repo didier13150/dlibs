@@ -7,6 +7,9 @@ set( Dlibs_PATCH_LEVEL 1 )
 set( Dlibs_SOVERSION 0 )
 set( Dlibs_VERSION ${Dlibs_MAJOR_VERSION}.${Dlibs_MINOR_VERSION}.${Dlibs_PATCH_LEVEL} )
 set( Dlibs_BUGREPORT "didier.fabert@gmail.com" )
+set( IMAP_HOST "localhost")
+set( IMAP_USER "root")
+set( IMAP_PASSWD "password")
 
 cmake_minimum_required(VERSION 2.4)
 #if you don't want the full compiler output, remove the following line

@@ -43,5 +43,9 @@
 
 #define CMAKE_SOURCE_DIR "@CMAKE_SOURCE_DIR@"
 
+#define IMAP_HOST "@IMAP_HOST@"
+#define IMAP_USER "@IMAP_USER@"
+#define IMAP_PASSWD "@IMAP_PASSWD@"
+
 #endif // _TEST_H_
  
