@@ -72,6 +72,7 @@ include_directories (${Dlibs_BINARY_DIR}
                      ${CMAKE_SOURCE_DIR}/src
                      ${LIBXML2_INCLUDE_DIR}
                      ${LIBCURL_INCLUDE_DIR}
+                     ${PCRECPP_INCLUDE_DIR}
                      ${MYSQL_INCLUDE_DIR}
                      ${POSTGRESQL_INCLUDE_DIR}
                      ${UTF8CPP_INCLUDE_DIR}
@@ -89,6 +90,7 @@ target_link_libraries(dlibs
                       ${REALTIME_LIBRARY}
                       ${LIBXML2_LIBRARIES}
                       ${LIBCURL_LIBRARIES}
+                      ${PCRECPP_LIBRARIES}
                       ${POSTGRESQL_LIBRARIES}
                       ${MYSQL_LIBRARIES}
 )
