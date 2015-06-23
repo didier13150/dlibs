@@ -891,7 +891,35 @@ void TestDString::related_function_test()
 	double d = 3.14159265359;
 	TEST_ASSERT_MSG( valueToStr( d, 10, 11 ) == std::string( "3.14159265359" ), "float to string failed (base 10)" )
 	TEST_ASSERT_MSG( valueToStr( d, 10, 2 ) == std::string( "3.14" ), "float to string failed (base 10)" )
+}
+
+void TestDString::regex_test()
+{
+	DString str = "abcdefghijklmnopqrstuvwxyz0123456789";
 	
+	TEST_ASSERT_MSG( ! str.match( "^$" ), "String match wrong regex" )
+	TEST_ASSERT_MSG( str.match( "^abcdef" ), "String don't match regex" )
+	TEST_ASSERT_MSG( str.match( "^abcdef.*", true, true ), "String don't match regex" )
+	TEST_ASSERT_MSG( str.match( "^ABCDEF.*", false, true ), "String don't match regex (case insensitive)" )
+	TEST_ASSERT_MSG( ! str.match( "^abcef" ), "String match wrong regex" )
+	TEST_ASSERT_MSG( ! str.match( "^abcef.*", true, true ), "String match wrong regex" )
+	
+	DStringList matches = str.getMatches( "^(abcdef)" );
+	TEST_ASSERT_MSG( matches.size() == 1, "Wrong number of matches. Must be 1" );
+	for( DStringList::iterator it = matches.begin() ; it != matches.end() ; ++it ) {
+		TEST_ASSERT_MSG( *it == "abcdef", "Match is not good" );
+	}
+	TEST_ASSERT_MSG( str.getMatches( "^$" ).size() == 0, "Wrong number of matches. Must be 0" );
+	TEST_ASSERT_MSG( str.getMatches( "^abcef" ).size() == 0, "Wrong number of matches. Must be 0" );
+	
+	str = "abcdefghijklmnopqrstuvwxyz firstname.name@example.com abcdefghijklmnopqrstuvwxyz";
+	TEST_ASSERT_MSG( str.match( "\\w+\\.?\\w*@\\w+\\.\\w+" ), "String don't match regex" )
+	TEST_ASSERT_MSG( ! str.match( "^\\w+\\.?\\w*@\\w+\\.\\w+$" ), "String match wrong regex" )
+	matches = str.getMatches( ".*\\s+(\\w+\\.?\\w*@\\w+\\.\\w+)\\s+.*" );
+	TEST_ASSERT_MSG( matches.size() == 1, "Wrong number of matches. Must be 1" );
+	for( DStringList::iterator it = matches.begin() ; it != matches.end() ; ++it ) {
+		TEST_ASSERT_MSG( *it == "firstname.name@example.com", "Match is not good" );
+	}
 }
 
 int main()

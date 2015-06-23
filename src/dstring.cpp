@@ -35,6 +35,10 @@
 #include "dstring.h"
 #include <stdint.h>
 #include <utf8.h>
+#include <pcrecpp.h>
+
+//The matching interface supports at most 16 arguments per call
+#define PCRE_MAX_ARGS 16
 
 DString::DString()
 {
@@ -1704,6 +1708,63 @@ bool DString::containsOnlyLegalChar ( BaseFlag base, CaseFlag caseflag ) const
 	return legal;
 }
 
+bool DString::match ( const DString & pattern, bool cs, bool fullmatch )
+{
+	pcrecpp::RE_Options opt;
+	
+	if ( ! cs ) {
+		opt.set_caseless( true );
+	}
+	pcrecpp::RE re( pattern.c_str(), opt );
+	if ( fullmatch ) {
+		return re.FullMatch( m_str.c_str() );
+	}
+	return re.PartialMatch( m_str.c_str() );
+}
+
+DStringList DString::getMatches ( const DString & pattern, bool cs )
+{
+	DStringList matches;
+	pcrecpp::RE_Options opt;
+	
+	if ( ! cs ) {
+		opt.set_caseless( true );
+	}
+	pcrecpp::RE re( pattern.c_str(), opt );
+	
+	int  n = re.NumberOfCapturingGroups();	
+	if ( n < 0 )
+		return matches;
+
+	else if( n > PCRE_MAX_ARGS ) {
+		// Overflow: There are too many capturing groups
+		return matches;
+	}
+
+	std::string str[PCRE_MAX_ARGS];
+	const pcrecpp::Arg *args[PCRE_MAX_ARGS];
+
+	for ( int i = 0 ; i < PCRE_MAX_ARGS ; i++ ) {
+		
+		args[i] = new pcrecpp::Arg( &str[i] );
+	}
+
+	pcrecpp::StringPiece input( m_str );
+
+	int consumed;
+	if ( re.DoMatch( input, pcrecpp::RE::UNANCHORED, &consumed, args, n ) ) {
+		input.remove_prefix(consumed);
+		for ( int i = 0 ; i < n ; i++ ) {
+			matches.push_back( str[i] );
+		}
+	}
+	
+	for ( int i = 0 ; i < PCRE_MAX_ARGS ; i++ ) {
+		delete args[i];
+	}
+	
+	return matches;
+}
 ///////////////////////////////////////////////////////////////////////////////
 std::list<char> & DString::onlyBinary() const
 {

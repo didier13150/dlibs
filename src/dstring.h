@@ -1136,6 +1136,23 @@ class DString
 		bool containsOnlyLegalChar ( BaseFlag base, CaseFlag caseflag = BOTHCASE ) const;
 
 		/**
+		 * Check if string match \p pattern regex.
+		 * If \em cs is TRUE (the default), the search is case sensitive; otherwise
+		 * the search is case insensitive. \n
+		 * If \em fullmatch is FALSE (the default), the pattern can be partial.
+		 * @return true if string match regex, false otherwise.
+		 */
+		bool match ( const DString & pattern, bool cs = true, bool fullmatch = false );
+		
+		/**
+		 * Check if string match \p pattern regex and return matches.
+		 * If \em cs is TRUE (the default), the search is case sensitive; otherwise
+		 * the search is case insensitive.
+		 * @return matches.
+		 */
+		DStringList getMatches ( const DString & pattern, bool cs = true );
+		
+		/**
 		* Convert timestamp (time_t) t to a human readable string formated as
 		* desired.\n
 		* The default is database format (%Y-%m-%d %H-%M-%S).\n
