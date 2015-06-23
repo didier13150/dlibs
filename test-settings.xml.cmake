@@ -7,4 +7,9 @@
     <user>dlibs</user>
     <password>dlibspw</password>
   </mysql>
+  <imap>
+    <host>localhost</host>
+    <user>dlibs</user>
+    <password>dlibspw</password>
+  </imap>
 </settings>
