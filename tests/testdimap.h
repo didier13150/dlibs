@@ -38,19 +38,26 @@
 #define _TESTDIMAP_H
 
 #include <cpptest.h>
+#include "dstring.h"
 
 class TestDIMAP : public Test::Suite
 {
 public:
 	TestDIMAP()
 	{
+		TEST_ADD( TestDIMAP::setup )
 		TEST_ADD( TestDIMAP::basic_test )
 		TEST_ADD( TestDIMAP::fetch_some_mails_test )
 	}
 
 private:
+	void setup();
 	void basic_test();
 	void fetch_some_mails_test();
+	
+	DString _host;
+	DString _user;
+	DString _passwd;
 };
 
 #endif // _TESTDIMAP_H

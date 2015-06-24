@@ -40,14 +40,51 @@
 #include "testdimap.h"
 #include "dimap.h"
 #include "test.h"
+#include "dsettings.h"
+
+void TestDIMAP::setup()
+{
+	DSettings sets;
+	int err;
+	
+	err = sets.setFileName ( "test-settings.xml" );
+	if ( err != DSettings::SUCCESS )
+	{
+		TEST_FAIL( "Can not specify settings file." )
+		_user = "root";
+		_passwd = "";
+		_host = "localhost";
+	}
+	
+	err = sets.readEntry ( "/settings/imap/user", _user );
+	if ( err != DSettings::SUCCESS )
+	{
+		TEST_FAIL( "Can not read entry for IMAP user." )
+		_user = "root";
+	}
+	
+	err = sets.readEntry ( "/settings/imap/password", _passwd );
+	if ( err != DSettings::SUCCESS )
+	{
+		TEST_FAIL( "Can not read entry for IMAP password." )
+		_passwd = "";
+	}
+	
+	err = sets.readEntry ( "/settings/imap/host", _host );
+	if ( err != DSettings::SUCCESS )
+	{
+		TEST_FAIL( "Can not read entry for IMAP hostname." )
+		_host = "localhost";
+	}
+}
 
 void TestDIMAP::basic_test()
 {
 	DIMAP imap;
 	DString content;
 	
-	imap.setHostname( IMAP_HOST );
-	imap.setLogin( IMAP_USER, IMAP_PASSWD );
+	imap.setHostname( _host );
+	imap.setLogin( _user, _passwd );
 	imap.setDir( "INBOX" );
 	
 	content = imap.getMessage();	
@@ -60,8 +97,8 @@ void TestDIMAP::fetch_some_mails_test()
 	DString content;
 	unsigned int uid = 0;
 	
-	imap.setHostname( IMAP_HOST );
-	imap.setLogin( IMAP_USER, IMAP_PASSWD );
+	imap.setHostname( _host );
+	imap.setLogin( _user, _passwd );
 	imap.setDir( "INBOX" );
 	
 	content = imap.getMessage();
