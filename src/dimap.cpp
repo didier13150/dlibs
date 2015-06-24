@@ -115,7 +115,9 @@ const DString & DIMAP::getMessage()
 	DString buffer;
 	CURLcode res = CURLE_OK;
 	std::ostringstream stream;
-		
+	
+	m_err.clear();
+	m_current_message.clear();
 	curl = curl_easy_init();
 	if( ! curl ) {
 		m_err = "curl_easy_init() failed: ";
