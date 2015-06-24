@@ -122,15 +122,27 @@ void TestDMail::constructor_test()
 {
 	DMail mail;
 	DMailPartList partlist;
+	
+	//std::cout << std::endl;
+	mail.setMail( mail1 );
+	partlist = mail.getMailPartList();
+	/*for( DMailPartList::iterator it = partlist.begin() ; it != partlist.end() ; ++it ) {
+		std::cout << "Type: \"" << it->getType() << "\", ";
+		std::cout << "Charset: \"" << it->getCharset() << "\", ";
+		std::cout << "Encoding: \"" << it->getTransfertEncoding() << "\"";
+		std::cout << std::endl;
+	}*/
+}
+
+void TestDMail::clear_test()
+{
+	DMail mail;
+	DMailPartList partlist;
 	//DMailPart part;
 	std::cout << std::endl;
 	mail.setMail( mail1 );
-	partlist = mail.getMailPartList();
-	for( DMailPartList::iterator it = partlist.begin() ; it != partlist.end() ; ++it ) {
-		std::cout << "Type: \"" << it->getType() << "\", ";
-		std::cout << "Encoding: \"" << it->getTransfertEncoding() << "\"";
-		std::cout << std::endl;
-	}
+	mail.setMail( mail1 );
+	TEST_ASSERT_MSG( mail.getHeader( "subject" ) == "Test (ref: 001) from example.com", "Headers are not cleared between two mail" )
 }
 
 int main()

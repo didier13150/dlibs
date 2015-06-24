@@ -45,10 +45,12 @@ public:
 	TestDMail()
 	{
 		TEST_ADD( TestDMail::constructor_test )
+		TEST_ADD( TestDMail::clear_test )
 	}
 
 private:
 	void constructor_test();
+	void clear_test();
 };
 
 #endif // _TESTDMAIL_H
