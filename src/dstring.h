@@ -1142,7 +1142,7 @@ class DString
 		 * If \em fullmatch is FALSE (the default), the pattern can be partial.
 		 * @return true if string match regex, false otherwise.
 		 */
-		bool match ( const DString & pattern, bool cs = true, bool fullmatch = false );
+		bool match ( const DString & pattern, bool cs = true, bool fullmatch = false ) const ;
 		
 		/**
 		 * Check if string match \p pattern regex and return matches.
@@ -1150,7 +1150,7 @@ class DString
 		 * the search is case insensitive.
 		 * @return matches.
 		 */
-		DStringList getMatches ( const DString & pattern, bool cs = true );
+		DStringList getMatches ( const DString & pattern, bool cs = true ) const ;
 		
 		/**
 		* Convert timestamp (time_t) t to a human readable string formated as

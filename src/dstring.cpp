@@ -1708,7 +1708,7 @@ bool DString::containsOnlyLegalChar ( BaseFlag base, CaseFlag caseflag ) const
 	return legal;
 }
 
-bool DString::match ( const DString & pattern, bool cs, bool fullmatch )
+bool DString::match ( const DString & pattern, bool cs, bool fullmatch ) const
 {
 	pcrecpp::RE_Options opt;
 	
@@ -1722,7 +1722,7 @@ bool DString::match ( const DString & pattern, bool cs, bool fullmatch )
 	return re.PartialMatch( m_str.c_str() );
 }
 
-DStringList DString::getMatches ( const DString & pattern, bool cs )
+DStringList DString::getMatches ( const DString & pattern, bool cs ) const
 {
 	DStringList matches;
 	pcrecpp::RE_Options opt;
