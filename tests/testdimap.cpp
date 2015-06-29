@@ -76,6 +76,12 @@ void TestDIMAP::setup()
 		TEST_FAIL( "Can not read entry for IMAP hostname." )
 		_host = "localhost";
 	}
+	
+	err = sets.readEntry ( "/settings/imap/dir", _dir );
+	if ( err != DSettings::SUCCESS or _dir.isEmpty() )
+	{
+		_dir = "INBOX";
+	}
 }
 
 void TestDIMAP::basic_test()
@@ -109,6 +115,40 @@ void TestDIMAP::fetch_some_mails_test()
 		content = imap.getMessage();
 	}
 	TEST_ASSERT_MSG( uid != 0, "No message downloaded" )
+}
+
+void TestDIMAP::delete_test()
+{
+	DIMAP imap;
+	bool success = false;
+	
+	imap.setHostname( _host );
+	imap.setLogin( _user, _passwd );
+	imap.setDir( "Junk" );
+	
+	imap.getMessage();
+	success = imap.erase();
+	TEST_ASSERT_MSG( success, "Mail not deleted" )
+
+}
+
+void TestDIMAP::read_test()
+{
+	DIMAP imap;
+	bool success = false;
+	
+	imap.setHostname( _host );
+	imap.setLogin( _user, _passwd );
+	imap.setDir( "Junk" );
+	
+	imap.getMessage();
+	success = imap.read();
+	if ( ! success ) {
+		std::cout << std::endl;
+		std::cout << imap.getLastError() << std::endl;
+	}
+	TEST_ASSERT_MSG( success, "Mail not read" )
+
 }
 
 int main()

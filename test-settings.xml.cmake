@@ -11,5 +11,6 @@
     <host>localhost</host>
     <user>dlibs</user>
     <password>dlibspw</password>
+    <dir>INBOX</dir>
   </imap>
 </settings>

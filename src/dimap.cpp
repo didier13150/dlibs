@@ -102,6 +102,11 @@ unsigned int DIMAP::getTimeout()
 	return m_timeout;
 }
 
+unsigned int DIMAP::getUid()
+{
+	return m_uid;
+}
+
 void DIMAP::clear()
 {
 	m_uid = 1;
@@ -130,49 +135,14 @@ const DString & DIMAP::getMessage()
 	curl_easy_setopt( curl, CURLOPT_USERNAME, m_user.c_str() );
 	curl_easy_setopt( curl, CURLOPT_PASSWORD, m_password.c_str() );
 	
-	res = curl_easy_setopt( curl, CURLOPT_WRITEFUNCTION, &data_write );
-	if( res != CURLE_OK ) {
-		m_err = "curl_easy_setopt(CURLOPT_WRITEFUNCTION) failed: ";
-		m_err += curl_easy_strerror( res );
-		m_current_message = DString::empty();
-		return m_current_message;
-	}
-	res = curl_easy_setopt( curl, CURLOPT_NOPROGRESS, 1L );
-	if( res != CURLE_OK ) {
-		m_err = "curl_easy_setopt(CURLOPT_NOPROGRESS) failed: ";
-		m_err += curl_easy_strerror( res );
-		m_current_message = DString::empty();
-		return m_current_message;
-	}
-	res = curl_easy_setopt( curl, CURLOPT_FOLLOWLOCATION, 1L );
-	if( res != CURLE_OK ) {
-		m_err = "curl_easy_setopt(CURLOPT_FOLLOWLOCATION) failed: ";
-		m_err += curl_easy_strerror( res );
-		m_current_message = DString::empty();
-		return m_current_message;
-	}
-	res = curl_easy_setopt( curl, CURLOPT_FILE, &stream );
-	if( res != CURLE_OK ) {
-		m_err = "curl_easy_setopt(CURLOPT_FILE) failed: ";
-		m_err += curl_easy_strerror( res );
-		m_current_message = DString::empty();
-		return m_current_message;
-	}
-	res = curl_easy_setopt( curl, CURLOPT_TIMEOUT, m_timeout );
-	if( res != CURLE_OK ) {
-		m_err = "curl_easy_setopt(CURLOPT_TIMEOUT) failed: ";
-		m_err += curl_easy_strerror( res );
-		m_current_message = DString::empty();
-		return m_current_message;
-	}
+	curl_easy_setopt( curl, CURLOPT_WRITEFUNCTION, &data_write );
+	curl_easy_setopt( curl, CURLOPT_NOPROGRESS, 1L );
+	curl_easy_setopt( curl, CURLOPT_FOLLOWLOCATION, 1L );
+	curl_easy_setopt( curl, CURLOPT_FILE, &stream );
+	curl_easy_setopt( curl, CURLOPT_TIMEOUT, m_timeout );
+	
 	buffer = "imap://" + m_host;
-	res = curl_easy_setopt( curl, CURLOPT_URL, buffer.c_str() );
-	if( res != CURLE_OK ) {
-		m_err = "curl_easy_setopt(" + buffer + ") failed: ";
-		m_err += curl_easy_strerror( res );
-		m_current_message = DString::empty();
-		return m_current_message;
-	}
+	curl_easy_setopt( curl, CURLOPT_URL, buffer.c_str() );
 	
 	buffer.setNum( m_uid );
 	buffer.prepend( "imap://" + m_host + "/" + m_dir + "/;UID=" );
@@ -244,61 +214,23 @@ bool DIMAP::setFlag( DIMAP::DIMAPFlag flag)
 	curl_easy_setopt( curl, CURLOPT_USERNAME, m_user.c_str() );
 	curl_easy_setopt( curl, CURLOPT_PASSWORD, m_password.c_str() );
 	
-	res = curl_easy_setopt( curl, CURLOPT_WRITEFUNCTION, &data_write );
-	if( res != CURLE_OK ) {
-		m_err = "curl_easy_setopt(CURLOPT_WRITEFUNCTION) failed: ";
-		m_err += curl_easy_strerror( res );
-		return false;
-	}
-	res = curl_easy_setopt( curl, CURLOPT_NOPROGRESS, 1L );
-	if( res != CURLE_OK ) {
-		m_err = "curl_easy_setopt(CURLOPT_NOPROGRESS) failed: ";
-		m_err += curl_easy_strerror( res );
-		return false;
-	}
-	res = curl_easy_setopt( curl, CURLOPT_FOLLOWLOCATION, 1L );
-	if( res != CURLE_OK ) {
-		m_err = "curl_easy_setopt(CURLOPT_FOLLOWLOCATION) failed: ";
-		m_err += curl_easy_strerror( res );
-		return false;
-	}
-	res = curl_easy_setopt( curl, CURLOPT_FILE, &stream );
-	if( res != CURLE_OK ) {
-		m_err = "curl_easy_setopt(CURLOPT_FILE) failed: ";
-		m_err += curl_easy_strerror( res );
-		return false;
-	}
-	res = curl_easy_setopt( curl, CURLOPT_TIMEOUT, m_timeout );
-	if( res != CURLE_OK ) {
-		m_err = "curl_easy_setopt(CURLOPT_TIMEOUT) failed: ";
-		m_err += curl_easy_strerror( res );
-		return false;
-	}
-	buffer = "imap://" + m_host;
-	res = curl_easy_setopt( curl, CURLOPT_URL, buffer.c_str() );
-	if( res != CURLE_OK ) {
-		m_err = "curl_easy_setopt(" + buffer + ") failed: ";
-		m_err += curl_easy_strerror( res );
-		return false;
-	}
+	curl_easy_setopt( curl, CURLOPT_WRITEFUNCTION, &data_write );
+	curl_easy_setopt( curl, CURLOPT_NOPROGRESS, 1L );
+	curl_easy_setopt( curl, CURLOPT_FOLLOWLOCATION, 1L );
+	curl_easy_setopt( curl, CURLOPT_FILE, &stream );
+	curl_easy_setopt( curl, CURLOPT_TIMEOUT, m_timeout );
 	
-	buffer.setNum( m_uid );
-	buffer.prepend( "imap://" + m_host + "/" + m_dir );
+	buffer = "imap://" + m_host + "/" + m_dir;
 	curl_easy_setopt( curl, CURLOPT_URL, buffer.c_str() );
-	res = curl_easy_perform( curl );
-	if( res != CURLE_OK ) {
-		m_err = "curl_easy_perform() failed: ";
-		m_err += curl_easy_strerror( res );
-		return false;
-	}
 	
 	buffer.setNum( m_uid );
 	buffer.prepend( "STORE ");
 	buffer.append( " +Flags \\" + action );
-	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, buffer);
+	
+	curl_easy_setopt( curl, CURLOPT_CUSTOMREQUEST, buffer.c_str() );
 	res = curl_easy_perform( curl );
 	if( res != CURLE_OK ) {
-		m_err = "curl_easy_perform() failed: ";
+		m_err = "curl_easy_perform(" + buffer + ") failed: ";
 		m_err += curl_easy_strerror( res );
 		return false;
 	}
@@ -307,7 +239,7 @@ bool DIMAP::setFlag( DIMAP::DIMAPFlag flag)
 		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "EXPUNGE");
 		res = curl_easy_perform( curl );
 		if( res != CURLE_OK ) {
-			m_err = "curl_easy_perform() failed: ";
+			m_err = "curl_easy_perform(EXPUNGE) failed: ";
 			m_err += curl_easy_strerror( res );
 			return false;
 		}

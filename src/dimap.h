@@ -151,6 +151,11 @@ public:
      * Go to next message
      */
     void next();
+	
+	/**
+	 * Get current mail UID
+	 */
+	unsigned int getUid();
     
     /**
      * Get last error message
