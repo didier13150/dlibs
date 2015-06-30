@@ -226,7 +226,9 @@ void TestDAppCmdLine::set_opts_test()
 							"/var/log/my.log",
 							"-v",
 							"-p=/var/run/my.pid",
-							"--lockfile=/var/lock/my.lock"
+							"--lockfile=/var/lock/my.lock",
+							"--name",
+							"toto"
 	};
 	
 	if ( sizeof( argv[0] ) ) argc = sizeof( argv ) / sizeof( argv[0] );
@@ -248,6 +250,7 @@ void TestDAppCmdLine::set_opts_test()
 	opts.push_back( opt6 );
 	
 	app.setOptions( opts );
+	app.addOption( "name", "Specify name", "<NAME>", 'n' );
 
 	if ( ! app.parse( argc, const_cast<char**>(argv) ) )
 	{
@@ -272,6 +275,9 @@ void TestDAppCmdLine::set_opts_test()
 	TEST_ASSERT_MSG( app.getOptionValue( "p" ) == "/var/run/my.pid", "DAppCmdLine doesn't report good value with alias" )
 	TEST_ASSERT_MSG( app.haveOption( "pidfile" ), "DAppCmdLine doesn't have value" )
 	TEST_ASSERT_MSG( app.haveOption( "p" ) , "DAppCmdLine doesn't have value with alias" )
+	TEST_ASSERT_MSG( app.haveOption( "name" ), "DAppCmdLine doesn't have value" )
+	TEST_ASSERT_MSG( app.getOptionValue( "name" ) == "toto", "DAppCmdLine doesn't report good value with name" )
+	TEST_ASSERT_MSG( app.getOptionValue( "n" ) == "toto", "DAppCmdLine doesn't report good value with alias" )
 }
 
 void TestDAppCmdLine::app_opt_stream_test()
