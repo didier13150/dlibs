@@ -256,14 +256,14 @@ const DString & DMail::decodeSubject( const DString & encoded )
 	DBase64 base64;
 	
 	decoded.clear();
-	if ( encoded.left( 2 ) == "=?" ) {
+	if ( encoded.contains( "=?" ) ) {
 		part = encoded.split( ' ' );
 		for ( it = part.begin() ; it != part.end() ; ++it ) {
 			if ( it->left( 10 ) == "=?utf-8?B?" or it->left( 10 ) == "=?UTF-8?B?" ) {
 				base64.setEncoded( it->section( '?', 3, 3 ) );
 				decoded += base64.getDecoded();
 			}
-			else if ( it->left( 13 ) == "=?iso-8859-1?B?" or it->left( 10 ) == "=?ISO-8859-1?B?" ) {
+			else if ( it->left( 15 ) == "=?iso-8859-1?B?" or it->left( 15 ) == "=?ISO-8859-1?B?" ) {
 				base64.setEncoded( it->section( '?', 3, 3 ) );
 				decoded += base64.getDecoded();
 			}
@@ -271,7 +271,7 @@ const DString & DMail::decodeSubject( const DString & encoded )
 				buffer.fromQuotedPrintable( it->section( '?', 3, 3 ) );
 				decoded += buffer;
 			}
-			else if ( it->left( 15 ) == "=?iso-8859-1?Q?" or it->left( 10 ) == "=?ISO-8859-1?Q?" ) {
+			else if ( it->left( 15 ) == "=?iso-8859-1?Q?" or it->left( 15 ) == "=?ISO-8859-1?Q?" ) {
 				buffer.fromQuotedPrintable( it->section( '?', 3, 3 ) );
 				decoded += buffer;
 			}

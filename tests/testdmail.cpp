@@ -147,19 +147,15 @@ void TestDMail::clear_test()
 
 void TestDMail::mail_subject_test()
 {
-	DString str = "=?utf-8?B?UkU6IENvb3Jkb25uw6llcyBkdSBjb25zdWx0YW50IGRlIHZvdHJlIE9mZnJl?= =?utf-8?B?IDogRlI2OSBDT05EUklFVSAtIEZSNjkgU0FJTlQtR0VPUkdFUy1ERS1SRU5F?= =?utf-8?Q?INS_-_SN_CGVL_FEYZIN?=";
+	DString str = "=?utf-8?B?UkU6IENvb3Jkb25uw6llcyBkdSBjb25zdWx0YW50IGRlIHZvdHJlIE9mZnJl?= =?utf-8?B?IDogRlI2OSBDT05EUklFVSAtIEZSNjkgU0FJTlQtR0VPUkdFUy1ERS1SRU5F?= =?utf-8?Q?INS_-_TEST?=";
 	std::cout << std::endl;
-	std::cout << DMail::decodeSubject( str ) << std::endl;
+	TEST_ASSERT_MSG( DMail::decodeSubject( str ) == "RE: Coordonnées du consultant de votre Offre : FR69 CONDRIEU - FR69 SAINT-GEORGES-DE-RENEINS_-_TEST", "Bad UTF-8 Base64 decode process" )	
 	
-	str = "=?iso-8859-1?Q?Automatische_Antwort:_Vos_statistiques_de_d=E9poses_quotid?= =?iso-8859-1?Q?iennes_sur_B2PWeb.?=";
-	std::cout << std::endl;
-	std::cout << DMail::decodeSubject( str ) << std::endl;
+	str = "=?iso-8859-1?Q?Automatische_Antwort:_Vos_statistiques_de_d=E9poses_quotid?= =?iso-8859-1?Q?iennes.?=";
+	TEST_ASSERT_MSG( DMail::decodeSubject( str ) == "Automatische_Antwort:_Vos_statistiques_de_déposes_quotidiennes.", "Bad ISO-8859 Quoted Printable decode process" )
 	
-	str = "=?UTF-8?Q?RE:_Coordonn=C3=A9es_du_consultant_de?= =?UTF-8?Q?_votre_Offre_:_FR28_CHATEAUDUN_-?= =?UTF-8?Q?_PL60_POZNAN_-_JSF_LOGISTICS?=";
-	std::cout << std::endl;
-	std::cout << DMail::decodeSubject( str ) << std::endl;
-
-
+	str = "=?UTF-8?Q?RE:_Coordonn=C3=A9es_du_consultant_de?= =?UTF-8?Q?_votre_Offre_:_FR28_CHATEAUDUN_-?= =?UTF-8?Q?_PL60_POZNAN_-_TEST?=";
+	TEST_ASSERT_MSG( DMail::decodeSubject( str ) == "RE:_Coordonnées_du_consultant_de_votre_Offre_:_FR28_CHATEAUDUN_-_PL60_POZNAN_-_TEST", "Bad UTF-8 Quoted Printable decode process" )
 }
 
 int main()
