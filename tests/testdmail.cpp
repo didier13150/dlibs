@@ -145,6 +145,23 @@ void TestDMail::clear_test()
 	TEST_ASSERT_MSG( mail.getHeader( "subject" ) == "Test (ref: 001) from example.com", "Headers are not cleared between two mail" )
 }
 
+void TestDMail::mail_subject_test()
+{
+	DString str = "=?utf-8?B?UkU6IENvb3Jkb25uw6llcyBkdSBjb25zdWx0YW50IGRlIHZvdHJlIE9mZnJl?= =?utf-8?B?IDogRlI2OSBDT05EUklFVSAtIEZSNjkgU0FJTlQtR0VPUkdFUy1ERS1SRU5F?= =?utf-8?Q?INS_-_SN_CGVL_FEYZIN?=";
+	std::cout << std::endl;
+	std::cout << DMail::decodeSubject( str ) << std::endl;
+	
+	str = "=?iso-8859-1?Q?Automatische_Antwort:_Vos_statistiques_de_d=E9poses_quotid?= =?iso-8859-1?Q?iennes_sur_B2PWeb.?=";
+	std::cout << std::endl;
+	std::cout << DMail::decodeSubject( str ) << std::endl;
+	
+	str = "=?UTF-8?Q?RE:_Coordonn=C3=A9es_du_consultant_de?= =?UTF-8?Q?_votre_Offre_:_FR28_CHATEAUDUN_-?= =?UTF-8?Q?_PL60_POZNAN_-_JSF_LOGISTICS?=";
+	std::cout << std::endl;
+	std::cout << DMail::decodeSubject( str ) << std::endl;
+
+
+}
+
 int main()
 {
 	TestDMail ets;

@@ -31,6 +31,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.             *
  ******************************************************************************/
 #include "dmail.h"
+#include "dbase64.h"
 #include <stdlib.h>
 #include <ctime>
 
@@ -227,9 +228,9 @@ void DMail::clear()
 	m_mail.clear();
 }
 
-DString DMail::getRandomBoundary()
+const DString & DMail::getRandomBoundary()
 {
-	DString boundary;
+	static DString boundary;
 	DString buffer;
 	clock_t t;
 	
@@ -244,6 +245,46 @@ DString DMail::getRandomBoundary()
 	boundary += buffer;
 	
 	return boundary;
+}
+
+const DString & DMail::decodeSubject( const DString & encoded )
+{
+	static DString decoded;
+	DString buffer;
+	DStringList part;
+	DStringList::const_iterator it;
+	DBase64 base64;
+	
+	decoded.clear();
+	if ( encoded.left( 2 ) == "=?" ) {
+		part = encoded.split( ' ' );
+		for ( it = part.begin() ; it != part.end() ; ++it ) {
+			if ( it->left( 10 ) == "=?utf-8?B?" or it->left( 10 ) == "=?UTF-8?B?" ) {
+				base64.setEncoded( it->section( '?', 3, 3 ) );
+				decoded += base64.getDecoded();
+			}
+			else if ( it->left( 13 ) == "=?iso-8859-1?B?" or it->left( 10 ) == "=?ISO-8859-1?B?" ) {
+				base64.setEncoded( it->section( '?', 3, 3 ) );
+				decoded += base64.getDecoded();
+			}
+			else if ( it->left( 10 ) == "=?utf-8?Q?" or it->left( 10 ) == "=?UTF-8?Q?" ) {
+				buffer.fromQuotedPrintable( it->section( '?', 3, 3 ) );
+				decoded += buffer;
+			}
+			else if ( it->left( 15 ) == "=?iso-8859-1?Q?" or it->left( 10 ) == "=?ISO-8859-1?Q?" ) {
+				buffer.fromQuotedPrintable( it->section( '?', 3, 3 ) );
+				decoded += buffer;
+			}
+			else {
+				decoded += *it;
+			}
+		}
+	}
+	else {
+		decoded = encoded;
+	}
+	
+	return decoded;
 }
 
 /******************************************************************************/

@@ -116,7 +116,9 @@ public:
 	
 	void clear();
 
-	static DString getRandomBoundary();
+	static const DString & getRandomBoundary();
+	
+	static const DString & decodeSubject( const DString & encoded );
 	
 protected:
 	DMailHeader m_header;

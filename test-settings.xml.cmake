@@ -7,10 +7,10 @@
     <user>dlibs</user>
     <password>dlibspw</password>
   </mysql>
-  <imap>
-    <host>localhost</host>
-    <user>dlibs</user>
-    <password>dlibspw</password>
-    <dir>INBOX</dir>
+  <imap>    
+    <host>smtp.b2pweb.com</host>
+    <user>noreply</user>
+    <password>6v9r1zra</password>
+    <dir>Junk</dir>
   </imap>
 </settings>
