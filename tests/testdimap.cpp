@@ -120,35 +120,37 @@ void TestDIMAP::fetch_some_mails_test()
 void TestDIMAP::delete_test()
 {
 	DIMAP imap;
-	bool success = false;
 	
 	imap.setHostname( _host );
 	imap.setLogin( _user, _passwd );
 	imap.setDir( "Junk" );
 	
 	imap.getMessage();
-	success = imap.erase();
-	TEST_ASSERT_MSG( success, "Mail not deleted" )
+	TEST_ASSERT_MSG( imap.erase(), "Mail not deleted" )
 
 }
 
 void TestDIMAP::read_test()
 {
 	DIMAP imap;
-	bool success = false;
 	
 	imap.setHostname( _host );
 	imap.setLogin( _user, _passwd );
 	imap.setDir( "Junk" );
 	
 	imap.getMessage();
-	success = imap.read();
-	if ( ! success ) {
-		std::cout << std::endl;
-		std::cout << imap.getLastError() << std::endl;
-	}
-	TEST_ASSERT_MSG( success, "Mail not read" )
+	TEST_ASSERT_MSG( imap.read(), "Mail not read" )
+}
 
+void TestDIMAP::list_test()
+{
+	DIMAP imap;
+	
+	imap.setHostname( _host );
+	imap.setLogin( _user, _passwd );
+	
+	imap.getDirList();
+	TEST_ASSERT_MSG( imap.getDirList().size(), "IMAP Dir list is empty" )
 }
 
 int main()

@@ -162,6 +162,55 @@ const DString & DIMAP::getMessage()
 	return m_current_message;
 }
 
+const DStringList & DIMAP::getDirList()
+{
+	CURL* curl = 0;
+	DString buffer;
+	DStringList list;
+	DStringList::iterator it;
+	CURLcode res = CURLE_OK;
+	std::ostringstream stream;
+	
+	m_err.clear();
+	m_dirs.clear();
+	curl = curl_easy_init();
+	if( ! curl ) {
+		m_err = "curl_easy_init() failed: ";
+		m_err += curl_easy_strerror( CURLE_FAILED_INIT );
+		return m_dirs;
+	}
+	
+	// Set username and password
+	curl_easy_setopt( curl, CURLOPT_USERNAME, m_user.c_str() );
+	curl_easy_setopt( curl, CURLOPT_PASSWORD, m_password.c_str() );
+	
+	curl_easy_setopt( curl, CURLOPT_WRITEFUNCTION, &data_write );
+	curl_easy_setopt( curl, CURLOPT_NOPROGRESS, 1L );
+	curl_easy_setopt( curl, CURLOPT_FOLLOWLOCATION, 1L );
+	curl_easy_setopt( curl, CURLOPT_FILE, &stream );
+	curl_easy_setopt( curl, CURLOPT_TIMEOUT, m_timeout );
+	
+	buffer = "imap://" + m_host;
+	curl_easy_setopt( curl, CURLOPT_URL, buffer.c_str() );
+	
+	// Perform the list
+	res = curl_easy_perform( curl );
+	if( res != CURLE_OK ) {
+		m_err = "curl_easy_perform() failed: ";
+		m_err += curl_easy_strerror( res );
+		m_dirs.clear();
+		return m_dirs;
+	}
+	curl_easy_cleanup( curl );
+	buffer = stream.str();
+	list = buffer.split( '\n' );
+	for ( it = list.begin() ; it != list.end() ; ++it ) {
+		m_dirs.push_back( it->section( " ", 4, 4 ).remove ( '"' ) );
+	}
+	
+	return m_dirs;
+}
+
 bool DIMAP::setFlag( DIMAP::DIMAPFlag flag)
 {
 	DString action, buffer;

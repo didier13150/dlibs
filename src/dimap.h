@@ -153,6 +153,11 @@ public:
     void next();
 	
 	/**
+	 * List IMAP directories
+	 */
+	const DStringList & getDirList();
+	
+	/**
 	 * Get current mail UID
 	 */
 	unsigned int getUid();
@@ -186,6 +191,8 @@ protected:
 	unsigned int m_timeout;
 	/// internal message counter
 	unsigned int m_uid;
+	/// IMAP directories 
+	DStringList m_dirs;
 };
 
 /**

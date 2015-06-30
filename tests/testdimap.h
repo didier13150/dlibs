@@ -50,6 +50,7 @@ public:
 		TEST_ADD( TestDIMAP::fetch_some_mails_test )
 		TEST_ADD( TestDIMAP::delete_test )
 		TEST_ADD( TestDIMAP::read_test )
+		TEST_ADD( TestDIMAP::list_test )
 	}
 
 private:
@@ -58,6 +59,7 @@ private:
 	void fetch_some_mails_test();
 	void delete_test();
 	void read_test();
+	void list_test();
 	
 	DString _host;
 	DString _user;
