@@ -123,6 +123,17 @@ const DString & DBase64::getEncoded()
 	return m_encoded;
 }
 
+const DString & DBase64::getDecoded()
+{
+	char * buffer = 0;
+	
+	buffer = new char[m_encoded.length()];
+	_base64_decode( m_encoded.c_str(), m_encoded.length(), buffer );
+	m_decoded = buffer;
+	delete [] buffer;
+	return m_decoded;
+}
+
 DStringList DBase64::getWrappedEncoded( int wrapping )
 {
 	DStringList list;
@@ -173,7 +184,6 @@ void DBase64::_base64_encode(const char * srcp, int len, char * dstp)
 	*dstp = '\0';
 }
 
-/*
 void DBase64::_base64_decode(const char * srcp, int len, char * dstp)
 {
 	register int i = 0;
@@ -200,10 +210,8 @@ void DBase64::_base64_decode(const char * srcp, int len, char * dstp)
 		*(dstp--) = '\0';
 
 	*dstp = '\0';
-
-	return dst;
 }
-*/
+
 /*
 size_t DBase64::_base64_length(char * str)
 {

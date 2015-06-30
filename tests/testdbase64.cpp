@@ -72,7 +72,7 @@ void TestDBase64::encode_wrapped_test()
 	DBase64 base;
 	DString encoded;
 	DStringList lines;
-	
+
 	encoded = base.encodeFromFile( TESTFILE2 );
 	lines = base.getWrappedEncoded( 76 );
 	TEST_ASSERT_MSG( lines.size() == 3, "Wrong wrapped base64 encoding" )
@@ -84,13 +84,11 @@ void TestDBase64::encode_wrapped_test()
 void TestDBase64::decode_test()
 {
 	DBase64 base;
-	DString ref, buffer;
 	
-	ref = test0;
-	base.setEncoded( ref );
-	buffer = base.getEncoded();
-	TEST_ASSERT_MSG( ref == buffer, "Get encoded failed" )
-	//base.decodeToFile( "/tmp/testdbase64.0.txt" );
+	base.setEncoded( test0 );
+	TEST_ASSERT_MSG( base.getDecoded() == "abcdefghijklmnopqrstuvwxyz0", "decode failed" )
+	base.setEncoded( test1 );
+	TEST_ASSERT_MSG( base.getDecoded() == "abcdefghijklmnopqrstuvwxyz", "decode failed" )
 }
 
 int main()

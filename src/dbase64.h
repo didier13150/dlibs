@@ -63,6 +63,11 @@ public:
 	const DString & getEncoded();
 	
 	/**
+	 * Get decoded string
+	 */
+	const DString & getDecoded();
+	
+	/**
 	 * Get wrapped encoded string list. 
 	 * wrap encoded lines after COLS character (default 76).  Use 0 to disable line wrapping
 	 */
@@ -81,13 +86,14 @@ public:
 	
 protected:
 	void _base64_encode( const char * srcp, int len, char * dstp );
-	//void _base64_decode( const char * srcp, int len, char * dstp );
+	void _base64_decode( const char * srcp, int len, char * dstp );
 	
 	//size_t _base64_length( char * str );
 	size_t _base64_length( int len );
 	//size_t _ascii_length( size_t len );
 	
 	DString m_encoded;
+	DString m_decoded;
 };
 
 #endif // _DBASE64_H
