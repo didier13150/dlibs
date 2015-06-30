@@ -1116,6 +1116,11 @@ class DString
 		DString toQuotedPrintable() const;
 		
 		/**
+		 * Replace all ASCII printable characters with special charaters
+		 */
+		void fromQuotedPrintable( const DString & str );
+		
+		/**
 		 * Replace all special charaters with HTML characters
 		 */
 		DString toHTML() const;
@@ -1274,7 +1279,7 @@ class DString
 		 * Get string format from \p format
 		 */
 		static DString getFormat ( DateFormat format );
-
+		
 	private:
 		std::string m_str;
 		/**

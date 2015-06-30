@@ -1497,6 +1497,89 @@ DString DString::toQuotedPrintable() const
 	return quoted;
 }
 
+void DString::fromQuotedPrintable( const DString & str )
+{
+	// TODO implement utf-8 and iso8859-1*
+	unsigned int i = 0;
+	DString buffer;
+	uint32_t value;
+	
+	m_str.clear();
+	while ( i < str.length() ) {
+		buffer.clear();
+		if ( str[i] == '=' ) {
+			while ( str[i] == '=' ) {
+				buffer += str.mid( i, 3 );
+				i = i + 3;
+			}
+			buffer = buffer.toUpper().remove( "=" );
+			if ( buffer.length() == 2 ) {
+				value = static_cast<uint32_t>( buffer.toUInt( 16 ) );
+				//value += 0xC340;
+			}
+			else if ( buffer == "E282AC" ) {
+				value = 0x20AC;
+			}
+			else if ( buffer == "C5A0" ) {
+				value = 0x160;
+			}
+			else if ( buffer == "C5A1" ) {
+				value = 0x161;
+			}
+			else if ( buffer == "C5BD" ) {
+				value = 0x17d;
+			}
+			else if ( buffer == "C5BE" ) {
+				value = 0x17e;
+			}
+			else if ( buffer == "C592" ) {
+				value = 0x152;
+			}
+			else if ( buffer == "C593" ) {
+				value = 0x153;
+			}
+			else if ( buffer == "C5B8" ) {
+				value = 0x178;
+			}
+			else if ( buffer.left( 2 ) == "C2" ) {
+				std::cout << buffer << std::endl;
+				value = static_cast<uint32_t>( buffer.right(2).toUInt( 16 ) );
+			}
+			else if ( buffer.left( 2 ) == "C3" ) {
+				value = static_cast<uint32_t>( buffer.right(2).toUInt( 16 ) );
+				value += 0x40;
+			}
+			
+			if (value <= 0x7f)
+			{
+				m_str.append(1, static_cast<char>(value));
+			}
+			else if (value <= 0x7ff)
+			{
+				m_str.append(1, static_cast<char>(0xc0 | ((value >> 6) & 0x1f)));
+				m_str.append(1, static_cast<char>(0x80 | (value & 0x3f)));
+			}
+			else if (value <= 0xffff)
+			{
+				m_str.append(1, static_cast<char>(0xe0 | ((value >> 12) & 0x0f)));
+				m_str.append(1, static_cast<char>(0x80 | ((value >> 6) & 0x3f)));
+				m_str.append(1, static_cast<char>(0x80 | (value & 0x3f)));
+			}
+			else
+			{
+				m_str.append(1, static_cast<char>(0xf0 | ((value >> 18) & 0x07)));
+				m_str.append(1, static_cast<char>(0x80 | ((value >> 12) & 0x3f)));
+				m_str.append(1, static_cast<char>(0x80 | ((value >> 6) & 0x3f)));
+				m_str.append(1, static_cast<char>(0x80 | (value & 0x3f)));
+			}
+		}
+		else {
+			m_str += str[i];
+			i++;
+		}
+	}
+}
+
 DString DString::replaceEscapeSequence ( const DString & begin,
 										 const DString & end ) const
 {
@@ -1829,7 +1912,7 @@ std::list<char> & DString::onlyHexa ( DString::CaseFlag caseflag ) const
 
 DString DString::getFormat ( DateFormat format )
 {
-	DString buffer;
+	static DString buffer;
 	switch ( format )
 	{
 		case DString::ISO_DATETIME:
