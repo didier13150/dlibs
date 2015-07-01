@@ -140,6 +140,10 @@ void TestDString::others_operators_test()
 	TEST_ASSERT_MSG( str1.at(0) == "a", "extracts char (dstring) failed" )
 	TEST_ASSERT_MSG( str1[2] == 'c', "extracts char failed" )
 
+	std::istringstream in ("Hello, world");
+	str1.assign( std::istreambuf_iterator<char>( in ),
+                 std::istreambuf_iterator<char>() );
+	TEST_ASSERT_MSG( str1 == "Hello, world", "extracts char failed" )
 }
 
 void TestDString::number_test()

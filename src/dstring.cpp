@@ -1208,6 +1208,12 @@ DString DString::section ( const DString sep, int start, int end ) const
 	return buffer;
 }
 
+DString & DString::assign( const std::istreambuf_iterator<char> & first, const std::istreambuf_iterator<char> & last )
+{
+	m_str.assign( first, last );
+	return *this;
+}
+
 DString DString::timeToString ( const time_t & t, DString format )
 {
 	char buffer[80];

@@ -1096,6 +1096,12 @@ class DString
 		int find ( char c, int index = 0, bool cs = true ) const;
 
 		/**
+		 * Assign
+		 */
+		DString & assign( const std::istreambuf_iterator<char> & first,
+						  const std::istreambuf_iterator<char> & last );
+		
+		/**
 		 * Replace escape sequence char (ASCII code < 0x20) by a human readable
 		 * string.\n
 		 * The human readable string of an escape sequence char begin by the string
