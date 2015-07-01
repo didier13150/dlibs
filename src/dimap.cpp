@@ -205,7 +205,7 @@ const DStringList & DIMAP::getDirList()
 	buffer = stream.str();
 	list = buffer.split( '\n' );
 	for ( it = list.begin() ; it != list.end() ; ++it ) {
-		m_dirs.push_back( it->section( " ", 4, 4 ).remove ( '"' ) );
+		m_dirs.push_back( it->section( " ", 4 ).remove ( '"' ) );
 	}
 	
 	return m_dirs;
