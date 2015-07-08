@@ -1813,9 +1813,7 @@ bool DString::match ( const DString & pattern, bool cs, bool fullmatch ) const
 
 int DString::haveMatches ( const DString & pattern ) const
 {
-	pcrecpp::RE_Options opt;
-	
-	pcrecpp::RE re( pattern.c_str(), opt );
+	pcrecpp::RE re( pattern.c_str() );
 	return re.NumberOfCapturingGroups();
 }
 
