@@ -919,6 +919,7 @@ void TestDString::regex_test()
 	str = "abcdefghijklmnopqrstuvwxyz firstname.name@example.com abcdefghijklmnopqrstuvwxyz";
 	TEST_ASSERT_MSG( str.match( "\\w+\\.?\\w*@\\w+\\.\\w+" ), "String don't match regex" )
 	TEST_ASSERT_MSG( ! str.match( "^\\w+\\.?\\w*@\\w+\\.\\w+$" ), "String match wrong regex" )
+	TEST_ASSERT_MSG( str.haveMatches( ".*\\s+(\\w+\\.?\\w*@\\w+\\.\\w+)\\s+.*" ) == 1, "Wrong number of matches. Must be 1" )
 	matches = str.getMatches( ".*\\s+(\\w+\\.?\\w*@\\w+\\.\\w+)\\s+.*" );
 	TEST_ASSERT_MSG( matches.size() == 1, "Wrong number of matches. Must be 1" );
 	for( DStringList::iterator it = matches.begin() ; it != matches.end() ; ++it ) {

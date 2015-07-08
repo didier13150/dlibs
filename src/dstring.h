@@ -1156,6 +1156,11 @@ class DString
 		bool match ( const DString & pattern, bool cs = true, bool fullmatch = false ) const ;
 		
 		/**
+		 * Return number of attempted matches
+		 */
+		int haveMatches ( const DString & pattern ) const;
+		
+		/**
 		 * Check if string match \p pattern regex and return matches.
 		 * If \em cs is TRUE (the default), the search is case sensitive; otherwise
 		 * the search is case insensitive.

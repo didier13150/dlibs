@@ -1811,6 +1811,14 @@ bool DString::match ( const DString & pattern, bool cs, bool fullmatch ) const
 	return re.PartialMatch( m_str.c_str() );
 }
 
+int DString::haveMatches ( const DString & pattern ) const
+{
+	pcrecpp::RE_Options opt;
+	
+	pcrecpp::RE re( pattern.c_str(), opt );
+	return re.NumberOfCapturingGroups();
+}
+
 DStringList DString::getMatches ( const DString & pattern, bool cs ) const
 {
 	DStringList matches;
@@ -1821,7 +1829,7 @@ DStringList DString::getMatches ( const DString & pattern, bool cs ) const
 	}
 	pcrecpp::RE re( pattern.c_str(), opt );
 	
-	int  n = re.NumberOfCapturingGroups();	
+	int  n = re.NumberOfCapturingGroups();
 	if ( n < 0 )
 		return matches;
 
