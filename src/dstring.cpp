@@ -1548,7 +1548,6 @@ void DString::fromQuotedPrintable( const DString & str )
 				value = 0x178;
 			}
 			else if ( buffer.left( 2 ) == "C2" ) {
-				std::cout << buffer << std::endl;
 				value = static_cast<uint32_t>( buffer.right(2).toUInt( 16 ) );
 			}
 			else if ( buffer.left( 2 ) == "C3" ) {
