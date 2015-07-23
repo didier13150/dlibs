@@ -37,6 +37,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <unistd.h>
 #include "testdimap.h"
 #include "dimap.h"
 #include "test.h"
@@ -91,7 +92,7 @@ void TestDIMAP::basic_test()
 	
 	imap.setHostname( _host );
 	imap.setLogin( _user, _passwd );
-	imap.setDir( "INBOX" );
+	imap.setDir( _dir );
 	
 	content = imap.getMessage();	
 	TEST_ASSERT_MSG( ! content.isEmpty(), "No message downloaded" )
@@ -105,7 +106,7 @@ void TestDIMAP::fetch_some_mails_test()
 	
 	imap.setHostname( _host );
 	imap.setLogin( _user, _passwd );
-	imap.setDir( "INBOX" );
+	imap.setDir( _dir );
 	
 	content = imap.getMessage();
 	while ( ! content.isEmpty() ) {
@@ -117,17 +118,35 @@ void TestDIMAP::fetch_some_mails_test()
 	TEST_ASSERT_MSG( uid != 0, "No message downloaded" )
 }
 
-void TestDIMAP::delete_test()
+void TestDIMAP::delete_one_test()
 {
 	DIMAP imap;
+	DString content;
 	
 	imap.setHostname( _host );
 	imap.setLogin( _user, _passwd );
-	imap.setDir( "Junk" );
+	imap.setDir( _dir );
 	
-	imap.getMessage();
+	content = imap.getMessage();
 	TEST_ASSERT_MSG( imap.erase(), "Mail not deleted" )
+}
 
+void TestDIMAP::delete_all_test()
+{
+	DIMAP imap;
+	DString content;
+	
+	imap.setHostname( _host );
+	imap.setLogin( _user, _passwd );
+	imap.setDir( _dir );
+	
+	content = imap.getMessage();
+	while ( ! content.isEmpty() ) {
+		TEST_ASSERT_MSG( imap.erase(), "Mail not deleted" )
+		imap.next();
+		content = imap.getMessage();
+	}
+	imap.expunge();
 }
 
 void TestDIMAP::read_test()
@@ -136,7 +155,7 @@ void TestDIMAP::read_test()
 	
 	imap.setHostname( _host );
 	imap.setLogin( _user, _passwd );
-	imap.setDir( "Junk" );
+	imap.setDir( _dir );
 	
 	imap.getMessage();
 	TEST_ASSERT_MSG( imap.read(), "Mail not read" )

@@ -48,16 +48,18 @@ public:
 		TEST_ADD( TestDIMAP::setup )
 		TEST_ADD( TestDIMAP::basic_test )
 		TEST_ADD( TestDIMAP::fetch_some_mails_test )
-		TEST_ADD( TestDIMAP::delete_test )
 		TEST_ADD( TestDIMAP::read_test )
 		TEST_ADD( TestDIMAP::list_test )
+		TEST_ADD( TestDIMAP::delete_one_test )
+		TEST_ADD( TestDIMAP::delete_all_test )
 	}
 
 private:
 	void setup();
 	void basic_test();
 	void fetch_some_mails_test();
-	void delete_test();
+	void delete_one_test();
+	void delete_all_test();
 	void read_test();
 	void list_test();
 	
