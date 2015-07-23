@@ -8,9 +8,9 @@
     <password>dlibspw</password>
   </mysql>
   <imap>    
-    <host>smtp.b2pweb.com</host>
-    <user>noreply</user>
-    <password>6v9r1zra</password>
-    <dir>Junk</dir>
+    <host>smtp.didier-linux.eu</host>
+    <user>didier</user>
+    <password>z0bioneKenobit</password>
+    <dir>inbox</dir>
   </imap>
 </settings>
