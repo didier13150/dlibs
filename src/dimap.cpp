@@ -120,6 +120,7 @@ const DString & DIMAP::getMessage()
 	DString buffer;
 	CURLcode res = CURLE_OK;
 	std::ostringstream stream;
+	bool success = true;
 	
 	m_err.clear();
 	m_current_message.clear();
@@ -154,10 +155,12 @@ const DString & DIMAP::getMessage()
 		m_err = "curl_easy_perform() failed: ";
 		m_err += curl_easy_strerror( res );
 		m_current_message = DString::empty();
-		return m_current_message;
+		success = false;
 	}
 	curl_easy_cleanup( curl );
-	m_current_message = stream.str();
+	if ( success ) {
+		m_current_message = stream.str();
+	}
 	
 	return m_current_message;
 }
@@ -170,6 +173,7 @@ const DStringList & DIMAP::getDirList()
 	DStringList::iterator it;
 	CURLcode res = CURLE_OK;
 	std::ostringstream stream;
+	bool success = true;
 	
 	m_err.clear();
 	m_dirs.clear();
@@ -199,13 +203,15 @@ const DStringList & DIMAP::getDirList()
 		m_err = "curl_easy_perform() failed: ";
 		m_err += curl_easy_strerror( res );
 		m_dirs.clear();
-		return m_dirs;
+		success = false;
 	}
 	curl_easy_cleanup( curl );
-	buffer = stream.str();
-	list = buffer.split( '\n' );
-	for ( it = list.begin() ; it != list.end() ; ++it ) {
-		m_dirs.push_back( it->section( " ", 4 ).remove ( '"' ) );
+	if ( success ) {
+		buffer = stream.str();
+		list = buffer.split( '\n' );
+		for ( it = list.begin() ; it != list.end() ; ++it ) {
+			m_dirs.push_back( it->section( " ", 4 ).remove ( '"' ) );
+		}
 	}
 	
 	return m_dirs;
@@ -217,6 +223,7 @@ bool DIMAP::setFlag( DIMAP::DIMAPFlag flag)
 	CURL* curl = 0;
 	CURLcode res = CURLE_OK;
 	std::ostringstream stream;
+	bool success = true;
 	
 	switch( flag )
 	{
@@ -281,21 +288,50 @@ bool DIMAP::setFlag( DIMAP::DIMAPFlag flag)
 	if( res != CURLE_OK ) {
 		m_err = "curl_easy_perform(" + buffer + ") failed: ";
 		m_err += curl_easy_strerror( res );
-		return false;
-	}
-	
-	if ( flag == DIMAP::DELETED ) {
-		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "EXPUNGE");
-		res = curl_easy_perform( curl );
-		if( res != CURLE_OK ) {
-			m_err = "curl_easy_perform(EXPUNGE) failed: ";
-			m_err += curl_easy_strerror( res );
-			return false;
-		}
+		success = false;
 	}
 	
 	curl_easy_cleanup( curl );
-	return true;
+	return success;
+}
+
+bool DIMAP::expunge()
+{
+	DString buffer;
+	CURL* curl = 0;
+	CURLcode res = CURLE_OK;
+	std::ostringstream stream;
+	bool success = true;
+	
+	curl = curl_easy_init();
+	if( ! curl ) {
+		m_err = "curl_easy_init() failed: ";
+		m_err += curl_easy_strerror( CURLE_FAILED_INIT );
+		return false;
+	}
+	
+	// Set username and password
+	curl_easy_setopt( curl, CURLOPT_USERNAME, m_user.c_str() );
+	curl_easy_setopt( curl, CURLOPT_PASSWORD, m_password.c_str() );
+	
+	curl_easy_setopt( curl, CURLOPT_WRITEFUNCTION, &data_write );
+	curl_easy_setopt( curl, CURLOPT_NOPROGRESS, 1L );
+	curl_easy_setopt( curl, CURLOPT_FOLLOWLOCATION, 1L );
+	curl_easy_setopt( curl, CURLOPT_FILE, &stream );
+	curl_easy_setopt( curl, CURLOPT_TIMEOUT, m_timeout );
+	
+	buffer = "imap://" + m_host + "/" + m_dir;
+	curl_easy_setopt( curl, CURLOPT_URL, buffer.c_str() );
+	
+	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "EXPUNGE");
+	res = curl_easy_perform( curl );
+	if( res != CURLE_OK ) {
+		m_err = "curl_easy_perform(EXPUNGE) failed: ";
+		m_err += curl_easy_strerror( res );
+		success = false;
+	}
+	curl_easy_cleanup( curl );
+	return success;
 }
 
 bool DIMAP::erase()

@@ -60,7 +60,7 @@ public:
 	   /// Message is in draft format; in other words, not complete
 	   DRAFT    = 0x05,
 	   /// Message recently arrived in this mailbox. This flag cannot be set by client.
-	   RECENT   = 0x06 
+	   RECENT   = 0x06,
     } DIMAPFlag;
     
     /**
@@ -151,6 +151,11 @@ public:
      * Go to next message
      */
     void next();
+	
+	/**
+	 * Expunge IMAP folder
+	 */
+	bool expunge();
 	
 	/**
 	 * List IMAP directories
