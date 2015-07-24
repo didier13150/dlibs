@@ -71,24 +71,26 @@ public:
     
     /**
      * Get configured IMAP host
+	 * @return IMAP host
      */
     const DString & getHostname();
     
     /**
-     * Set mail account and password
+     * Set mail account: user and password.
      * @param user IMAP account
      * @param password IMAP password
      */
     void setLogin( const DString & user, const DString & password );
     
     /**
-     * Set mail user
+     * Set mail user.
      * @param user IMAP account
      */
     void setUser( const DString & user );
     
     /**
-     * Get configured IMAP user
+     * Get configured IMAP user.
+	 * @return IMAP user
      */
     const DString & getUser();
     
@@ -100,27 +102,31 @@ public:
     
     /**
      * Get configured IMAP password
+	 * @return IMAP password
      */
     const DString & getPassword();
     
     /**
-     * Set IMAP connection timeout
+     * Set IMAP connection timeout.
      * @param timeout Timeout connection in seconds
      */
     void setTimeout( unsigned int timeout );
     
     /**
-     * Get IMAP connection timeout
+     * Get IMAP connection timeout.
+	 * @return IMAP connection timeout
      */
     unsigned int getTimeout();
     
     /**
-     * Change mail Directory (default is INBOX)
+     * Change mail Directory (default is INBOX).
+     * @param dir mail directory
      */
     void setDir( const DString & dir );
     
     /**
-     * Get directory
+     * Get current directory.
+	 * @return IMAP current directory.
      */
     const DString & getDir();
     
@@ -138,12 +144,14 @@ public:
     bool setFlag( DIMAPFlag flag);
     
     /**
-     * Delete current message.
+     * Mark current message as deleted.
+	 * @return true if success, false otherwise.
      */
     bool erase();
     
     /**
-     * Mark current message as read
+     * Mark current message as read.
+	 * @return true if success, false otherwise.
      */
     bool read();
 
@@ -153,17 +161,20 @@ public:
     void next();
 	
 	/**
-	 * Expunge IMAP folder
+	 * Expunge current IMAP folder: delete messages marked as deleted.
+	 * @return true if success, false otherwise.
 	 */
 	bool expunge();
 	
 	/**
 	 * List IMAP directories
+	 * @return IMAP directorie list.
 	 */
 	const DStringList & getDirList();
 	
 	/**
 	 * Get current mail UID
+	 * @return current mail indentifiant.
 	 */
 	unsigned int getUid();
     

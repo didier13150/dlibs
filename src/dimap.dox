@@ -12,11 +12,19 @@ using namespace std;
 int main( int argc, char ** argv )
 {
 	DIMAP imap;
+	DStringList folders;
 	DString content;
 	
-	imap.setHostname( IMAP_HOST );
-	imap.setLogin( IMAP_USER, IMAP_PASSWD );
+	imap.setHostname( "imap.example.com" );
+	imap.setLogin( "me", "passwd" );
+	// set current directory explicitly to inbox
 	imap.setDir( "INBOX" );
+	
+	folders = imap.getDirList();
+	cout << "Found directories:" << endl;
+	for ( DStringList::iterator it = folders.begin() ; it != folders.end() ; ++it ) {
+		cout << *it << endl;
+	}
 	
 	content = imap.getMessage();
 	while ( ! content.isEmpty() ) {
