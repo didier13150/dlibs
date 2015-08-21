@@ -356,10 +356,10 @@ int DMailPart::setPart( const DString & part )
 	for( DStringList::iterator it = lines.begin() ; it != lines.end() ; ++it ) {
 		line = *it;
 		if ( is_header && line.left( 12 ).lower() == "content-type" ) {
-			m_type = line.section( ';', 0, 0 ).section( ':', 1).toLower().simplifyWhiteSpace();
+			m_type = line.section( ';', 0, 0 ).section( ':', 1).toLower().remove( "\"" ).simplifyWhiteSpace();
 			buffer = line.section( ';', 1 );
 			if ( buffer.lower().contains( "charset" ) ) {
-				m_charset = line.section( ';', 1 ).section( '=', 1).simplifyWhiteSpace();
+				m_charset = line.section( ';', 1 ).section( '=', 1).remove( "\"" ).simplifyWhiteSpace();
 			}
 			if ( m_type.contains( "multipart") ) {
 				if ( line.contains( "boundary" ) ) {
@@ -373,7 +373,7 @@ int DMailPart::setPart( const DString & part )
 			return DMailPart::MULTIPART;
 		}
 		else if ( is_header && line.left( 25 ).lower() == "content-transfer-encoding" ) {
-			m_transfert_encoding = line.section( ':', 1).simplifyWhiteSpace();
+			m_transfert_encoding = line.section( ':', 1).remove( "\"" ).simplifyWhiteSpace();
 		}
 		else if ( is_header && line == "" ) {
 			is_header = false;
