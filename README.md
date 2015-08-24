@@ -78,8 +78,10 @@ This library depends on several other open source packages.These must be install
 * pthread
 * libxml2 (XML API)
 * librt (real time)
-* libcurl
+* libcurl >= 7.30
 * pcre (Regular expression)
+* utf8cpp
+* cpptest (tests) : optionnal
 * libmysql (DB operations) : optionnal
 * libpq (DB operations) : optionnal
 

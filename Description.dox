@@ -100,6 +100,10 @@
  * - pthread (The lib use threads)
  * - libxml2 (XML API)
  * - librt (real time)
+ * - libcurl >= 7.30
+ * - pcre
+ * - utf8cpp
+ * - cpptest (tests) : optionnal
  * - libmysql (DB operations) : optionnal
  * - libpq (DB operations) : optionnal
  *
