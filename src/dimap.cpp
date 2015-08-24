@@ -142,9 +142,6 @@ const DString & DIMAP::getMessage()
 	curl_easy_setopt( curl, CURLOPT_FILE, &stream );
 	curl_easy_setopt( curl, CURLOPT_TIMEOUT, m_timeout );
 	
-	buffer = "imap://" + m_host;
-	curl_easy_setopt( curl, CURLOPT_URL, buffer.c_str() );
-	
 	buffer.setNum( m_uid );
 	buffer.prepend( "imap://" + m_host + "/" + m_dir + "/;UID=" );
 	curl_easy_setopt( curl, CURLOPT_URL, buffer.c_str() );
@@ -194,7 +191,7 @@ const DStringList & DIMAP::getDirList()
 	curl_easy_setopt( curl, CURLOPT_FILE, &stream );
 	curl_easy_setopt( curl, CURLOPT_TIMEOUT, m_timeout );
 	
-	buffer = "imap://" + m_host;
+	buffer = "imap://" + m_host + "/";
 	curl_easy_setopt( curl, CURLOPT_URL, buffer.c_str() );
 	
 	// Perform the list
