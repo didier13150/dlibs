@@ -745,6 +745,11 @@ void TestDString::quoted_printable_test()
 	TEST_ASSERT_MSG( str.toQuotedPrintable() == "UTF-8 =C3=A0 =C3=A1 =C3=A2 =C3=A3 =C3=A4 =C3=A5 =C3=A6 =C3=A7 =C3=A8 =C3=A9 =C3=AA =C3=AB =C3=AC =C3=AD =C3=AE =C3=AF", "Bad encodage" )
 	str = "UTF-8 ð ñ ò ó ô õ ö ÷ ø ù ú û ü ý þ ÿ";
 	TEST_ASSERT_MSG( str.toQuotedPrintable() == "UTF-8 =C3=B0 =C3=B1 =C3=B2 =C3=B3 =C3=B4 =C3=B5 =C3=B6 =C3=B7 =C3=B8 =C3=B9 =C3=BA =C3=BB =C3=BC =C3=BD =C3=BE =C3=BF", "Bad encodage" )
+	
+	str.fromQuotedPrintable( "ISO-8859-1 =2E" );
+	
+	std::cout << std::endl << str << std::endl;
+	TEST_ASSERT_MSG( str == "ISO-8859-1 .", "Bad conversion from ISO-8859-1" )
 }
 
 void TestDString::html_test()
