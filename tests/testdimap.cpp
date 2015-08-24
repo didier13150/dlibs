@@ -43,6 +43,17 @@
 #include "test.h"
 #include "dsettings.h"
 
+TestDIMAP::TestDIMAP()
+{
+	TEST_ADD( TestDIMAP::setup )
+	TEST_ADD( TestDIMAP::basic_test )
+	TEST_ADD( TestDIMAP::fetch_some_mails_test )
+	TEST_ADD( TestDIMAP::read_test )
+	TEST_ADD( TestDIMAP::list_test )
+	//TEST_ADD( TestDIMAP::delete_one_test )
+	//TEST_ADD( TestDIMAP::delete_all_test )
+}
+
 void TestDIMAP::setup()
 {
 	DSettings sets;
@@ -164,11 +175,17 @@ void TestDIMAP::read_test()
 void TestDIMAP::list_test()
 {
 	DIMAP imap;
+	DStringList dirs;
+	DStringList::const_iterator it;
 	
 	imap.setHostname( _host );
 	imap.setLogin( _user, _passwd );
 	
-	imap.getDirList();
+	dirs = imap.getDirList();
+	std::cout << std::endl;
+	for ( it = dirs.begin() ; it != dirs.end() ; ++it ) {
+		std::cout << "Dir:" << *it << std::endl;
+	}
 	TEST_ASSERT_MSG( imap.getDirList().size(), "IMAP Dir list is empty" )
 }
 

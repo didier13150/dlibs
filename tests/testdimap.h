@@ -43,16 +43,7 @@
 class TestDIMAP : public Test::Suite
 {
 public:
-	TestDIMAP()
-	{
-		TEST_ADD( TestDIMAP::setup )
-		TEST_ADD( TestDIMAP::basic_test )
-		TEST_ADD( TestDIMAP::fetch_some_mails_test )
-		TEST_ADD( TestDIMAP::read_test )
-		TEST_ADD( TestDIMAP::list_test )
-		TEST_ADD( TestDIMAP::delete_one_test )
-		TEST_ADD( TestDIMAP::delete_all_test )
-	}
+	TestDIMAP();
 
 private:
 	void setup();
