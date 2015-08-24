@@ -175,17 +175,9 @@ void TestDIMAP::read_test()
 void TestDIMAP::list_test()
 {
 	DIMAP imap;
-	DStringList dirs;
-	DStringList::const_iterator it;
 	
 	imap.setHostname( _host );
 	imap.setLogin( _user, _passwd );
-	
-	dirs = imap.getDirList();
-	std::cout << std::endl;
-	for ( it = dirs.begin() ; it != dirs.end() ; ++it ) {
-		std::cout << "Dir:" << *it << std::endl;
-	}
 	TEST_ASSERT_MSG( imap.getDirList().size(), "IMAP Dir list is empty" )
 }
 
