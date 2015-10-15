@@ -54,6 +54,7 @@ public:
 		TEST_ADD( TestDAppCmdLine::set_opts_test )
 		TEST_ADD( TestDAppCmdLine::print_app_test )
 		TEST_ADD( TestDAppCmdLine::bad_opts_test )
+		TEST_ADD( TestDAppCmdLine::help_with_lot_of_opts_test )
 	}
 
 private:
@@ -67,6 +68,7 @@ private:
 	void set_opts_test();
 	void print_app_test();
 	void bad_opts_test();
+	void help_with_lot_of_opts_test();
 };
 
 #endif // _TESTDAPPCMDLINE_H

@@ -369,9 +369,9 @@ void DAppCmdLine::showHelp() const
 			helpstr.append ( " " );
 		}
 		helpstr.append ( it2->second.getDescription() );
+		std::cout << helpstr << std::endl;
 	}
 
-	std::cout << helpstr << std::endl;
 	std::cout << std::endl;
 }
 

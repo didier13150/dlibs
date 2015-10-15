@@ -510,6 +510,72 @@ void TestDAppCmdLine::bad_opts_test()
 	TEST_ASSERT_MSG( app.getOptionValue( "k" ).isEmpty(), "DAppCmdLine doesn't report empty value for unknown option" )
 }
 
+void TestDAppCmdLine::help_with_lot_of_opts_test()
+{
+	DAppCmdLine app;
+	std::streambuf *backup;
+	std::ostringstream stream;
+	DString buffer, ref;
+	
+	int argc = 0;
+	const char * argv[] = { "/my/path/test" };
+
+	if ( sizeof( argv[0] ) ) argc = sizeof( argv ) / sizeof( argv[0] );
+	
+	app.addOption( "help", "display usage", 'h' );
+	app.addOption( "file", "use file as input stream", "{file}", 'f' );
+	app.addOption( "url", "server hostname and optional port. must use admin port with -z/-a", "http[s]://{host}[:{port}]", 'u' );
+	app.addOption( "admin", "admin account name to auth as", "{name}", 'a' );
+	app.addOption( "zadmin", "use zimbra admin name/password from localconfig for admin/password", 'z' );
+	app.addOption( "authtoken", "use auth token string (has to be in JSON format) from command line", "{authtoken}", 'y' );
+	app.addOption( "authtokenfile", "read auth token (has to be in JSON format) from a file", "{authtoken file}", 'Y' );
+	app.addOption( "mailbox", "mailbox to open", "{name}", 'm' );
+	app.addOption( "auth", "account name to auth as; defaults to -m unless -A is used", "{name}" );
+	app.addOption( "admin-priv", "execute requests with admin privileges\n                                           requires -z or -a, and -m", 'A' );
+	app.addOption( "password", "password for account", "{pass}", 'p' );
+	app.addOption( "passfile", "read password from file", "{file}", 'P' );
+	app.addOption( "timeout", "timeout (in seconds)", 't' );
+	app.addOption( "verbose", "verbose mode (dumps full exception stack trace)", 'v' );
+	app.addOption( "debug", "debug mode (dumps SOAP messages)", 'd' );
+	
+	app.addArgument( "cmd" );
+	app.addArgument( "cmd-args ..." );
+	
+	if ( ! app.parse( argc, const_cast<char**>(argv) ) )
+	{
+		TEST_FAIL( "Error on parsing command line" )
+		return;
+	}
+	
+	// Redirect stdout to buffer
+	backup = std::cout.rdbuf();
+	
+	std::cout.rdbuf( stream.rdbuf() );
+	app.showHelp();
+	std::cout.rdbuf(backup);
+	buffer = stream.str();
+	
+	ref  = "\ntest [opts] [cmd] [cmd-args ...]\n\n";
+	ref += "  -a, --admin={name}                   admin account name to auth as\n";
+	ref += "  -A, --admin-priv                     execute requests with admin privileges\n";
+	ref += "                                           requires -z or -a, and -m\n";
+	ref += "  --auth={name}                        account name to auth as; defaults to -m unless -A is used\n";
+	ref += "  -y, --authtoken={authtoken}          use auth token string (has to be in JSON format) from command line\n";
+	ref += "  -Y, --authtokenfile={authtoken file} read auth token (has to be in JSON format) from a file\n";
+	ref += "  -d, --debug                          debug mode (dumps SOAP messages)\n";
+	ref += "  -f, --file={file}                    use file as input stream\n";
+	ref += "  -h, --help                           display usage\n";
+	ref += "  -m, --mailbox={name}                 mailbox to open\n";
+	ref += "  -P, --passfile={file}                read password from file\n";
+	ref += "  -p, --password={pass}                password for account\n";
+	ref += "  -t, --timeout                        timeout (in seconds)\n";
+	ref += "  -u, --url=http[s]://{host}[:{port}]  server hostname and optional port. must use admin port with -z/-a\n";
+	ref += "  -v, --verbose                        verbose mode (dumps full exception stack trace)\n";
+	ref += "  -z, --zadmin                         use zimbra admin name/password from localconfig for admin/password\n\n";
+
+	TEST_ASSERT_MSG( buffer == ref, "Show version with a lot of options is not printed correctly" )
+}
+
 int main()
 {
 	TestDAppCmdLine ets;
