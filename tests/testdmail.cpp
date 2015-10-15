@@ -42,6 +42,73 @@
 #include "test.h"
 
 static const char * mail1 = 
+"Return-Path: root@smtp.example.com\n"
+"Received: from smtp.example.com (LHLO smtp.example.com) (195.216.193.6) by\n"
+" smtp.example.com with LMTP; Mon, 24 Aug 2015 17:45:28 +0200 (CEST)\n"
+"Received: from localhost (localhost.localdomain [127.0.0.1])\n"
+"	by smtp.example.com (Postfix) with ESMTP id 749987E0B73\n"
+"	for <me@example.com>; Mon, 24 Aug 2015 17:45:28 +0200 (CEST)\n"
+"X-Virus-Scanned: amavisd-new at example.com\n"
+"X-Spam-Flag: NO\n"
+"X-Spam-Score: -7.506\n"
+"X-Spam-Level:\n"
+"X-Spam-Status: No, score=-7.506 tagged_above=-10 required=6.6\n"
+"	tests=[AM.WBL=-10, BAYES_50=0.8, DKIM_ADSP_NXDOMAIN=0.9,\n"
+"	NO_DNS_FOR_FROM=0.001, RDNS_NONE=0.793] autolearn=no\n"
+"Received: from smtp.example.com ([127.0.0.1])\n"
+"	by localhost (smtp.example.com [127.0.0.1]) (amavisd-new, port 10024)\n"
+"	Return-Path: root@smtp.example.com\n"
+"Received: from smtp.example.com (LHLO smtp.example.com) (195.216.193.6) by\n"
+" smtp.example.com with LMTP; Mon, 24 Aug 2015 17:45:28 +0200 (CEST)\n"
+"Received: from localhost (localhost.localdomain [127.0.0.1])\n"
+"	by smtp.example.com (Postfix) with ESMTP id 749987E0B73\n"
+"	for <me@example.com>; Mon, 24 Aug 2015 17:45:28 +0200 (CEST)\n"
+"X-Virus-Scanned: amavisd-new at example.com\n"
+"X-Spam-Flag: NO\n"
+"X-Spam-Score: -7.506\n"
+"X-Spam-Level:\n"
+"X-Spam-Status: No, score=-7.506 tagged_above=-10 required=6.6\n"
+"	tests=[AM.WBL=-10, BAYES_50=0.8, DKIM_ADSP_NXDOMAIN=0.9,\n"
+"	NO_DNS_FOR_FROM=0.001, RDNS_NONE=0.793] autolearn=no\n"
+"Received: from smtp.example.com ([127.0.0.1])\n"
+"	by localhost (smtp.example.com [127.0.0.1]) (amavisd-new, port 10024)\n"
+"	with ESMTP id 1ofOHyovyb64 for <me@example.com>;\n"
+"	Mon, 24 Aug 2015 17:45:23 +0200 (CEST)\n"
+"Received: from smtp.example.com (unknown [46.218.176.171])\n"
+"	by smtp.example.com (Postfix) with ESMTPS id 8BE397E0AA4\n"
+"	for <me@example.com>; Mon, 24 Aug 2015 17:45:23 +0200 (CEST)\n"
+"Received: from localhost.localdomain (localhost [127.0.0.1])\n"
+"	by smtp.example.com (8.15.2/8.14.8) with SMTP id t7OFjJcd016987\n"
+"	for root@localhost; Mon, 24 Aug 2015 17:45:21 +0200\n"
+"Message-Id: <201508241545.t7OFjJcd016987@smtp.example.com>\n"
+"Subject: DLibs test\n"
+"From: root@smtp.example.com\n"
+"To: root@smtp.example.com\n"
+"Date: Mon, 24 Aug 2015 17:45:22 +0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: quoted-printable\n"
+"\n"
+"This is just a simple DLibs test, SMTP partwith ESMTP id 1ofOHyovyb64 for <me@example.com>;\n"
+"	Mon, 24 Aug 2015 17:45:23 +0200 (CEST)\n"
+"Received: from smtp.example.com (unknown [46.218.176.171])\n"
+"	by smtp.example.com (Postfix) with ESMTPS id 8BE397E0AA4\n"
+"	for <me@example.com>; Mon, 24 Aug 2015 17:45:23 +0200 (CEST)\n"
+"Received: from localhost.localdomain (localhost [127.0.0.1])\n"
+"	by smtp.example.com (8.15.2/8.14.8) with SMTP id t7OFjJcd016987\n"
+"	for root@localhost; Mon, 24 Aug 2015 17:45:21 +0200\n"
+"Message-Id: <201508241545.t7OFjJcd016987@smtp.example.com>\n"
+"Subject: DLibs test\n"
+"From: root@smtp.example.com\n"
+"To: root@smtp.example.com\n"
+"Date: Mon, 24 Aug 2015 17:45:22 +0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: quoted-printable\n"
+"\n"
+"This is just a simple DLibs test, SMTP part\n";
+
+static const char * mail2 = 
 "Return-Path: toto@example.com\n"
 "Received: from smtp.example.com (LHLO smtp.example.com) (192.168.0.69) by\n"
 " smtp.example.com with LMTP; Tue, 26 May 2015 13:13:13 +0200 (CEST)\n"
@@ -126,6 +193,8 @@ void TestDMail::constructor_test()
 	//std::cout << std::endl;
 	mail.setMail( mail1 );
 	partlist = mail.getMailPartList();
+	mail.setMail( mail2 );
+	partlist = mail.getMailPartList();
 	/*for( DMailPartList::iterator it = partlist.begin() ; it != partlist.end() ; ++it ) {
 		std::cout << "Type: \"" << it->getType() << "\", ";
 		std::cout << "Charset: \"" << it->getCharset() << "\", ";
@@ -140,8 +209,8 @@ void TestDMail::clear_test()
 	DMailPartList partlist;
 	//DMailPart part;
 	std::cout << std::endl;
-	mail.setMail( mail1 );
-	mail.setMail( mail1 );
+	mail.setMail( mail2 );
+	mail.setMail( mail2 );
 	TEST_ASSERT_MSG( mail.getHeader( "subject" ) == "Test (ref: 001) from example.com", "Headers are not cleared between two mail" )
 }
 
@@ -156,6 +225,12 @@ void TestDMail::mail_subject_test()
 	
 	str = "=?UTF-8?Q?RE:_Coordonn=C3=A9es_du_consultant_de?= =?UTF-8?Q?_votre_Offre_:_FR28_CHATEAUDUN_-?= =?UTF-8?Q?_PL60_POZNAN_-_TEST?=";
 	TEST_ASSERT_MSG( DMail::decodeSubject( str ) == "RE:_Coordonnées_du_consultant_de_votre_Offre_:_FR28_CHATEAUDUN_-_PL60_POZNAN_-_TEST", "Bad UTF-8 Quoted Printable decode process" )
+}
+
+void TestDMail::boundary_test()
+{
+	DString boundary = DMail::getRandomBoundary();
+	TEST_ASSERT_MSG( boundary.match( "----=_Part_-[0-9]{9}_[0-9]{9}.[0-9]{10,18}" ), "Wrong random boundary" )
 }
 
 int main()

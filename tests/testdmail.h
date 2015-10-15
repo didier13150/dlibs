@@ -47,12 +47,14 @@ public:
 		TEST_ADD( TestDMail::constructor_test )
 		TEST_ADD( TestDMail::clear_test )
 		TEST_ADD( TestDMail::mail_subject_test )
+		TEST_ADD( TestDMail::boundary_test )
 	}
 
 private:
 	void constructor_test();
 	void clear_test();
 	void mail_subject_test();
+	void boundary_test();
 };
 
 #endif // _TESTDMAIL_H
