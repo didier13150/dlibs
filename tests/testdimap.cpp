@@ -48,10 +48,12 @@ TestDIMAP::TestDIMAP()
 	TEST_ADD( TestDIMAP::setup )
 	TEST_ADD( TestDIMAP::basic_test )
 	TEST_ADD( TestDIMAP::fetch_some_mails_test )
-	TEST_ADD( TestDIMAP::read_test )
+	TEST_ADD( TestDIMAP::flag_test )
 	TEST_ADD( TestDIMAP::list_test )
-	//TEST_ADD( TestDIMAP::delete_one_test )
-	//TEST_ADD( TestDIMAP::delete_all_test )
+	TEST_ADD( TestDIMAP::bad_host_test )
+	TEST_ADD( TestDIMAP::bad_credential_test )
+	TEST_ADD( TestDIMAP::delete_one_test )
+	TEST_ADD( TestDIMAP::delete_all_test )
 }
 
 void TestDIMAP::setup()
@@ -102,11 +104,63 @@ void TestDIMAP::basic_test()
 	DString content;
 	
 	imap.setHostname( _host );
-	imap.setLogin( _user, _passwd );
+	imap.setUser( _user );
+	imap.setPassword( _passwd );
+	TEST_ASSERT_MSG( imap.getDir() == "INBOX", "Wrong default directory" )
 	imap.setDir( _dir );
-	
-	content = imap.getMessage();	
+	TEST_ASSERT_MSG( imap.getDir() == _dir, "Wrong current directory" )
+	TEST_ASSERT_MSG( imap.getHostname() == _host, "Wrong hostname" )
+	TEST_ASSERT_MSG( imap.getUser() == _user, "Wrong user" )
+	TEST_ASSERT_MSG( imap.getPassword() == _passwd , "Wrong password" )
+	TEST_ASSERT_MSG( imap.getTimeout() == 30 , "Wrong default timeout" )
+	imap.setTimeout( 10 );
+	TEST_ASSERT_MSG( imap.getTimeout() == 10 , "Wrong current timeout" )
+	TEST_ASSERT_MSG( imap.getUid() == 1 , "Wrong UID" )
+	content = imap.getMessage();
 	TEST_ASSERT_MSG( ! content.isEmpty(), "No message downloaded" )
+	imap.next();
+	TEST_ASSERT_MSG( imap.getUid() == 2 , "Wrong UID" )
+}
+
+void TestDIMAP::bad_host_test()
+{
+	DIMAP imap;
+	DString content;
+	
+	imap.setHostname( "imap.example.org" );
+	imap.setLogin( "toto", "toto" );
+	imap.getDirList();
+	TEST_ASSERT_MSG( imap.getLastError() == "curl_easy_perform() failed: Couldn't resolve host name", "Wrong error message for unknown host" )
+	content = imap.getMessage();
+	TEST_ASSERT_MSG( imap.getLastError() == "curl_easy_perform() failed: Couldn't resolve host name", "Wrong error message for unknown host" )
+}
+
+void TestDIMAP::bad_credential_test()
+{
+	DIMAP imap;
+	DString content;
+	
+	imap.setHostname( _host );
+	// Wrong login with wrong password
+	imap.setLogin( "toto", "toto" );
+	imap.getMessage();
+	TEST_ASSERT_MSG( imap.getLastError() == "curl_easy_perform() failed: Login denied", "Wrong error message for unknown user: get message" )
+	
+	imap.erase();
+	TEST_ASSERT_MSG( imap.getLastError() == "curl_easy_perform(STORE 1 +Flags \\Deleted) failed: Login denied", "Wrong error message for unknown user: erase" )
+	
+	imap.expunge();
+	TEST_ASSERT_MSG( imap.getLastError() == "curl_easy_perform(EXPUNGE) failed: Login denied", "Wrong error message for unknown user: expunge" )
+	
+	imap.getDirList();
+	TEST_ASSERT_MSG( imap.getLastError() == "curl_easy_perform() failed: Login denied", "Wrong error message for unknown user: dir list" )
+
+	// Allowed login with wrong password
+	imap.setLogin( _user, "toto" );
+	
+	imap.getMessage();
+	TEST_ASSERT_MSG( imap.getLastError() == "curl_easy_perform() failed: Login denied", "Wrong error message for allowed user but wrong pasword: get message" )
+
 }
 
 void TestDIMAP::fetch_some_mails_test()
@@ -158,9 +212,12 @@ void TestDIMAP::delete_all_test()
 		content = imap.getMessage();
 	}
 	imap.expunge();
+	content = imap.getMessage();
+	TEST_ASSERT_MSG( content.isEmpty(), "Message still present" )
+	TEST_ASSERT_MSG( imap.getLastError() == "curl_easy_perform() failed: Remote file not found", "Wrong error message for empty dir" )
 }
 
-void TestDIMAP::read_test()
+void TestDIMAP::flag_test()
 {
 	DIMAP imap;
 	
@@ -169,7 +226,9 @@ void TestDIMAP::read_test()
 	imap.setDir( _dir );
 	
 	imap.getMessage();
-	TEST_ASSERT_MSG( imap.read(), "Mail not read" )
+	TEST_ASSERT_MSG( imap.read(), "Mail not flagged as read" )
+	TEST_ASSERT_MSG( imap.answered(), "Mail not flagged as answered" )
+	TEST_ASSERT_MSG( imap.setFlag( DIMAP::FLAGGED ), "Mail not flagged as flagged" )
 }
 
 void TestDIMAP::list_test()

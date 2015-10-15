@@ -48,10 +48,12 @@ public:
 private:
 	void setup();
 	void basic_test();
+	void bad_host_test();
+	void bad_credential_test();
 	void fetch_some_mails_test();
 	void delete_one_test();
 	void delete_all_test();
-	void read_test();
+	void flag_test();
 	void list_test();
 	
 	DString _host;
