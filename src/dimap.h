@@ -154,6 +154,12 @@ public:
 	 * @return true if success, false otherwise.
      */
     bool read();
+    
+    /**
+     * Mark current message as answered.
+	 * @return true if success, false otherwise.
+     */
+    bool answered();
 
     /**
      * Go to next message

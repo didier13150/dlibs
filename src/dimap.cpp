@@ -249,11 +249,12 @@ bool DIMAP::setFlag( DIMAP::DIMAPFlag flag)
 			action = "Draft";
 			break;
 		}
-		case DIMAP::RECENT:
+		//Only server side can modify this flag
+		/*case DIMAP::RECENT:
 		{
 			action = "Recent";
 			break;
-		}
+		}*/
 	}
 		
 	curl = curl_easy_init();
@@ -339,6 +340,11 @@ bool DIMAP::erase()
 bool DIMAP::read()
 {
 	return setFlag( DIMAP::SEEN );
+}
+
+bool DIMAP::answered()
+{
+	return setFlag( DIMAP::ANSWERED );
 }
 
 void DIMAP::next()
