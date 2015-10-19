@@ -250,7 +250,7 @@ bool DAppCmdLine::parse ( int argc, char** argv )
 	while ( nb < argc )
 	{
 		buffer = argv[ nb ];
-		number_of_dash = buffer.contains ( "-" );
+		number_of_dash = buffer.left(2).contains ( "-" );
 
 		// It's an option
 		if ( value_on_next )

@@ -510,6 +510,30 @@ void TestDAppCmdLine::bad_opts_test()
 	TEST_ASSERT_MSG( app.getOptionValue( "k" ).isEmpty(), "DAppCmdLine doesn't report empty value for unknown option" )
 }
 
+void  TestDAppCmdLine::arg_with_dash_test()
+{
+	DAppCmdLine app;
+	std::streambuf *backup;
+	std::ostringstream stream;
+	DString buffer, ref;
+	
+	int argc = 0;
+	const char * argv[] = { "/my/path/test", "arg1", "arg2-withdash" };
+
+	if ( sizeof( argv[0] ) ) argc = sizeof( argv ) / sizeof( argv[0] );
+	
+	app.addOption( "help", "display usage", 'h' );
+	app.addOption( "file", "use file as input stream", "{file}", 'f' );
+	
+	if ( ! app.parse( argc, const_cast<char**>(argv) ) )
+	{
+		TEST_FAIL( "Error on parsing command line" )
+		return;
+	}
+	TEST_ASSERT_MSG( app.getArgumentValue( 0 ) == "arg1", "DAppCmdLine doesn't report good argument value (1)" )
+	TEST_ASSERT_MSG( app.getArgumentValue( 1 ) == "arg2-withdash", "DAppCmdLine doesn't report good argument value (2)" )
+}
+
 void TestDAppCmdLine::help_with_lot_of_opts_test()
 {
 	DAppCmdLine app;
